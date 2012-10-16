@@ -1,0 +1,52 @@
+<!DOCTYPE QtuCDeviceAPIDef>
+<deviceAPI>
+	
+	<deviceInfo>
+		<name>deviceName</name>
+		<desc>A short description of the device</desc>
+		<platform>A short platform string, eg.: STM32F4</platform>
+		<project>projName</project>
+	</deviceInfo>
+	
+	<hardwareInterfaceList>
+		<hardwareInterface>
+			<name>led</name>
+			<info>Manage LED outputs</info>
+		</hardwareInterface>
+	</hardwareInterfaceList>
+
+	<stateVariableList>
+		<stateVariable>
+			<hwInterface>drive</hwInterface>
+			<name>encVal</name>
+			<type>
+				<device>int</device>	//raw
+				<user>double</user>
+			</type>
+			<conversion>
+				<toUser><![CDATA[encVal / 22564 * 360]]></toUser>
+				<toDevice><![CDATA[encVal / 360 * 22564]]></toDevice>
+			</conversion>
+			<autoUpdate side="user">10</autoUpdate>	<!--Hz--> <!-- GUI:there will be a control command: register. GUI can register to a continuous variable update feed. The device will be polled  with "get" command on every update. (or the device sends "set"-s periodically...)-->
+			<autoUpdate side="device">10</autoUpdate>
+			<direction>r/w/rw/r+w/read/write/read+write</direction> ????? minek
+			<guiHint>
+				<display>progressbar</display>	<!--slider, lineedit, textbox, checkbox, radio, button-->
+			</guiHint>
+		</stateVariable>
+	</stateVariableList>
+
+	<functionList>
+		<function>
+			<hwInterface>ADC</hwInterface>
+			<name>calibrate</name>
+			<arg>3 "string with spaces"</arg>
+		</function>
+		<function>
+			<hwInterface>LCD</hwInterface>
+			<name>write</name>
+			<arg><![CDATA[I <3 Qt.]]></arg>
+		</function>
+	</functionList>
+
+</deviceAPI>

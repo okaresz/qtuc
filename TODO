@@ -1,0 +1,4 @@
+check DeviceStateVariable action tree
+
+validate deviceAPI.xml! : http://doc.qt.digia.com/4.7/xmlpatterns-schema.html
+
