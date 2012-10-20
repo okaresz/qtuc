@@ -1,4 +1,5 @@
 #include "DeviceAPIParser.h"
+#include <QCryptographicHash>
 
 using namespace QtuC;
 
@@ -9,6 +10,7 @@ DeviceAPIParser::DeviceAPIParser ( QObject* parent ) : QObject(parent)
 
 bool DeviceAPIParser::parseAPI ( const QString& deviceAPIString )
 {
+	/// @todo api encoding!...
 	QDomDocument apiMarkup('QtuCDeviceAPIDef');
 	QString errMsg;
 	int errLine;
@@ -75,6 +77,8 @@ bool DeviceAPIParser::parseAPI ( const QString& deviceAPIString )
 			error( QtWarningMsg, "API parsing failed while parsing functionList", "parseAPI(const QString&)" );
 		}
 	}
+
+	mCurrentAPIHash = getHash( deviceAPIString );
 
 	return true;
 }
@@ -261,4 +265,14 @@ bool DeviceAPIParser::parseNodeStateVariable( const QDomElement &stateVariableEl
 	emit newStateVariable( params );
 
 	return true;
+}
+
+bool DeviceAPIParser::operator ==(const QString &newAPIString)
+{
+	return ( mCurrentAPIHash == getHash(newAPIString) );
+}
+
+const QByteArray DeviceAPIParser::getHash(const QString &apiString)
+{
+	return QCryptographicHash::hash( apiString.toAscii(), QCryptographicHash::Md5 );
 }

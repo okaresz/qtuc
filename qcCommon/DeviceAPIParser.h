@@ -25,6 +25,17 @@ public:
 	  *	@return True on success, false otherwise.*/
 	bool parseAPI ( const QString& deviceAPIString = QString() );
 
+	/** Get the hash of current API.
+	  *	@return Hash of the current API as a QByteArray. If API is invalid, returns an empty QByteArray.*/
+	const QByteArray getHash();
+
+	/** Get hash of the passed deviceAPI string.
+	  *	@param The deviceAPI string (content of the deviceAPI.xm, with or without the DTD.
+	  *	@return The hash as a QByteArray.*/
+	static const QByteArray getHash( const QString &apiString );
+
+	bool operator==( const QString &newAPIString );
+
 signals:
 
 	/** Emitted if a new device information is parsed.
@@ -77,7 +88,7 @@ private:
 
 	/** MD5 hash of the current API file.
 	 */
-	QString mCurrentAPIHash;
+	QByteArray mCurrentAPIHash;
 
 	/// @todo all tag name in a QHash?.....
 	const QString mRootNodeName = 'deviceAPI';

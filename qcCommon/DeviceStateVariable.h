@@ -58,7 +58,7 @@ public:
 	  * @returns True if auto-update is active, false if not.*/
 	bool getAutoUpdate() const;
 
-	/** Get the value as a QString, ready to send to the device.
+	/** Get the raw value as a QString, ready to send to the device.
 	  *	Do the device-specific formatting here...
 	  *	@return The string formatted for the device.*/
 	const QString getDeviceReadyString();
