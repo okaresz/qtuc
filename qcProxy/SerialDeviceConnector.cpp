@@ -15,8 +15,14 @@ QtuC::SerialDeviceConnector::~SerialDeviceConnector()
 	this->closePort();
 }
 
-void SerialDeviceConnector::sendCommand(const DeviceCommand &cmd)
+bool SerialDeviceConnector::sendCommand(const DeviceCommand &cmd)
 {
+	if( !mSerialPort->isOpen() )
+	{
+		error( QtWarningMsg, "Serial port is closed, sendCommand failed", "sendCommand()" );
+		return false;
+	}
+
 	if( mSerialPort->write( cmd.getCommandString() ) <= 0 )
 	{
 		errorDetails_t errDet;

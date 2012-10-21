@@ -29,5 +29,4 @@ HEADERS += SettingsManagerBase.h \
     DeviceAPIParser.h \
     ErrorHandlerBase.h
 
-OTHER_FILES += \
-    ../TODO
+OTHER_FILES +=

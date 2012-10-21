@@ -12,12 +12,12 @@ class SerialDeviceConnector : public DeviceConnectionManagerBase
 	Q_OBJECT
 public:
 
-	SerialDeviceConnector( QObject *parent );
+	SerialDeviceConnector( QObject *parent = 0 );
 
 	~SerialDeviceConnector();
 
 	/// Inherited from DeviceConnectionManagerBase.
-	virtual void sendCommand( const DeviceCommand &cmd );
+	virtual bool sendCommand( const DeviceCommand &cmd );
 
 	/// Inherited from DeviceConnectionManagerBase.
 	virtual void closeDevice();

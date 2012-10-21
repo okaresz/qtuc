@@ -2,7 +2,7 @@
 
 using namespace QtuC;
 
-DeviceConnectionManagerBase::DeviceConnectionManagerBase( QObject *parent )
+DeviceConnectionManagerBase::DeviceConnectionManagerBase( QObject *parent ) : ErrorHandlerBase(parent)
 {
 
 }

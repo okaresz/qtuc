@@ -1,8 +1,10 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
+#include "ErrorHandlerBase.h"
 #include <QString>
 #include "DeviceCommandBase.h"
+#include <QHash>
 
 namespace QtuC
 {
@@ -19,15 +21,36 @@ enum deviceMessageType_t
  *	Device info monostate class (pure static).
  *	Holds some globally reachable information about the device.
  *	Before using this class, you must call it's create() method.*/
-class Device
+class Device : public ErrorHandlerBase
 {
+	Q_OBJECT
 public:
-	/** Create the Device static object.
+
+	/** C'tor*/
+	Device( QObject *parent = 0 );
+
+	/** Create the Device object.
+	 *	@param hwInterfaceList A QStringList of the valid hardware interfaces.
+	 *	@param hwInterfaceInfoList Info strings for the hardware interfaces.
+	 *	@param deviceName Name of the device. (ASCII, max 50 char)*/
+	Device( const QStringList& hwInterfaceList, const QStringList& hwInterfaceInfoList, const QString & deviceName, QObject *parent = 0 );
+
+	/** Swap the Device singleton for the passed Device object.
+	  *	Think twice before you use this!
+	  *	@param newDevice The new Device singleton.*/
+	Device* swap( Device *newDevice );
+
+	/** Create the Device singleton.
 	 *	Can only be called once, after that, Device will be readonly.
 	 *	@param hwInterfaceList A QStringList of the valid hardware interfaces.
 	 *	@param hwInterfaceInfoList Info strings for the hardware interfaces.
 	 *	@param deviceName Name of the device. (ASCII, max 50 char)*/
-	static void create( const QStringList& hwInterfaceList, const QStringList& hwInterfaceInfoList, const QString & deviceName );
+	static bool create( const QStringList& hwInterfaceList, const QStringList& hwInterfaceInfoList, const QString & deviceName, QObject *parent );
+
+	/** Get Device instance.
+	  *	You can only get the pointer, if the device hasn't benn initialized yet.
+	  *	@return Pointer to the Device singleton, or 0 if it is already initialized.*/
+	static Device *instance( QObject *parent = 0 );
 
 	/** Get if hardware interface exists and is valid.
 	  *	@param hwInterfaceName Name of the hardware interface.
@@ -39,57 +62,107 @@ public:
 	  *	@return The info param of the hardware interface.*/
 	static const QString getHwInterfaceInfo( const QString& hwInterfaceName ) const;
 
+	/** Get device information.
+	  *	Returns valid value only after the device handshake has happened.
+	  *	@param key Name of the information.
+	  *	@return The requested device information.*/
+	static const QString getInfo( const QString & key ) const;
+
 	/** Get the device name.
-	 *	Holds valid value only after the device handshake has happened.
-	 *	@return The client name.*/
+	 *	Returns valid value only after the device handshake has happened.
+	 *	@return The device name.*/
 	static const QString getName() const;
 
 	/** Get the device description.
-	 *	Holds valid value only after the device handshake has happened.
-	 *	@return The client description 8if exists, empty string otherwise.*/
+	 *	Returns valid value only after the device handshake has happened.
+	 *	@return The device description 8if exists, empty string otherwise.*/
 	static const QString getDescription() const;
+
+	/** Get the device platform.
+	 *	Returns valid value only after the device handshake has happened.
+	 *	@return The device platform if exists, empty string otherwise.*/
+	static const QString getPlatform() const;
+
+	/** Get the device project.
+	 *	Returns valid value only after the device handshake has happened.
+	 *	@return The device project if exists, empty string otherwise.*/
+	static const QString getProject() const;
 
 	/** Get device connection status. Will be true only after a successful handshake.
 	 *	@return COnnection status: true if connected, false if not or an error happened.*/
-	static bool isConnected() const;
+	//static bool isConnected() const;
+
+	/** Set whether the device uses positive acknowledge to verify received commands.
+	  *	@return True if device uses poitive acknowledge, false if not.*/
+	static bool positiveAck() const
+		{ return mPositiveAck; }
+
+
+	/** Mark device as created.
+	  *	After this function call, the device singleton cannot be reached or modified, only the static getters will work.*/
+	void setCreated( bool created = true )
+		{ mCreated = created; }
+
+public slots:
+
+	/** Add a hardware interface.
+	  *	@param hwInterfaceName Name od the new hardware interface.*/
+	void addHardwareInterface( const QString &hwInterfaceName );
+
+	/** Add hardware interface with info (short description).
+	  *	@param hwInterfaceName Name of the new hardware interface.
+	  *	@param hwInterfaceInfo Info to add.*/
+	void addHardwareInterface( const QString &hwInterfaceName, const QString &hwInterfaceInfo );
+
+	/** Add new device function.
+	  *	@param hwInterface Hardware interface of the function.
+	  *	@param name Name of the function.
+	  *	@param args Optional function arguments.*/
+	void addFunction( const QString &hwInterface, const QString &name, const QString &args = QString() );
+
+	/** Set device information.
+	  *	@param key name of the information.
+	  *	@param value Value of information.*/
+	void setInfo( const QString &key, const QString &value );
 
 	/** Set the connection status of the device.
 	 *	@param connectedState The new connection status to set.*/
-	static void setConnected( bool connectedState );
-
-
-	/** Convert commandType to QString.
-	 *	@param cmdType Command type to convert.
-	 *	@return command type as a QString.*/
-	static const QString commandTypeToString( deviceCommandType_t cmdType );
-
-
-	/** Convert a QString to commandType.
-	 *	@param cmdStr Command string to convert.
-	 *	@return the command type (may be invalid).*/
-	static deviceCommandType_t commandTypeFromString( const QString &cmdStr );
-
+	//void setConnected( bool connectedState );
 
 	/** Set device name.
 	 *	Only ASCII, max 50 character.
 	 *	@param deviceName The new name for the device.*/
-	static void setName( const QString &deviceName );
-
+	void setName( const QString &deviceName );
 
 	/** Set device description.
 	 *	@param deviceDesc The new description for the device.*/
-	static void setDescription( const QString & deviceDesc );
+	void setDescription( const QString & deviceDesc );
+
+	/** Set device platform.
+	 *	@param platform The new platform for the device.*/
+	void setPlatform( const QString &platform );
+
+	/** Set device project.
+	 *	@param project The new project for the device.*/
+	void setProject( const QString &project );
+
+	/** Set device project.
+	 *	@param project The new project for the device.*/
+	void setProject( const QString &project );
+
+	/** Set whether the device uses positive acknowledge to verify received commands.
+	  *	@param posAck Set to true if device uses poitive acknowledge, false if not.*/
+	void setPositiveAck( bool posAck );
 
 private:
 
-	static  bool created;	///< After the Device monostate class is created, it cannot be modified.
-	QStringList hardwareInterfaces;	///< List of the valid hardware interfaces.
-	QHash< QString, QString > hardwareInterfaceInfo;	///< List of hardware interface informations
-	QString name;	///< device name
-	QString description;	///< Device description
-	bool connected;	///< Whether the device is connected. Set to true by proxy after a successful handshake.
-	QString platform;	///< platform string of device (read from deviceAPI)
-	QString project;	///< project string of device (read from deviceAPI)
+	static Device *mInstance;	///< Pointer to the Device singleton.
+	static bool mCreated;	///< After the Device is created, it cannot be modified.
+	static QStringList mHardwareInterfaces;	///< List of the valid hardware interfaces.
+	static QHash<QString,QString> mHardwareInterfaceInfo;	///< List of hardware interface informations.
+	static QList<QStringList> mFunctions;		///< Device function list.
+	static bool mPositiveAck;	///< Whether the device uses positive acknowledge to verify received commands.
+	static QHash<QString,QString> mInfo;	///< Several device information, parsed from deviceAPI.
 };
 
 }	//QtuC::

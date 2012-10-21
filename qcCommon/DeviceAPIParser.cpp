@@ -3,7 +3,7 @@
 
 using namespace QtuC;
 
-DeviceAPIParser::DeviceAPIParser ( QObject* parent ) : QObject(parent)
+DeviceAPIParser::DeviceAPIParser ( QObject* parent ) : ErrorHandlerBase(parent)
 {
 
 }

@@ -3,8 +3,7 @@
 
 using namespace QtuC;
 
-ErrorHandlerBase::ErrorHandlerBase(QObject *parent) :
-	QObject(parent)
+ErrorHandlerBase::ErrorHandlerBase(QObject *parent) : QObject(parent)
 {
 }
 

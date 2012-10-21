@@ -12,6 +12,7 @@ class DeviceStateManager : public StateManagerBase
 {
 	Q_OBJECT
 public:
+	DeviceStateManager( QObject *parent = 0 );
 };
 
 }	//QtuC::

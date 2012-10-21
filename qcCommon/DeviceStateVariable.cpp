@@ -3,6 +3,26 @@
 
 using namespace QtuC;
 
+DeviceStateVariable::DeviceStateVariable(const DeviceStateVariable &otherVar)
+{
+	mName = otherVar.getName();
+	mHwInterface = otherVar.getHwInterface();
+	mRawType = otherVar.getRawType();
+	mType = otherVar.getType();
+	mRawValue = otherVar.getRawValue();
+	mValue = otherVar.getValue();
+	mConvertToRawScript = otherVar.getConvertScript(false);
+	QString mConvertFromRawScript = otherVar.getConvertScript(true);
+	mLastUpdate = otherVar.getLastUpdateTime();
+	mAutoUpdate = otherVar.getAutoUpdate();
+	mAutoUpdateFrequency = otherVar.getAutoUpdateFrequency();
+
+	/// @todo implement
+	mAutoUpdateTimer;
+
+	mConvertEngine.globalObject().setProperty( mName, mConvertEngine.newVariant(mRawValue) );
+}
+
 DeviceStateVariable::init( const QString &varHwInterface, const QString &varName, const QString &varType, const QString &varRawType, const QString convertScriptFromRaw, const QString convertScriptToRaw )
 {
 	if( varName.isEmpty() )
@@ -108,6 +128,24 @@ const QVariant DeviceStateVariable::getRawValue() const
 const QVariant DeviceStateVariable::getValue() const
 {
 	return mValue;
+}
+
+const QVariant::Type DeviceStateVariable::getRawType() const
+{
+	return mRawType;
+}
+
+const QVariant::Type DeviceStateVariable::getType() const
+{
+	return mType;
+}
+
+const QString DeviceStateVariable::getConvertScript(bool fromRaw)
+{
+	if( fromRaw )
+		{ return mConvertFromRawScript; }
+	else
+		{ return mConvertToRawScript; }
 }
 
 bool DeviceStateVariable::setRawValue( const QVariant& newRawValue )
@@ -510,6 +548,14 @@ void DeviceStateVariable::stopAutoUpdate()
 bool DeviceStateVariable::getAutoUpdate() const
 {
 	/// @todo Implement
+}
+
+int DeviceStateVariable::getAutoUpdateFrequency() const
+{
+	if( getAutoUpdate() )
+		{ return mAutoUpdateFrequency; }
+	else
+		{ return 0;
 }
 
 const QString DeviceStateVariable::getDeviceReadyString()

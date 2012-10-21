@@ -17,7 +17,7 @@ class DeviceAPIParser : public ErrorHandlerBase
 public:
 
 	/** c'tor*/
-	DeviceAPIParser ( QObject* parent );
+	DeviceAPIParser ( QObject* parent = 0 );
 
 	/** Parse passed string or try to load from file
 	  *	@param deviceAPIString If passed, parse this string. This must be the full device API definition string, as in the deviceAPI.xml. The XML DTD is optional.

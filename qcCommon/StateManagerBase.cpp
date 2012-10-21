@@ -3,7 +3,7 @@
 
 using namespace QtuC;
 
-StateManagerBase::StateManagerBase( QObject *parent )
+StateManagerBase::StateManagerBase( QObject *parent ) : ErrorHandlerBase(parent)
 {
 	mStateVars = new QList<DeviceStateVariable*>();
 }

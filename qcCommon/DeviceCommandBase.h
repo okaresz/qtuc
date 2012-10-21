@@ -50,7 +50,7 @@ public:
 
 	/** Get the hardware interface of the command.
 	  *	@return Hardware interface name.*/
-	const QString getInterface() const
+	const QString getHwInterface() const
 		{ return mHwInterface; }
 
 	/** Get command variable.
@@ -63,11 +63,6 @@ public:
 	  *	@return function name.*/
 	const QString getFunction() const
 		{ return getVariable(); }
-
-	/** Get command arguments.
-	  *	For get/set command, this gives the value, for a call command, the function arguments.
-	  *	@return Command arguments as a concatenated string, as in a valid device command.*/
-	const QString getArg() const;
 
 	/** Get command argument list.
 	  *	For get/set command, this gives the value (one lement in the list), for a call command, the function arguments.
@@ -105,15 +100,25 @@ public:
 
 	/** Set command arguments.
 	  *	For get/set command, this sets the value, for a call command, the function arguments.
-	  *	@param argStr Argument string.
+	  *	@param argList Argument(s) as a QStringList.
 	 *	@return True on success, false otherwise.*/
-	bool setArg( const QString& argStr );
+	bool setArgList( const QStringList& argList );
+
+	/** Convert commandType to QString.
+	 *	@param cmdType Command type to convert.
+	 *	@return command type as a QString.*/
+	static const QString commandTypeToString( deviceCommandType_t cmdType );
+
+	/** Convert a QString to commandType.
+	 *	@param cmdStr Command string to convert.
+	 *	@return the command type (may be invalid).*/
+	static deviceCommandType_t commandTypeFromString( const QString &typeStr );
 
 private:
 
 	/** Check the minimum number of arguments for the current command type.
 	  *	@return True if arguments are valid, false otherwise.*/
-	bool checkArgCount();
+	bool checkValid();
 
 	QString mHwInterface;		///< Hardware interface name
 	deviceCommandType_t mType;	///< Command type.

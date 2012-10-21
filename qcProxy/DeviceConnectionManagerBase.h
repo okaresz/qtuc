@@ -16,14 +16,14 @@ class DeviceConnectionManagerBase : public ErrorHandlerBase
 public:
 
 	/** C'tor*/
-	DeviceConnectionManagerBase( QObject *parent );
+	DeviceConnectionManagerBase( QObject *parent = 0 );
 
 	~DeviceConnectionManagerBase();
 
 	/** Send command.
 	 *	Put the command to the send queue.
 	 *	@param cmd The command to send,*/
-	virtual void sendCommand( const DeviceCommand &cmd ) = 0;
+	virtual bool sendCommand( const DeviceCommand &cmd ) = 0;
 
 	/** Close the device connection.*/
 	virtual void closeDevice() = 0;

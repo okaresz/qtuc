@@ -27,6 +27,9 @@ class DeviceStateVariable : public ErrorHandlerBase
 
 public:
 
+	/** Copy constructor.*/
+	DeviceStateVariable( const DeviceStateVariable &otherVar );
+
 	/** Initialize a DeviceStateVariable.
 	 *This static function returns a pointer to a new DeviceStateVariable object on success, null pointer on failure.
 	 * @param varHwInterface The hardware interface containing the variable.
@@ -40,10 +43,17 @@ public:
 	 * @returns True if the variable has a valid type, name, hardware interface and non-empty, valid values, otherwise returns false*/
 	bool isValid() const;
 
-	const QString getName() const;			///< Returns the name of the variable.
-	const QString getHwInterface() const;	/// Returns the hardware interface name of the variable.
-	const QVariant getRawValue() const;		/// Returns the device-side raw value as a QVariant
-	const QVariant getValue() const;		/// Returns the user-side value as a QVariant
+	const QString getName() const;			///< Get the name of the variable.
+	const QString getHwInterface() const;	/// Get the hardware interface name of the variable.
+	const QVariant getRawValue() const;		/// Get the device-side raw value as a QVariant
+	const QVariant getValue() const;		/// Get the user-side value as a QVariant
+	const QVariant::Type getRawType() const;	///< Get raw type of variable.
+	const QVariant::Type getType() const;	///< Get the <b>user-side</b> type of variable.
+
+	/** Get convert script.
+	  *	@param fromRaw Set to true, to get the device-side -> user-side convert script, or false to get the other direction.
+	  *	@return The convert script as a QSstring.*/
+	const QString getConvertScript( bool fromRaw );
 
 	/** Get last update time.
 	  * @returns The milliseconds (as a UNIX timestamp) when the variable was last updated (read from device).*/
@@ -57,6 +67,10 @@ public:
 	/** Get the state of auto-update.
 	  * @returns True if auto-update is active, false if not.*/
 	bool getAutoUpdate() const;
+
+	/** Get the frequency of auto-update.
+	  * @returns The frequency of auto-update, or 0 if auto-update is off.*/
+	int getAutoUpdateFrequency() const;
 
 	/** Get the raw value as a QString, ready to send to the device.
 	  *	Do the device-specific formatting here...

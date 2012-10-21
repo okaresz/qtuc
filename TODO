@@ -1,4 +1,10 @@
 check DeviceStateVariable action tree
 
+check and implement the device-safe string handling at receiving/sending commands
+check QObject parents
+check destructor chains, proper object deletions
+
+doc todo-s
+
 validate deviceAPI.xml! : http://doc.qt.digia.com/4.7/xmlpatterns-schema.html
 

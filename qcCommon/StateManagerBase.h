@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QHash>
+#include "ErrorHandlerBase.h"
 
 namespace QtuC
 {
@@ -12,14 +13,14 @@ class DeviceStateVariable;
 
 /** Class StateManagerBase
  *	Base for the state manager classes dealing with DeviceStateVariables.*/
-class StateManagerBase : public QObject
+class StateManagerBase : public ErrorHandlerBase
 {
 	Q_OBJECT
 
 public:
 	/** Constructor.
 	  *	@param parent The usual optional parent object.*/
-	StateManagerBase( QObject* parent );
+	StateManagerBase( QObject* parent = 0 );
 
 	~ StateManagerBase();
 
@@ -34,6 +35,7 @@ public:
 	  *	@param stateVar The variable to manage.*/
 	void registerStateVariable( DeviceStateVariable* stateVar );
 
+public slots:
 	/** Create a deviceStateVariable from a QHash of params and register it if valid.
 	  *	This slot is usually connected to DeviceAPIParser::newStateVariable() signal.
 	  *	Tries to build a variable from the params passed. If the variable is created, it will be registered using registerStateVariable().
