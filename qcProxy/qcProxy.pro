@@ -28,7 +28,8 @@ SOURCES += main.cpp \
     DeviceAPI.cpp \
     Device.cpp \
     ConnectionServer.cpp \
-    ProxySettingsManager.cpp
+    ProxySettingsManager.cpp \
+    QcProxy.cpp
 
 HEADERS += \
     SerialDeviceConnector.h \
@@ -40,7 +41,8 @@ HEADERS += \
     DeviceAPI.h \
     Device.h \
     ConnectionServer.h \
-    ProxySettingsManager.h
+    ProxySettingsManager.h \
+    QcProxy.h
 
 
 CONFIG(debug, debug|release):unix:!macx:!symbian: LIBS += -L$$PWD/../QSerialDevice/lib/ -lSerialPortd-qt481-x86_64

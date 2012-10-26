@@ -16,7 +16,9 @@ SOURCES += SettingsManagerBase.cpp \
     ClientCommandDevice.cpp \
     ClientConnectionManagerBase.cpp \
     DeviceAPIParser.cpp \
-    ErrorHandlerBase.cpp
+    ErrorHandlerBase.cpp \
+    ClientCommandFactory.cpp \
+    ClientCommandHeartBeat.cpp
 
 HEADERS += SettingsManagerBase.h \
     DeviceStateVariable.h \
@@ -27,6 +29,8 @@ HEADERS += SettingsManagerBase.h \
     ClientCommandDevice.h \
     ClientConnectionManagerBase.h \
     DeviceAPIParser.h \
-    ErrorHandlerBase.h
+    ErrorHandlerBase.h \
+    ClientCommandFactory.h \
+    ClientCommandHeartBeat.h
 
 OTHER_FILES +=

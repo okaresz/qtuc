@@ -2,9 +2,12 @@
 
 using namespace QtuC;
 
-ClientConnectionManagerBase::ClientConnectionManagerBase()
+ClientConnectionManagerBase::ClientConnectionManagerBase( QTcpSocket *socket, QObject *parent ) : ErrorHandlerBase(parent), mState(connectionUnInitialized)
 {
+	mCommandFactory = new ClientCommandFactory( this );
 
+	mClientSocket = socket;
+	// update mState along the connection progress!...
 }
 
 void ClientConnectionManagerBase::commandReceived( ClentCommandBase cmd )
@@ -32,7 +35,7 @@ ClientPacket * ClientConnectionManagerBase::pack( ClientCommandBase * cmd )
 
 }
 
-ClientPacket * ClientConnectionManagerBase::pack( QList<ClientCmmandBase*> cmdList )
+ClientPacket * ClientConnectionManagerBase::pack( QList<ClientCommandBase *> cmdList )
 {
 
 }

@@ -7,6 +7,17 @@ ErrorHandlerBase::ErrorHandlerBase(QObject *parent) : QObject(parent)
 {
 }
 
+void ErrorHandlerBase::customMessageHandler(QtMsgType msgType, const char *msg)
+{
+	switch( msgType )
+	{
+		case QtDebugMsg: cout << "[DEBUG] " << msg; break;
+		case QtWarningMsg: cout << "[WARN] " << msg; break;
+		case QtCriticalMsg: cout << "[CRIT] " << msg; break;
+		case QtFatalMsg: cout << "[FATAL] " << msg;
+	}
+}
+
 void ErrorHandlerBase::error( QtMsgType severity, const QString &msg, const QString &location, const QHash<QString, QString> &details )
 {
 	if(this)

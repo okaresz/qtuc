@@ -20,6 +20,10 @@ class ErrorHandlerBase : public QObject
 
 public:
 	explicit ErrorHandlerBase(QObject *parent = 0);
+
+	/** A custom Qt message handler.
+	  *	See QtGlobal documentation for details.*/
+	static void customMessageHandler( QtMsgType msgType, const char *msg );
 	
 signals:
 	void signalError( QtMsgType severity, QString msg, QString location );
@@ -27,7 +31,7 @@ signals:
 protected:
 	typedef QHash<QString,QString> errorDetails_t;
 
-private slots:
+protected slots:
 	/** Error handler (slot).
 	  * Call this when an error occurs.
 	  * This function emits signalError() signal with these exact arguments,

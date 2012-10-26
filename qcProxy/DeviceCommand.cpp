@@ -37,7 +37,7 @@ const QString DeviceCommand::getCommandString()
 	if( !strCmd.endsWith('\n') )
 		{ strCmd.append('\n'); }
 
-	return strCmd;
+	return strCmd.toAscii();
 }
 
 bool DeviceCommand::setCommandString( const QString &strCmd )

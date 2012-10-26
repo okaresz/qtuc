@@ -26,7 +26,7 @@ The packets are grouping the similar commands/data as a container:
   * **id**: The packet ID. This is a string, consisting of the ID string (see [Handshake command](#doc-clientProtocol-packets-handshake)) of the sender, and the packet number, separated by a hashmark. The packet number is an integer number, incremented on every packet, starting with 1. An example would be: `qcProxy#265` meaning this is a 265th packet sent by the qcProxy.
   * **re**: There are several packets, which are sent in reply to another (a set device command to a get request, a heartBeat ACK, or a deviceAPI packet to a deviceAPI request), in this case the ack attribute holds the original packet ID to which this packet is a reply (or ACK).
 
-If you want to send more commands which belong to the same packet class, you can send them in one packet.
+If you want to send more commands which belong to the same packet class, you can send them in one packet. In that case, the commands are processed in order.
 
 ### Device packets ###		{#doc-clientProtocol-packets-device}
 

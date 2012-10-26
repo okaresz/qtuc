@@ -60,18 +60,18 @@ public:
 	 *	@return Returns if set is successful, false otherwise.*/
 	bool set( const QString &hwInterface, const QString &varName, const QVariant &newVal );
 
-	/** Initialize the deviceAPI from an API definition string.
+	/** Initialize the deviceAPI.
 	 *	This function can only be called if no API is set so far. If you want to update the API, use reInitAPI().
-	 *	@param apiDefString The API definition string.
+	 *	@param apiDefString The API definition string. If omitted, the API will be loaded from file (path can be set in settings).
 	 *	@return True if API is valid and is successfully applied, false otherwise.*/
-	bool initAPI( const QString &apiDefString );
+	bool initAPI( const QString &apiDefString = QString() );
 
 
-	/** Re-initialize the deviceAPI from an API definition string.
+	/** Re-initialize the deviceAPI.
 	 *	This function can only be used to update the API. To initialize DevieAPI for the first time, use initAPI().
-	 *	@param apiDefString The API definition string.
+	 *	@param apiDefString The API definition string. If omitted, the API will be loaded from file (path can be set in settings).
 	 *	@return True if API is valid and is successfully applied, false otherwise. If API change fails, the previous API (if any) remains active.*/
-	bool reInitAPI( const QString &apiDefString );
+	bool reInitAPI( const QString &apiDefString = QString() );
 
 signals:
 

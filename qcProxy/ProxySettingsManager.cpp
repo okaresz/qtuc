@@ -9,6 +9,11 @@ ProxySettingsManager::ProxySettingsManager(QObject *parent) :
 	setValue( "device/commandSeparator", QChar(' ') );
 
 	// devicePort
-	setValue( "devicePort/portName", "/dev/stty1");
+	setValue( "devicePort/portName", "/dev/ttyS1");
 	setValue( "devicePort/baudRate", 115200 );
+
+	// serverSocket
+	setValue( "serverSocket/host", "localhost" );
+	setValue( "serverSocket/port", 24563 );
+	setValue( "serverSocket/serverId", "qcProxy" );
 }

@@ -1,42 +1,47 @@
 #ifndef CLIENTCONNECTIONMANAGERBASE_H
 #define CLIENTCONNECTIONMANAGERBASE_H
 
-#include <QString>
+#include "ErrorHandlerBase.h"
+#include <QTcpSocket>
+#include "ClientCommandFactory.h"
 
 namespace QtuC
 {
 
 enum connectionState_t
 {
-	undefined_connection,
-	unInitialized_connection,
-	connected_connection,
-	handShaking_connection,
-	ready_connection,
-	lost_connection,
-	disconnected_connection,
-	error_connection
+	connectionUndefined,
+	connectionUnInitialized,
+	connectionConnected,
+	connectionHandShaking,
+	connectionReady,
+	connectionLost,
+	connectionDisconnected,
+	connectionError
 };
+
+class ClientCommandBase;
 
 /** Class ClientConnectionManagerBase.
  * Provides a basic interface to communicate with a client.
  * Specific Client connection manager classes should inherit this.*/
-class ClientConnectionManagerBase
+class ClientConnectionManagerBase : public ErrorHandlerBase
 {
+	Q_OBJECT
 public:
-	ClientConnectionManagerBase();
+	ClientConnectionManagerBase( QTcpSocket *socket, QObject *parent = 0 );
 
-	void commandReceived( ClentCommandBase cmd );
+	void commandReceived( ClientCommandBase cmd );
 
 	/**
 	 * Commands should be created with new on the heap.
 	 */
-	bool sendCommand( ClentCommandBase * cmd );
+	bool sendCommand( ClientCommandBase * cmd );
 
 	/**
 	 * Send multiple commands of the same class in one packet.
 	 */
-	bool sendCommands( QList<ClentCommandBase*> cmdList );
+	bool sendCommands( QList<ClientCommandBase*> cmdList );
 
 	bool isConnected() const;
 
@@ -74,10 +79,11 @@ public:
 	void setSelfInfo( const QString & key, const QString & value );
 
 protected:
-	static  qint64 packetCount;
-	static  const QHash<QString,QString> selfInfo;
-	QHash<QString,QString> clientInfo;
-	QTcpSocket* clientSocket;
+	static qint64 mPacketCount;
+	static QHash<QString,QString> mSelfInfo;
+	QHash<QString,QString> mClientInfo;
+	QTcpSocket* mClientSocket;
+	ClientCommandFactory *mCommandFactory;
 
 	/**
 	 * If command is invalid, return 0.
@@ -88,7 +94,7 @@ protected:
 	/**
 	 * if classes don't match, return 0.
 	 */
-	ClientPacket * pack( QList<ClientCmmandBase*> cmdList );
+	ClientPacket * pack( QList<ClientCommandBase*> cmdList );
 
 	/**
 	 *
@@ -108,8 +114,8 @@ private slots:
 	void ackHeartBeat( ClientCommandHeartBeat* hb );
 
 private:
-	connectionState state;
-	qint64 heartBeatCount;
+	connectionState_t mState;
+	qint64 mHeartBeatCount;
 };
 
 }	//QtuC::

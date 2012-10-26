@@ -1,7 +1,8 @@
 #ifndef CONNECTIONSERVER_H
 #define CONNECTIONSERVER_H
 
-#include "ClientConnectionManagerBase.h"
+//#include "ClientConnectionManagerBase.h"
+#include "ErrorHandlerBase.h"
 #include <QString>
 #include <QTcpServer>
 #include <QList>
@@ -9,18 +10,35 @@
 namespace QtuC
 {
 
-class ConnectionServer : public QObject
+class ClientConnectionManagerBase;
+
+class ConnectionServer : public ErrorHandlerBase
 {
 	Q_OBJECT
 public:
 
-	ConnectionServer();
+	ConnectionServer( QObject *parent = 0 );
+	~ConnectionServer();
 
 	/** Get a client.
 	  * Get a ClientConnectionManagerBase object of a client, based on the client id.
 	  * @param clientID ID of the client.
 	  * @return The ClientConnectionManagerBase object of the client if id was a valid one, otherwise return 0.*/
 	ClientConnectionManagerBase* getClient( QString clientID );
+
+	/** Get a client.
+	  * Get a ClientConnectionManagerBase object of a client, based on the client number.
+	  *	Client number is the index in the list of clents, in the order they were connected.
+	  * @param clientNumber Number of the client. If omitted, the first client (number 0) is returned.
+	  * @return The ClientConnectionManagerBase object of the client if clientNumber was a valid one, otherwise return 0.*/
+	ClientConnectionManagerBase* getClient( int clientNumber = 0 );
+
+	/** Start listening.
+	  *	Host and port defined in settings.
+	  *	@return True on success, false otherwise.*/
+	bool startListening();
+
+	static QString serverId;	///< Id of the server. used in packet Id-s and server info.
 
 signals:
 	/** Emitted if a new client has connected.
@@ -30,8 +48,8 @@ signals:
 
 private slots:
 	/** Handle incoming connection.
-	  * @param newClientSocket the new socket created for the incoming client connection.*/
-	void handleNewConnection( QTcpSocket* newClientSocket );
+	 *	This slot should be connected to QTcpServer::newConnection() signal.*/
+	void handleNewConnection();
 
 private:
 	QTcpServer* mTcpServer;	///< Holds the QTcpServer object

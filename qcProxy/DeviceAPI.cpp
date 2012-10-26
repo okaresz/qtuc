@@ -91,6 +91,7 @@ bool DeviceAPI::set( const QString &hwInterface, const QString &varName, const Q
 
 bool DeviceAPI::initAPI( const QString &apiDefString )
 {
+	/// @todo Implement argument (at reinit also)
 	// Connect nothing on first pass, only if API is successfully parsed
 	if( !mDeviceAPI->load() )
 	{
