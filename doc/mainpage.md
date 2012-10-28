@@ -43,7 +43,7 @@ The device and the proxy communicates with a fixed command syntax, called
 deviceCommand. See Device Command documentation page. Between the proxy and the
 clients,
 a custom XML-based packet communication exists. See [clientCommand](@ref
-doc-clientCommand) page for details.
+doc-clientProtocol) page for details.
 
 The client and  device side is aupdated and handled asynchronously.
 

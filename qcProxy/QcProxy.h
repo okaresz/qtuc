@@ -20,6 +20,8 @@ public:
 	/** C'tor.*/
 	QcProxy( QObject *parent = 0 );
 
+	~QcProxy();
+
 private:
 	DeviceAPI *mDevice;
 	//GuiConnectionManager mGui;

@@ -1,12 +1,15 @@
 #include "ClientCommandFactory.h"
 
-#include "ClientCommandHeartBeat.h"
-
 using namespace QtuC;
 
 ClientCommandFactory::ClientCommandFactory( QObject *parent ) : ErrorHandlerBase(parent)
 {
-	registerClientCommand( new ClientCommandHeartBeat() );
+	registerClientCommand( new ClientCommandHeartBeat(this) );
+}
+
+ClientCommandFactory::~ClientCommandFactory()
+{
+
 }
 
 bool ClientCommandFactory::registerClientCommand( ClientCommandBase *cmdPrototype )
@@ -14,7 +17,42 @@ bool ClientCommandFactory::registerClientCommand( ClientCommandBase *cmdPrototyp
 	mCommandPrototypes.append( cmdPrototype );
 }
 
-ClientCommandBase *ClientCommandFactory::buildCommand( const QDomElement &cmdElement )
+const ClientCommandBase *ClientCommandFactory::getCommand(const QString &cmdName)
+{
+	for( int i=0; i<mCommandPrototypes.size(); ++i )
+	{
+		if( mCommandPrototypes.at(i)->getName() == cmdName )
+			{ return mCommandPrototypes.at(i); }
+	}
+
+	error( QtWarningMsg, QString("No matching ClientCommandPrototype found wih name \"%1\"").arg(cmdName), "getCommand()" );
+	return 0;
+}
+
+const ClientCommandBase *ClientCommandFactory::getCommand(const QDomElement &cmdElement)
+{
+	for( int i=0; i<mCommandPrototypes.size(); ++i )
+	{
+		if( mCommandPrototypes.at(i)->getName() == cmdElement.tagName() )
+		{
+			if( mCommandPrototypes.at(i)->applyDomElement( cmdElement ) )
+				{ return mCommandPrototypes.at(i); }
+			else
+			{
+				errorDetails_t errDet;
+				errDet.insert( "element_tagName", cmdElement.tagName() );
+				errDet.insert( "commandName", mCommandPrototypes.at(i)->getName() );
+				error( QtWarningMsg, "Failed to apply markup element to command object", "getCommand()", errDet );
+				return 0;
+			}
+		}
+	}
+
+	error( QtWarningMsg, QString("No matching ClientCommandPrototype found for commandElement: tagname: %1").arg(cmdElement.tagName()), "buildCommand()" );
+	return 0;
+}
+
+ClientCommandBase *ClientCommandFactory::cloneCommand( const QDomElement &cmdElement )
 {
 	for( int i=0; i<mCommandPrototypes.size(); ++i )
 	{

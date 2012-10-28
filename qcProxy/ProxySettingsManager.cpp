@@ -16,4 +16,5 @@ ProxySettingsManager::ProxySettingsManager(QObject *parent) :
 	setValue( "serverSocket/host", "localhost" );
 	setValue( "serverSocket/port", 24563 );
 	setValue( "serverSocket/serverId", "qcProxy" );
+	setValue( "serverSocket/heartBeatTimeout", 3 );	// sec
 }

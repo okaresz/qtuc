@@ -24,6 +24,11 @@ QcProxy::QcProxy( QObject *parent ) : ErrorHandlerBase( parent ), mDevice( 0 ), 
 	}
 }
 
+QcProxy::~QcProxy()
+{
+
+}
+
 void QcProxy::handleNewClient( ClientConnectionManagerBase *newClient )
 {
 

@@ -4,7 +4,17 @@ check and implement the device-safe string handling at receiving/sending command
 check QObject parents
 check destructor chains, proper object deletions
 
+implement connection lost detection
+
 doc todo-s
+
+write a short how-to use for every class doc.
+
+fix doxygen errors
+check doc, write missing func/class doc
+
+check whole code for memleaks
+
 
 validate deviceAPI.xml! : http://doc.qt.digia.com/4.7/xmlpatterns-schema.html
 

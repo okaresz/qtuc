@@ -4,7 +4,7 @@ Session Example		{#doc-session_example}
 Configuration		{#doc-session_example-conf}
 -------------------------------
 
-  1. **Defining the device API**: First you have to plan the structure of your "device state". You must define de hardware interfaces, state variables and device functions in the [deviceAPI config file](@ref doc-deviceAPI). You have to have at least one hardware interface with a variable.
+  1. **Defining the device API**: First you have to plan the structure of your "device state". You must define de hardware interfaces, state variables and device functions in the [deviceAPI config file](@ref doc-deviceAPIxml). You have to have at least one hardware interface with a variable.
   2. **Check qcProxy settings**: By the qcProxy executable, there is an xml file named *qcProxySettings.xml*. (If not, start the proxy, and close it, the settings will be generated automatically.) Open and edit it to suit your environment. (And I mean most of all the network!)
   3. **Placing the files**: Copy the qcProxy executable, the *deviceAPI.xml* and *qcProxySettings.xml* under the same directory.
   4. **Check environment**: Ensure that the proxy can read/write the defined serial or other port, has the privilages to create and modify files in the working directory, and that the defined TCP port is open (check firewall if there's any) and routed to the current machine.

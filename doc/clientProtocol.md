@@ -20,11 +20,11 @@ The packets are grouping the similar commands/data as a container:
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  * **class**: The packet class. There are two type of packets so far:
+  * **class**: The packet class, compulsory. This must be set for a valid packet. There are two type of packets so far:
     * *device*: These packets contain a deviceCommand, and are used to get/set a state variable or call a device function.
     * *control*: These packets are designated for the proxy or the client and can contain various control commands like `quit` or `heartBeat`, etc...
-  * **id**: The packet ID. This is a string, consisting of the ID string (see [Handshake command](#doc-clientProtocol-packets-handshake)) of the sender, and the packet number, separated by a hashmark. The packet number is an integer number, incremented on every packet, starting with 1. An example would be: `qcProxy#265` meaning this is a 265th packet sent by the qcProxy.
-  * **re**: There are several packets, which are sent in reply to another (a set device command to a get request, a heartBeat ACK, or a deviceAPI packet to a deviceAPI request), in this case the ack attribute holds the original packet ID to which this packet is a reply (or ACK).
+  * **id**: The packet ID, compulsory. This is a string, consisting of the ID string (see [Handshake command](#doc-clientProtocol-packets-handshake)) of the sender, and the packet number, separated by a hashmark. The packet number is an integer number, incremented on every packet, starting with 1. An example would be: `qcProxy#265` meaning this is a 265th packet sent by the qcProxy.
+  * **re**: Optional. There are several packets, which are sent in reply to another (a set device command to a get request, a heartBeat ACK, or a deviceAPI packet to a deviceAPI request), in this case the ack attribute holds the original packet ID to which this packet is a reply (or ACK).
 
 If you want to send more commands which belong to the same packet class, you can send them in one packet. In that case, the commands are processed in order.
 
@@ -81,9 +81,9 @@ The handshake packet is used as the first packet sent from the client to the pro
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  * **id**: The ID string of the client. A unique identifier, specific to this client. Can only contain letters from the english alphabet, numbers, and the underscore (regex: `[a-zA-Z0-9_]`), case sensitive.
-  * **name**: A client name of your choice.
-  * **desc**: A description of the client.
+  * **id**: Compulsory. The ID string of the client. A unique identifier, specific to this client. Can only contain letters from the english alphabet, numbers, and the underscore (regex: `[a-zA-Z0-9_]`), case sensitive.
+  * **name**: A client name of your choice, optional.
+  * **desc**: A description of the client, optional.
 
 
 #### HeartBeat ####		{#doc-clientProtocol-packets-heartbeat}
