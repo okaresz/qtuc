@@ -2,6 +2,9 @@
 #define QCPROXY_H
 
 #include "ErrorHandlerBase.h"
+#include "ClientCommandBase.h"
+#include "DeviceCommandBase.h"
+#include "Device.h"
 
 namespace QtuC
 {
@@ -22,15 +25,26 @@ public:
 
 	~QcProxy();
 
-private:
-	DeviceAPI *mDevice;
-	//GuiConnectionManager mGui;
-	ConnectionServer *mConnectionServer;
+public slots:
+
+	bool route( ClientCommandBase *clientCommand );
+	bool route( DeviceCommandBase *deviceCommand );
+
+	/** Handle incoming device message*
+	  *	@param msgType Message type.
+	  *	@param msg The message string.
+	  * @return True on success, false otherwise.*/
+	bool handleDeviceMessage( deviceMessageType_t msgType, QString msg );
 
 private slots:
 	/** Handle a newly connected client.
 	 *	@param newClient The connected client object.*/
 	void handleNewClient( ClientConnectionManagerBase *newClient );
+
+private:
+	DeviceAPI *mDevice;
+	//GuiConnectionManager mGui;
+	ConnectionServer *mConnectionServer;
 
 };
 

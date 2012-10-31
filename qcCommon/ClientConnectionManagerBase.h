@@ -33,7 +33,7 @@ class ClientCommandBase;
 
 /** ClientConnectionManagerBase class.
  *	Provides a basic interface to communicate with a client.
- *	@todo more detailed doc, howto use, and about deleting packets and commands,,,
+ *	@todo more detailed doc, howto use, and about deleting packets and commands,,, (responsibility of higher level code, ClientConnectionManagerBase won't delete them)
  *	Specific client connection manager classes should inherit this.*/
 class ClientConnectionManagerBase : public ErrorHandlerBase
 {

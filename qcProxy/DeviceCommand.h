@@ -17,10 +17,6 @@ public:
 	/**	Constructor: create an invalid deviceCommand object.*/
 	//DeviceCommand();
 
-	/**	Constructor: create a deviceCommand object from a command string.
-	 *	@param	cmdStr The command string.*/
-	DeviceCommand( const QString &cmdStr );
-
 	/** Create a DeviceCommand from a DeviceCommandBase object.
 	 *	@param cmdBase A DeviceCommandBase object,*/
 	DeviceCommand( const DeviceCommandBase &cmdBase );
@@ -33,15 +29,17 @@ public:
 	 *	@return The command as a QString, or an empty string if invalid.*/
 	const QString getCommandString();
 
-	/** Change the command to the passed command string.
-	 *	Parse command string and update the command object with the parsed data.
-	 *	@param cmdStr The new command string.
-	 *	@return True on success, false otherwise.*/
-	bool setCommandString( const QString &cmdStr );
+	/** Parse th passed command string, and create a DeviceCOmmand instance from it.
+	 *	@param commandString The new command string.
+	 *	@return The new DeviceCommand instance on success, 0 otherwise.*/
+	static DeviceCommand *fromString( const QString &commandString );
 
 private:
 
-	//QString mCmdString;		///< The string representation of the commmand.
+	/**	Create a deviceCommand object from a command string.
+	  * Private c'tor, use fromString() instead.
+	 *	@param	commandString The valid command string.*/
+	DeviceCommand( const QString &commandString );
 
 	/** Parse argument string and update the command object with the new argument data.
 	  *	@return True on successful parsing, false otherwise.*/

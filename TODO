@@ -15,6 +15,9 @@ check doc, write missing func/class doc
 
 check whole code for memleaks
 
+"All the QObjects derived classes which will become child of any object in your program should be on heap. "
+
+delete all member object instances, created with new in constructors.
 
 validate deviceAPI.xml! : http://doc.qt.digia.com/4.7/xmlpatterns-schema.html
 

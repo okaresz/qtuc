@@ -26,10 +26,12 @@ class Device : public ErrorHandlerBase
 	Q_OBJECT
 public:
 
-	/** C'tor*/
+	/** Constructor.
+	 *	This will clear all existing static device data! Use swap() to replace only the Device object, and leave the static params.*/
 	Device( QObject *parent = 0 );
 
 	/** Create the Device object.
+	 *	This will clear all existing static device data! Use swap() to replace only the Device object, and leave the static params.
 	 *	@param hwInterfaceList A QStringList of the valid hardware interfaces.
 	 *	@param hwInterfaceInfoList Info strings for the hardware interfaces.
 	 *	@param deviceName Name of the device. (ASCII, max 50 char)*/
@@ -42,13 +44,21 @@ public:
 
 	/** Create the Device singleton.
 	 *	Can only be called once, after that, Device will be readonly.
+	 *	This will clear all existing static device data! Use swap() to replace only the Device object, and leave the static params.
+	 *	@return The new Device instance.*/
+	static Device *create( QObject *parent );
+
+	/** Create the Device singleton.
+	 *	Can only be called once, after that, Device will be readonly.
+	 *	This will clear all existing static device data! Use swap() to replace only the Device object, and leave the static params.
 	 *	@param hwInterfaceList A QStringList of the valid hardware interfaces.
 	 *	@param hwInterfaceInfoList Info strings for the hardware interfaces.
-	 *	@param deviceName Name of the device. (ASCII, max 50 char)*/
-	static bool create( const QStringList& hwInterfaceList, const QStringList& hwInterfaceInfoList, const QString & deviceName, QObject *parent );
+	 *	@param deviceName Name of the device. (ASCII, max 50 char).
+	 *	@return The new Device instance.*/
+	static Device *create( const QStringList& hwInterfaceList, const QStringList& hwInterfaceInfoList, const QString & deviceName, QObject *parent );
 
 	/** Get Device instance.
-	  *	You can only get the pointer, if the device hasn't benn initialized yet.
+	  *	You can only get the pointer, if the device object has been created with create(), and the initialization has not yet occured, so setCreated() hasn't been called yet.
 	  *	@return Pointer to the Device singleton, or 0 if it is already initialized.*/
 	static Device *instance( QObject *parent = 0 );
 
@@ -102,6 +112,21 @@ public:
 	  *	After this function call, the device singleton cannot be reached or modified, only the static getters will work.*/
 	void setCreated( bool created = true )
 		{ mCreated = created; }
+
+	/** Clear Device.
+	  *	Delete all info and data.
+	  *	@warning Think before you use this...*/
+	void clear();
+
+	/** Convert string to deviceMessageType_t.
+	  *	@param msgTypeStr deviceMessageType string to convert.
+	  *	@return deviceMessageType enum value.*/
+	static deviceMessageType_t messageTypeFromString( const QString &msgTypeStr );
+
+	/** Convert deviceMessageType_t to string.
+	  *	@param msgType deviceMessageType enum value to convert.
+	  *	@return deviceMessageType string.*/
+	static const QString messageTypeToString( deviceMessageType_t msgType );
 
 public slots:
 
@@ -157,7 +182,7 @@ public slots:
 private:
 
 	static Device *mInstance;	///< Pointer to the Device singleton.
-	static bool mCreated;	///< After the Device is created, it cannot be modified.
+	bool mCreated = false;	///< After the Device is created, it cannot be modified.
 	static QStringList mHardwareInterfaces;	///< List of the valid hardware interfaces.
 	static QHash<QString,QString> mHardwareInterfaceInfo;	///< List of hardware interface informations.
 	static QList<QStringList> mFunctions;		///< Device function list.

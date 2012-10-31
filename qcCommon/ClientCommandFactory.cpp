@@ -4,7 +4,7 @@ using namespace QtuC;
 
 ClientCommandFactory::ClientCommandFactory( QObject *parent ) : ErrorHandlerBase(parent)
 {
-	registerClientCommand( new ClientCommandHeartBeat(this) );
+	registerCommand( new ClientCommandHeartBeat(this) );
 }
 
 ClientCommandFactory::~ClientCommandFactory()
@@ -12,7 +12,7 @@ ClientCommandFactory::~ClientCommandFactory()
 
 }
 
-bool ClientCommandFactory::registerClientCommand( ClientCommandBase *cmdPrototype )
+bool ClientCommandFactory::registerCommand( ClientCommandBase *cmdPrototype )
 {
 	mCommandPrototypes.append( cmdPrototype );
 }

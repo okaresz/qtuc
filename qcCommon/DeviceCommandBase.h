@@ -64,6 +64,11 @@ public:
 	const QString getFunction() const
 		{ return getVariable(); }
 
+	/** Get argument at index.
+	  *	@param argIndex Index of argument. If omitted, return the one with index 0 (the first argument).
+	  *	@return Command argument at index argIndex.*/
+	const QString getArg( int argIndex = 0 );
+
 	/** Get command argument list.
 	  *	For get/set command, this gives the value (one lement in the list), for a call command, the function arguments.
 	  *	@return Command arguments as a QStringList.*/
@@ -118,7 +123,7 @@ private:
 
 	/** Check the minimum number of arguments for the current command type.
 	  *	@return True if arguments are valid, false otherwise.*/
-	bool checkValid();
+	bool checkSetValid();
 
 	QString mHwInterface;		///< Hardware interface name
 	deviceCommandType_t mType;	///< Command type.

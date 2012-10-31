@@ -36,13 +36,8 @@ signals:
 
 	/** Emitted when a command is received.
 	  *	@param cmd The command object.*/
-	void commandReceived( DeviceCommand cmd );
+	void commandReceived( DeviceCommandBase *cmd );
 
-protected:
-	/** Build a device command object from string.
-	  *	@param cmdStr The string representation of the command.
-	  *	@return Pointer to a DeviceCommand object on success, 0 on failure.*/
-	DeviceCommand* buildCommandFromString( const QString &cmdStr );
 };
 
 }	//QtuC::

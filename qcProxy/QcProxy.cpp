@@ -15,6 +15,8 @@ QcProxy::QcProxy( QObject *parent ) : ErrorHandlerBase( parent ), mDevice( 0 ), 
 		error( QtFatalMsg, "Failed to initialize device API", "QcProxy()" );
 		return;
 	}
+	connect( mDevice, SIGNAL(messageReceived(deviceMessageType_t,QString)), this, SLOT(handleDeviceMessage(deviceMessageType_t,QString)) );
+	connect( mDevice, SIGNAL(commandReceived(DeviceCommandBase*)), this, SLOT(route(DeviceCommandBase*)) );
 
 	connect( mConnectionServer, SIGNAL( newClientConnected( ClientConnectionManagerBase * ) ), this, SLOT( handleNewClient( ClientConnectionManagerBase * ) ) );
 	if( !mConnectionServer->startListening() )
@@ -29,7 +31,16 @@ QcProxy::~QcProxy()
 
 }
 
-void QcProxy::handleNewClient( ClientConnectionManagerBase *newClient )
+bool QcProxy::route(ClientCommandBase *clientCommand)
 {
 
+}
+
+bool QcProxy::route(DeviceCommandBase *deviceCommand)
+{
+}
+
+void QcProxy::handleNewClient( ClientConnectionManagerBase *newClient )
+{
+	connect( newClient, SIGNAL(commandReceived(ClientCommandBase*)), this, SLOT(route(ClientCommandBase*)) );
 }

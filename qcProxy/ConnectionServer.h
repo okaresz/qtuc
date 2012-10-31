@@ -11,6 +11,7 @@ namespace QtuC
 {
 
 class ClientConnectionManagerBase;
+class ClientCommandBase;
 
 class ConnectionServer : public ErrorHandlerBase
 {
@@ -37,6 +38,12 @@ public:
 	  *	Host and port defined in settings.
 	  *	@return True on success, false otherwise.*/
 	bool startListening();
+
+	/** Send a broadcast command.
+	  *	The passed command will be sent to all clients.
+	  *	@param cmd The command to send.
+	  *	@return True if the command has been successfully sent to ALL clients, false otherwise.*/
+	bool broadcast( const ClientCommandBase *cmd );
 
 	static QString serverId;	///< Id of the server. used in packet Id-s and server info.
 

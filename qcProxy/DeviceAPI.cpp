@@ -27,7 +27,7 @@ bool DeviceAPI::call( const QString &hwInterface, const QString &function, const
 	return true;
 }
 
-const QVariant DeviceAPI::get( const QString &hwInterface, const QString &varName )
+const QVariant DeviceAPI::getVar( const QString &hwInterface, const QString &varName )
 {
 	DeviceStateVariable *var = mStateManager->getVar( hwInterface, varName );
 	if( !var )
@@ -42,7 +42,7 @@ const QVariant DeviceAPI::get( const QString &hwInterface, const QString &varNam
 
 bool DeviceAPI::update( const QString &hwInterface, const QString &varName )
 {
-	if( !mDeviceLink->sendCommand( DeviceCommand( DeviceCommandBase::build( deviceCmdGet, get( hwInterface, varName ) ) ) ) )
+	if( !mDeviceLink->sendCommand( DeviceCommand( DeviceCommandBase::build( deviceCmdGet, getVar( hwInterface, varName ) ) ) ) )
 	{
 		errorDetails_t errDet;
 		errDet.insert( "hwInterface", hwInterface );
@@ -57,9 +57,13 @@ bool DeviceAPI::set( const QString &hwInterface, const QString &varName, const Q
 {
 	if( Device::positiveAck() )
 	{
-		DeviceStateVariable tmpVar( *( get(hwInterface, varName) ) );
-		tmpVar.setValue(newVal);
-		if( !mDeviceLink->sendCommand( DeviceCommand( DeviceCommandBase::build( deviceCmdSet, tmpVar ) ) ) )
+		/// @todo this QVariant.toString is not an elegant solution... somehow a static deviceformatter function?
+		DeviceCommand *cmd = new DeviceCommand();
+		cmd->setType( deviceCmdSet);
+		cmd->setInterface( hwInterface );
+		cmd->setVariable( varName );
+		cmd->setArgumentString( newVal.toString() );
+		if( !mDeviceLink->sendCommand( cmd ) )
 		{
 			errorDetails_t errDet;
 			errDet.insert( "posAck", "true");
@@ -72,7 +76,7 @@ bool DeviceAPI::set( const QString &hwInterface, const QString &varName, const Q
 	}
 	else
 	{
-		DeviceStateVariable* var = get( hwInterface, varName );
+		DeviceStateVariable* var = getVar( hwInterface, varName );
 		if( var )
 			{ var->setValue(newVal); }
 		else
@@ -82,7 +86,7 @@ bool DeviceAPI::set( const QString &hwInterface, const QString &varName, const Q
 			errDet.insert( "hwInterface", hwInterface );
 			errDet.insert( "varName", varName );
 			errDet.insert( "varVal", newVal.toString() );
-			error( QtWarningMsg, "Failed to send set command", "set()", errDet );
+			error( QtWarningMsg, "Failed to send set command: no such variable", "set()", errDet );
 			return false;
 		}
 	}
@@ -92,15 +96,19 @@ bool DeviceAPI::set( const QString &hwInterface, const QString &varName, const Q
 bool DeviceAPI::initAPI( const QString &apiDefString )
 {
 	/// @todo Implement argument (at reinit also)
+	/// @todo don't allow loading if something is alrady loaded.
+
+	//=== Load deviceAPI ===================
+
 	// Connect nothing on first pass, only if API is successfully parsed
 	if( !mDeviceAPI->load() )
 	{
-		error( QtCriticalMsg, "Failed to load deviceAPI", "initAPI()" );
+		error( QtCriticalMsg, "Failed to pre-load deviceAPI", "initAPI()" );
 		return false;
 	}
 	else
 	{
-		mDeviceInstance = Device::instance(this);
+		mDeviceInstance = Device::create(this);
 		connect( mDeviceAPI, SIGNAL(newDeviceInfo(QString,QString)), mDeviceInstance, SLOT(setInfo(QString,QString)) );
 		connect( mDeviceAPI, SIGNAL(newHardwareInterface(QString,QString)), mDeviceInstance, SLOT(addHardwareInterface(QString,QString)) );
 		connect( mDeviceAPI, SIGNAL(newStateVariable(QHash<QString,QString>)), mStateManager, SLOT(registerStateVariable(QHash<QString,QString>)) );
@@ -112,22 +120,78 @@ bool DeviceAPI::initAPI( const QString &apiDefString )
 		}
 		mDeviceInstance->setCreated();
 		debug( debugLevelInfo, "deviceAPI loaded, Device created", "initAPI()" );
+
+		// === Connect to device ================
+
+		connect( mDeviceLink, SIGNAL(commandReceived(DeviceCommandBase*), this, SLOT(handleDeviceCommand(DeviceCommandBase*)) );
+		if( !mDeviceLink->openDevice() )
+		{
+			error( QtCriticalMsg, "Failed to connect to device", "initAPI()" );
+			return false;
+		}
+
 		return true;
 	}
 }
 
 bool DeviceAPI::reInitAPI( const QString &apiDefString )
 {
+	debug( debugLevelInfo, "reinitAPI() is not implemented yet. Do nothing.", "reInitAPI()" );
 	return false;
+
+	/// @todo Implement, only reinit, if something is already running.
+
 	// Stop everithing, or delete everything (timers, autoupdates, subscriptions....
 	// reinit StateManager, stateVars
 	// reparse API, file
-	/// @todo Implement
-	mDeviceInstance->setCreated(false);
+	mDeviceLink->closeDevice();
+
+	Device *oldDevice = mDeviceInstance;
 	if( !initAPI(apiDefString) )
 	{
 		error( QtCriticalMsg, "Failed to initialize deviceAPI", "reInitAPI()" );
 		return false;
 	}
-	return true;
+	else
+	{
+		oldDevice->deleteLater();
+		return true;
+	}
+}
+
+void DeviceAPI::handleDeviceCommand( DeviceCommandBase *cmd )
+{
+	if( cmd->getType() == deviceCmdCall )
+	{
+		if( cmd->getHwInterface() == "!proxy" && cmd->getVariable() == "message" )
+			{ emit messageReceived( Device::messageTypeFromString(cmd->getArg(0)), QStringList( cmd->getArgList().mid(1) ).join(" ") ); }
+		else if( cmd->getHwInterface() == "!proxy" )
+			{ emit commandReceived( cmd ); }
+	}
+	else
+	{
+		if( cmd->getType() == deviceCmdGet )
+		{
+			DeviceCommandBase *setCmd = DeviceCommandBase::build( deviceCmdSet, mStateManager->getVar( cmd->getHwInterface(), cmd->getVariable() ) );
+			if( !mDeviceLink->sendCommand( *setCmd ) )
+				{ error( QtWarningMsg, "Failed to reply to device get", "handleDeviceCommand()" ); }
+			delete setCmd;
+		}
+		else if( cmd->getType() == deviceCmdSet )
+		{
+			DeviceStateVariable *var = mStateManager->getVar( cmd->getHwInterface(), cmd->getVariable() );
+			if( var )
+				{ var->setFromDevice( cmd->getArg() ); }
+			else
+				{ error( QtWarningMsg, QString("Failed to set variable from device, no such variable (hwI: %1, name: %2)").arg(cmd->getHwInterface(),cmd->getVariable()), "handleDeviceCommand()" ); }
+		}
+		else
+			{ error( QtWarningMsg, "Got an undefined command?! Weird...", "handleDeviceCommand()" ); }
+	}
+}
+
+void DeviceAPI::handleStateVariableUpdateRequest(DeviceStateVariable *stateVar)
+{
+	if( !mDeviceLink->sendCommand( DeviceCommand( DeviceCommandBase::build( deviceCmdGet, stateVar ) ) ) )
+		{ error( QtWarningMsg, QString("Failed to update stateVar: %1").arg(stateVar->getName()), "handleStateVariableUpdateRequest()" ); }
 }

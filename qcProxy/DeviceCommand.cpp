@@ -4,9 +4,56 @@
 
 using namespace QtuC;
 
-DeviceCommand::DeviceCommand( const QString &cmdStr ) : DeviceCommandBase()
+DeviceCommand::DeviceCommand( const QString &commandString ) : DeviceCommandBase()
 {
 	mSeparator = ProxySettingsManager::instance()->value( "device/commandSeparator" );
+
+	QStringList cmdExploded = commandString.remove('\n').split( mSeparator, QString::SkipEmptyParts );
+	mType = commandTypeFromString( cmdExploded.at(0) );
+	mHwInterface = cmdExploded.at(1);
+	mVariable = cmdExploded.at(2);
+
+	if( cmdExploded.size() > 3 )
+	{
+		cmdExploded.removeFirst();
+		cmdExploded.removeFirst();
+		cmdExploded.removeFirst();
+		setArgumentString( cmdExploded.join(mSeparator) );
+	}
+}
+
+DeviceCommand *DeviceCommand::fromString( const QString &commandString )
+{
+	QStringList cmdExploded = commandString.remove('\n').split( mSeparator, QString::SkipEmptyParts );
+
+	if( cmdExploded.isEmpty() )
+	{
+		error( QtWarningMsg, "Try to set empty command string, command ignored.", "fromString()" );
+		return 0;
+	}
+	if( cmdExploded.size() < 3 )
+	{
+		error( QtWarningMsg, "Try to set command from string containing less than 3 parts, command ignored.", "fromString()" );
+		return 0;
+	}
+
+	if( Device::isValidHwInterface( cmdExploded.at(1) ) )
+	{
+		error( QtWarningMsg, QString("Try to set command from string with invalid hradware interface '%1', command ignored.").arg(cmdExploded.at(1)), "fromString()" );
+		return 0;
+	}
+
+	DeviceCommand *cmd = new DeviceCommand( commandString );
+
+	if( cmd->isValid() )
+		{ return cmd; }
+	else
+	{
+		errorDetails_t errDet;
+		errDet.insert( "cmdString", commandString );
+		error( QtWarningMsg, "DeviceCommand is invalid.", "fromString()" );
+		return 0;
+	}
 }
 
 DeviceCommand::DeviceCommand(const DeviceCommandBase &cmdBase) : DeviceCommandBase(cmdBase)
@@ -40,43 +87,6 @@ const QString DeviceCommand::getCommandString()
 	return strCmd.toAscii();
 }
 
-bool DeviceCommand::setCommandString( const QString &strCmd )
-{
-	QString pCmd = strCmd.remove('\n');
-	QStringList cmdExploded = pCmd.split( mSeparator, QString::SkipEmptyParts );
-
-	if( cmdExploded.isEmpty() )
-	{
-		error( QtWarningMsg, "Try to set empty command string, command ignored.", "setCommandString()" );
-		return false;
-	}
-	if( cmdExploded.size() < 3 )
-	{
-		error( QtWarningMsg, "Try to set command from string containing less than 3 parts, command ignored.", "setCommandString()" );
-		return false;
-	}
-
-	if( Device::isValidHwInterface( cmdExploded.at(1) ) )
-	{
-		error( QtWarningMsg, QString("Try to set command from string with invalid hradware interface '%1', command ignored.").arg(cmdExploded.at(1)), "setCommandString()" );
-		return false;
-	}
-
-	mType = commandTypeFromString( cmdExploded.at(0) );
-	mHwInterface = cmdExploded.at(1);
-	mVariable = cmdExploded.at(2);
-
-	if( cmdExploded.size() > 3 )
-	{
-		cmdExploded.removeFirst();
-		cmdExploded.removeFirst();
-		cmdExploded.removeFirst();
-		setArgumentString( cmdExploded.join(mSeparator) );
-	}
-
-	return checkValid();
-}
-
 bool DeviceCommand::setArgumentString(const QString &argStr)
 {
 	QStringList rawArgList = argStr.split(mSeparator);
@@ -106,7 +116,7 @@ bool DeviceCommand::setArgumentString(const QString &argStr)
 	}
 
 	mArgs = QStringList(argList);
-	return checkValid();
+	return checkSetValid();
 }
 
 const QString DeviceCommand::getArgumentString()

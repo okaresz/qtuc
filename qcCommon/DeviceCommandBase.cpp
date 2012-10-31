@@ -14,7 +14,7 @@ DeviceCommandBase::DeviceCommandBase( const DeviceCommandBase &deviceCommand )
 	mHwInterface = deviceCommand.getHwInterface();
 	mVariable = deviceCommand.getVariable();
 	mArgs = QStringList( deviceCommand.getArgList() );
-	checkValid();
+	checkSetValid();
 }
 
 DeviceCommandBase::DeviceCommandBase( DeviceCommandBase* deviceCommand )
@@ -23,7 +23,7 @@ DeviceCommandBase::DeviceCommandBase( DeviceCommandBase* deviceCommand )
 	mHwInterface = deviceCommand->getHwInterface();
 	mVariable = deviceCommand->getVariable();
 	mArgs = QStringList( deviceCommand->getArgList() );
-	checkValid();
+	checkSetValid();
 }
 
 DeviceCommandBase *DeviceCommandBase::build( deviceCommandType_t cmdType, DeviceStateVariable *stateVar )
@@ -44,7 +44,7 @@ DeviceCommandBase *DeviceCommandBase::build( deviceCommandType_t cmdType, Device
 	deviceCommand->setType( cmdType );
 	deviceCommand->setVariable( stateVar->getName() );
 	deviceCommand->setArgList( stateVar->getDeviceReadyString() );
-	if( checkValid() )
+	if( checkSetValid() )
 		{ return deviceCommand; }
 	else
 		{ error( QtWarningMsg, "Validity check failed after build()", "build(deviceCommandType_t,DeviceStateVariable)" ); }
@@ -55,10 +55,18 @@ bool DeviceCommandBase::isValid() const
 	return mValid;
 }
 
+const QString DeviceCommandBase::getArg(int argIndex)
+{
+	if( argIndex < mArgs.size() )
+		{ return mArgs.at(argIndex); }
+	else
+		{ return QString(); }
+}
+
 void DeviceCommandBase::setType( deviceCommandType_t type )
 {
 	mType = type;
-	checkValid();
+	checkSetValid();
 }
 
 bool DeviceCommandBase::setInterface( const QString &hwi )
@@ -72,7 +80,7 @@ bool DeviceCommandBase::setInterface( const QString &hwi )
 void DeviceCommandBase::setVariable( const QString& cv )
 {
 	mVariable = cv;
-	checkValid();
+	checkSetValid();
 }
 
 bool DeviceCommandBase::applyVariable( DeviceStateVariable *stateVar )
@@ -82,7 +90,7 @@ bool DeviceCommandBase::applyVariable( DeviceStateVariable *stateVar )
 		mVariable = stateVar->getName();
 		mArgs.clear();
 		mArgs.append( stateVar->getDeviceReadyString() );
-		return checkValid();
+		return checkSetValid();
 	}
 	else
 	{
@@ -94,7 +102,7 @@ bool DeviceCommandBase::applyVariable( DeviceStateVariable *stateVar )
 bool DeviceCommandBase::setArgList( const QStringList &argList )
 {
 	mArgs = QStringList( argList );
-	return checkValid();
+	return checkSetValid();
 }
 
 const QString DeviceCommandBase::commandTypeToString( deviceCommandType_t cmdType )
@@ -116,7 +124,7 @@ void DeviceCommandBase::commandTypeFromString( const QString &typeStr )
 	return deviceCmdUndefined;
 }
 
-bool DeviceCommandBase::checkValid()
+bool DeviceCommandBase::checkSetValid()
 {
 	bool validity = true;
 	validity = validity && mType != deviceCmdUndefined;

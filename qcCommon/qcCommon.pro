@@ -31,6 +31,7 @@ HEADERS += SettingsManagerBase.h \
     DeviceAPIParser.h \
     ErrorHandlerBase.h \
     ClientCommandFactory.h \
-    ClientCommandHeartBeat.h
+    ClientCommandHeartBeat.h \
+    ClientCommands.h
 
 OTHER_FILES +=

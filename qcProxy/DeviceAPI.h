@@ -29,13 +29,12 @@ public:
 	 *	@return Returns true if function is successfully called, false otherwise.*/
 	bool call( const QString &hwInterface, const QString &function, const QString &arg );
 
-	/** Get a device state variable from the stateMeneger.
+	/** Get a device state variable from the stateManager.
 	  *	Please note, this function returns immediately with a DeviceStateVariable object, which may be outdated.
-	  *	@todo How to request from device?
 	  *	@param hwInterface Name of the hardware interface
 	  *	@param varName name of the variable.
 	  *	@return Pointer to a DeviceStateVariable object.*/
-	const DeviceStateVariable* get( const QString &hwInterface, const QString &varName );
+	const DeviceStateVariable* getVar( const QString &hwInterface, const QString &varName );
 
 
 	/** Send a get command to the device to update this variable.
@@ -73,12 +72,22 @@ public:
 	 *	@return True if API is valid and is successfully applied, false otherwise. If API change fails, the previous API (if any) remains active.*/
 	bool reInitAPI( const QString &apiDefString = QString() );
 
+public slots:
+
+	void handleDeviceCommand( DeviceCommandBase *cmd );
+
+	void handleStateVariableUpdateRequest( DeviceStateVariable *stateVar );
+
 signals:
 
 	/** Emitted if a message is received from the device
 	 *	@param msgType Type of the message.
 	 *	@param msg The message.*/
-	void message( deviceMessageType_t msgType, QString msg );
+	void messageReceived( deviceMessageType_t msgType, QString msg );
+
+	/** Emitted when a new deviceCommand  is received, addressed for proxy.
+	  *	@param cmd The device command.*/
+	void commandReceived( DeviceCommandBase *cmd );
 
 private:
 

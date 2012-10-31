@@ -66,9 +66,11 @@ ClientPacket::ClientPacket( ClientCommandBase *clientCommand, QObject *parent ) 
 
 ClientPacket::~ClientPacket()
 {
-	/// @todo Are they destroyed?
 	for( int i=0; i<mCmdList.size(); ++i )
-		{ mCmdList.at(i)->deleteLater(); }
+	{
+		if( mCmdList.at(i) )
+			{ delete mCmdList.value(i); }
+	}
 }
 
 bool ClientPacket::isValid()

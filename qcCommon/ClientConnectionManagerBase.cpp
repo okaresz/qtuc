@@ -175,6 +175,7 @@ void ClientConnectionManagerBase::handleReceivedPacket(ClientPacket *packet)
 		else
 		{
 			error( QtWarningMsg, QString("Received command (%1) is invalid, dropped").arg(packetCommands.at(i)->getName()), "handleReceivedPacket()" );
+			/// @todo This is just ugly... This way packet doesn't know that this command was deleted.
 			packetCommands.at(i)->deleteLater();
 		}
 	}

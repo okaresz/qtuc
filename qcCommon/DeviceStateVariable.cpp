@@ -12,12 +12,12 @@ DeviceStateVariable::DeviceStateVariable(const DeviceStateVariable &otherVar)
 	mRawValue = otherVar.getRawValue();
 	mValue = otherVar.getValue();
 	mConvertToRawScript = otherVar.getConvertScript(false);
-	QString mConvertFromRawScript = otherVar.getConvertScript(true);
+	mConvertFromRawScript = otherVar.getConvertScript(true);
 	mLastUpdate = otherVar.getLastUpdateTime();
 	mAutoUpdate = otherVar.getAutoUpdate();
 	mAutoUpdateFrequency = otherVar.getAutoUpdateFrequency();
 
-	/// @todo implement
+	/// @todo implement mAutoUpdateTimer
 	mAutoUpdateTimer;
 
 	mConvertEngine.globalObject().setProperty( mName, mConvertEngine.newVariant(mRawValue) );
@@ -461,7 +461,7 @@ void DeviceStateVariable::swapRawValue( const QVariant &newRawVal )
 	if( mRawValue != newRawValue )
 	{
 		mRawValue = newRawValue;
-		/// @todo set update time??
+		/// @todo set update time?? depends on positive ack?
 		emitValueChangedRaw();
 		emit setOnDevice(getDeviceReadyString());
 		calculateValue();

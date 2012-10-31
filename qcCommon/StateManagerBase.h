@@ -35,6 +35,17 @@ public:
 	  *	@param stateVar The variable to manage.*/
 	void registerStateVariable( DeviceStateVariable* stateVar );
 
+signals:
+
+	/** Emitted if a stateVariable requested an update.
+	  *	@param stateVar The stateVariable who requested the update.*/
+	void stateVariableUpdateRequest( DeviceStateVariable *stateVar );
+
+	/** Emitted when a state variable requested a set command to device with a new raw value.
+	  *	@param stateVar The stateVariable who made the request.
+	  *	@param newRawVal The new Raw value to set on the device.*/
+	void setVariableOnDeviceRequest( DeviceStateVariable *stateVar, QString newRawVal );
+
 public slots:
 	/** Create a deviceStateVariable from a QHash of params and register it if valid.
 	  *	This slot is usually connected to DeviceAPIParser::newStateVariable() signal.
@@ -43,11 +54,15 @@ public slots:
 	  *	@return True on success, false otherwise.*/
 	bool registerStateVariable( QHash<QString,QString> params );
 
-public slots:
-	/**
-	 * must be used as slot, all info from sender()
-	 */
+private slots:
+
+	/** Handle update request from a state variable.*/
 	void handleStateVariableUpdateRequest();
+
+	/** Set a new value for variable on device.
+	  *	Basically a request to send a set command to the device.
+	  *	@param newRawVal The new raw value to set.*/
+	void handleSetOnDevice( const QString &newRawVal );
 
 private:
 	QList<DeviceStateVariable*>* mStateVars;

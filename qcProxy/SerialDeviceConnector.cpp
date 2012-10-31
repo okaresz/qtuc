@@ -62,11 +62,11 @@ void SerialDeviceConnector::receivePart()
 		mCmdRxBuffer = mCmdRxBufferShadow;
 		debug( debugLevelInfo, QString("Command received on serial: %1").arg(mCmdRxBuffer), "receivePart()" );
 
-		DeviceCommand cmd = buildCommand( mCmdRxBuffer );
+		DeviceCommand *cmd = DeviceCommand::fromString( mCmdRxBuffer );
 		if( cmd )
 			{ emit commandReceived(cmd); }
 		else
-		{ error( QtWarningMsg, "Invalid device command received, command dropped", "receivePart()"); }
+			{ error( QtWarningMsg, "Invalid device command received, command dropped", "receivePart()"); }
 		mCmdRxBufferShadow.clear();
 	}
 }

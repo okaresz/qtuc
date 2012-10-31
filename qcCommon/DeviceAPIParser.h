@@ -90,7 +90,7 @@ private:
 	 */
 	QByteArray mCurrentAPIHash;
 
-	/// @todo all tag name in a QHash?.....
+	/// @todo write back string literals, no need for variables...
 	const QString mRootNodeName = 'deviceAPI';
 	const QString mInfoNodeName = 'deviceInfo';
 	const QString mHwiNodeName = 'hardwareInterfaceList';

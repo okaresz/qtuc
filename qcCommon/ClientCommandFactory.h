@@ -5,9 +5,7 @@
 #include "ClientCommandBase.h"
 #include <QList>
 #include <QDomElement>
-
-// ClientCommand class headers.
-#include "ClientCommandHeartBeat.h"
+#include "ClientCommands.h"
 
 namespace QtuC
 {
@@ -28,7 +26,7 @@ public:
 	  *	After that, ClientCommandFactory will recognize and clone it if that command arrives.
 	  *	@param cmdPrototype A prototype instance of the command.
 	  *	@return True if the command is registered, false on failure.*/
-	static bool registerClientCommand( ClientCommandBase *cmdPrototype );
+	static bool registerCommand( ClientCommandBase *cmdPrototype );
 
 	/** Get the stored command prototype with the name cmdName.
 	  *	@warning Use this function with care, as this returns a pointer to the stored protoype object, which may be used elsewhere.

@@ -10,7 +10,16 @@ StateManagerBase::StateManagerBase( QObject *parent ) : ErrorHandlerBase(parent)
 
 StateManagerBase::~ StateManagerBase()
 {
-	/// @todo Delete mStateVarlist and statevars in it, if they are not deleted yet by parent
+	for( int i=0; i<mStateVars->size(); ++i )
+	{
+		if( mStateVars->at(i) )
+		{
+			mStateVars->value(i)->disconnect();
+			delete mStateVars->value(i);
+		}
+	}
+	mStateVars->clear();
+	delete mStateVars;
 }
 
 DeviceStateVariable* StateManagerBase::getVar( const QString& hardwareInterface, const QString& varName )
@@ -26,8 +35,8 @@ DeviceStateVariable* StateManagerBase::getVar( const QString& hardwareInterface,
 void StateManagerBase::registerStateVariable( DeviceStateVariable *stateVar )
 {
 	stateVar->setParent(this);
-	stateVar->connect( stateVar, SIGNAL(updateMe()), this, SLOT(handleStateVariableUpdateRequest()) );
-	/// @todo connect the rest of the signals
+	connect( stateVar, SIGNAL(updateMe()), this, SLOT(handleStateVariableUpdateRequest()) );
+	connect( stateVar, SIGNAL(setOnDevice(QString)), this, SLOT(handleSetOnDevice(QString)) );
 	mStateVars->append(stateVar);
 }
 
@@ -53,5 +62,11 @@ bool StateManagerBase::registerStateVariable(QHash<QString,QString> params)
 
 void StateManagerBase::handleStateVariableUpdateRequest()
 {
+	emit stateVariableUpdateRequest( (DeviceStateVariable*)sender() );
+}
 
+void StateManagerBase::handleSetOnDevice(const QString &newRawVal)
+{
+	DeviceStateVariable *var = (DeviceStateVariable*)sender();
+	emit setVariableOnDeviceRequest( var, newRawVal );
 }
