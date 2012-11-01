@@ -27,7 +27,7 @@ bool DeviceAPI::call( const QString &hwInterface, const QString &function, const
 	return true;
 }
 
-const QVariant DeviceAPI::getVar( const QString &hwInterface, const QString &varName )
+DeviceStateVariable *DeviceAPI::getVar( const QString &hwInterface, const QString &varName )
 {
 	DeviceStateVariable *var = mStateManager->getVar( hwInterface, varName );
 	if( !var )
@@ -123,7 +123,7 @@ bool DeviceAPI::initAPI( const QString &apiDefString )
 
 		// === Connect to device ================
 
-		connect( mDeviceLink, SIGNAL(commandReceived(DeviceCommandBase*), this, SLOT(handleDeviceCommand(DeviceCommandBase*)) );
+		connect( mDeviceLink, SIGNAL(commandReceived(DeviceCommandBase*)), this, SLOT(handleDeviceCommand(DeviceCommandBase*)) );
 		if( !mDeviceLink->openDevice() )
 		{
 			error( QtCriticalMsg, "Failed to connect to device", "initAPI()" );

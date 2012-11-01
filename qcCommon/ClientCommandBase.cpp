@@ -2,14 +2,19 @@
 
 using namespace QtuC;
 
-ClientCommandBase::ClientCommandBase( QObject *parent ) : ErrorHandlerBase(parent), mPacketClass(ClientPacket::packetUndefined)
+ClientCommandBase::ClientCommandBase( QObject *parent ) : ErrorHandlerBase(parent), mClass(clientCommandUndefined)
 {}
+
+ClientCommandBase::~ClientCommandBase()
+{
+	/// @todo implement?
+}
 
 bool ClientCommandBase::isValid() const
 {
 	if(
 	   mName.isEmpty() ||
-	   mPacketClass == ClientPacket::packetUndefined
+	   mClass == clientCommandUndefined
 	  )
 	{ return false; }
 	return true;

@@ -11,35 +11,35 @@ DeviceAPIParser::DeviceAPIParser ( QObject* parent ) : ErrorHandlerBase(parent)
 bool DeviceAPIParser::parseAPI ( const QString& deviceAPIString )
 {
 	/// @todo api encoding!...
-	QDomDocument apiMarkup('QtuCDeviceAPIDef');
+	QDomDocument apiMarkup("QtuCDeviceAPIDef");
 	QString errMsg;
 	int errLine;
 	if( !apiMarkup.setContent( deviceAPIString, false, &errMsg, &errLine ) )
 	{
-		QHash errDetails;
+		errorDetails_t errDetails;
 		errDetails.insert( "message", errMsg );
-		errDetails.insert( "line", errLine );
+		errDetails.insert( "line", QString::number(errLine) );
 		error( QtCriticalMsg, "API parsing failed", "parseAPI(const QString&)", errDetails );
 		return false;
 	}
 
-	if( apiMarkup.documentElement().tagName() != mRootNodeName )
+	if( apiMarkup.documentElement().tagName() != "deviceAPI" )
 	{
-		error( QtCriticalMsg, "API parsing failed: root node is not "+mRootNodeName, "parseAPI(const QString&)" );
+		error( QtCriticalMsg, "API parsing failed: root node is not deviceAPI", "parseAPI(const QString&)" );
 		return false;
 	}
 
 	QDomElement rootElement = apiMarkup.documentElement();
-	QDomElement nextElement = rootElement.firstChildElement(mInfoNodeName);
+	QDomElement nextElement = rootElement.firstChildElement("deviceInfo");
 
 	if( !nextElement.isNull() )
 	{
 		parseNodeDeviceInfo(nextElement);
 	}
 	else
-		{ debug( "No deviceInfo node found! Consider including one. Continue parsing...", "parseAPI(const QString&)" ); }
+		{ debug( debugLevelVerbose, "No deviceInfo node found! Consider including one. Continue parsing...", "parseAPI(const QString&)" ); }
 
-	nextElement = rootElement.firstChildElement(mHwiNodeName);
+	nextElement = rootElement.firstChildElement("hardwareInterfaceList");
 	if( !nextElement.isNull() )
 	{
 		if( !parseNodeHardwareInterfaceList(nextElement) )
@@ -54,7 +54,7 @@ bool DeviceAPIParser::parseAPI ( const QString& deviceAPIString )
 		return false;
 	}
 
-	nextElement = rootElement.firstChildElement(mVarNodeName);
+	nextElement = rootElement.firstChildElement("stateVariableList");
 	if( !nextElement.isNull() )
 	{
 		if( !parseNodeStateVariableList(nextElement) )
@@ -69,7 +69,7 @@ bool DeviceAPIParser::parseAPI ( const QString& deviceAPIString )
 		return false;
 	}
 
-	nextElement = rootElement.firstChildElement(mFuncNodeName);
+	nextElement = rootElement.firstChildElement("functionList");
 	if( !nextElement.isNull() )
 	{
 		if( !parseNodeFunctionList(nextElement) )
@@ -85,7 +85,7 @@ bool DeviceAPIParser::parseAPI ( const QString& deviceAPIString )
 
 bool DeviceAPIParser::parseNodeDeviceInfo ( const QDomElement &deviceInfoElement )
 {
-	QDomElement infoElement = stateVariableListElement.firstChildElement();
+	QDomElement infoElement = deviceInfoElement.firstChildElement();
 	while( !infoElement.isNull() )
 	{
 		emit newDeviceInfo( infoElement.tagName(), infoElement.text() );
@@ -112,7 +112,7 @@ bool DeviceAPIParser::parseNodeHardwareInterfaceList ( const QDomElement hardwar
 			error( QtWarningMsg, QString("Missing hardware interface name node at line %1").arg(hwiElement.lineNumber()), "parseNodeHardwareInterfaceList()" );
 			continue;
 		}
-		QString name = hwiElement.firstChildElement("name");
+		QString name = hwiElement.firstChildElement("name").text();
 		QString info; hwiElement.firstChildElement("info").isNull()? info = "" : info = hwiElement.firstChildElement("info").text();
 		emit newHardwareInterface( name, info );
 		hwiCount++;
@@ -171,8 +171,8 @@ bool DeviceAPIParser::parseNodeFunctionList ( const QDomElement &functionListEle
 			{ name = functionElement.firstChildElement("name").text(); }
 
 		QString args;
-		if( !hwiElement.firstChildElement("args").isNull() )
-			{ args = hwiElement.firstChildElement("args").text(); }		// text() handles CDATA
+		if( !functionElement.firstChildElement("args").isNull() )
+			{ args = functionElement.firstChildElement("args").text(); }		// text() handles CDATA
 
 		emit newDeviceFunction( hwi, name, args );
 
@@ -212,14 +212,14 @@ bool DeviceAPIParser::parseNodeStateVariable( const QDomElement &stateVariableEl
 	else
 	{ // both are compulsory
 		if( !typeElement.firstChildElement("device").isNull() )
-			{ params.insert( 'deviceType', typeElement.firstChildElement("device").text() ); }
+			{ params.insert( "deviceType", typeElement.firstChildElement("device").text() ); }
 		else
 		{
 			error( QtWarningMsg, QString("StateVariable type parsing failed (on line %1): missing device node! Skip variable...").arg(typeElement.lineNumber()), "parseNodeStateVariable()" );
 			return false;
 		}
 		if( !typeElement.firstChildElement("user").isNull() )
-			{ params.insert( 'userType', typeElement.firstChildElement("user").text() ); }
+			{ params.insert( "userType", typeElement.firstChildElement("user").text() ); }
 		else
 		{
 			error( QtWarningMsg, QString("StateVariable type parsing failed (on line %1): missing user node! Skip variable...").arg(typeElement.lineNumber()), "parseNodeStateVariable()" );
@@ -229,7 +229,7 @@ bool DeviceAPIParser::parseNodeStateVariable( const QDomElement &stateVariableEl
 
 	// ... the rest is optional
 
-	if( stateVariableElement.firstChildElement("conversion") )
+	if( !stateVariableElement.firstChildElement("conversion").isNull() )
 	{
 		QDomElement conversionElement = stateVariableElement.firstChildElement("conversion");
 		if( conversionElement.firstChildElement("toUser").isNull() )

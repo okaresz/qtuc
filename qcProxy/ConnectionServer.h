@@ -43,9 +43,7 @@ public:
 	  *	The passed command will be sent to all clients.
 	  *	@param cmd The command to send.
 	  *	@return True if the command has been successfully sent to ALL clients, false otherwise.*/
-	bool broadcast( const ClientCommandBase *cmd );
-
-	static QString serverId;	///< Id of the server. used in packet Id-s and server info.
+	bool broadcast( ClientCommandBase *cmd );
 
 signals:
 	/** Emitted if a new client has connected.

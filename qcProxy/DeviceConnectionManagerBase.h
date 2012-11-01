@@ -18,7 +18,7 @@ public:
 	/** C'tor*/
 	DeviceConnectionManagerBase( QObject *parent = 0 );
 
-	~DeviceConnectionManagerBase();
+	//virtual ~DeviceConnectionManagerBase()=0;
 
 	/** Send command.
 	 *	Put the command to the send queue.

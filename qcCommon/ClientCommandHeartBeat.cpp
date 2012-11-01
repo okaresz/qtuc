@@ -3,19 +3,19 @@
 using namespace QtuC;
 
 /// 0 means invalid
-quint16 ClientCommandHeartBeat::heartBeatCounter = 1;
+quint32 ClientCommandHeartBeat::heartBeatCounter = 1;
 
-ClientCommandHeartBeat::ClientCommandHeartBeat( QObject *parent ) : ClientCommandBase(parent)
+ClientCommandHeartBeat::ClientCommandHeartBeat( QObject *parent ) : ClientCommandBase(parent), mIsReply(false)
 {
 	mName = "heartBeat";
-	mPacketClass = packetControl;
+	mClass = clientCommandControl;
 	mId = heartBeatCounter++;
 }
 
-ClientCommandHeartBeat *ClientCommandHeartBeat::replyToBeat(ClientCommandHeartBeat *heartBeat)
+ClientCommandHeartBeat *ClientCommandHeartBeat::cloneReply()
 {
-	ClientCommandHeartBeat *replyBeat = clone();
-	replyBeat->mAck = heartBeat->getId();
+	ClientCommandHeartBeat *replyBeat = (ClientCommandHeartBeat*)clone();
+	replyBeat->mAck = getId();
 	replyBeat->mIsReply = true;
 	return replyBeat;
 }
@@ -25,7 +25,7 @@ bool ClientCommandHeartBeat::applyDomElement(const QDomElement &cmdElement)
 	if( !checkTagName(cmdElement) )
 		{ return false; }
 
-	mAck = cmdElement.attribute("id");
+	mAck = cmdElement.attribute("id").toInt();
 	mIsReply = true;
 	return true;
 }
@@ -35,7 +35,7 @@ ClientCommandBase *ClientCommandHeartBeat::cloneWithDomElement(const QDomElement
 	if( !checkTagName(cmdElement) )
 		{ return 0; }
 
-	ClientCommandHeartBeat *cmd = clone();
+	ClientCommandHeartBeat *cmd = (ClientCommandHeartBeat*)clone();
 	if( cmd->applyDomElement(cmdElement) )
 	{
 		error( QtWarningMsg, QString("Failed to apply markup element to %1").arg(mName), "cloneWithDomElement()" );
@@ -61,7 +61,7 @@ ClientCommandBase *ClientCommandHeartBeat::exactClone()
 	return clone;
 }
 
-const QDomElement &ClientCommandHeartBeat::getDomElement() const
+QDomElement ClientCommandHeartBeat::getDomElement() const
 {
 	QDomElement cmdElement;
 	cmdElement.setTagName( mName );

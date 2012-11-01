@@ -1,5 +1,5 @@
 
-QT       += xml script
+QT       += xml script network
 
 QT       -= gui
 

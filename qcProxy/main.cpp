@@ -1,5 +1,4 @@
-#include <QtCore/QCoreApplication>
-#include "ProxySettingsManager.h"
+#include <QCoreApplication>
 #include "QcProxy.h"
 #include <QDebug>
 #include "ErrorHandlerBase.h"
@@ -22,19 +21,18 @@ int main(int argc, char *argv[])
 	// Install a custom mesage handler
 	qInstallMsgHandler( ErrorHandlerBase::customMessageHandler );
 
-	// Create the settings object, the app as parent.
-	ProxySettingsManager::instance(qcProxyApp);
-
 	// ...and let the show begin!
-	QcProxy *proxy = new QcProxy(qcProxyApp);
-	if( !proxy )
+	QcProxy *proxy = new QcProxy();
+	if( !proxy->start() )
 	{
 		//  oops..
+		delete proxy;
 		qFatal( "Fatal error, exit..." );
 		return 1;
 	}
 	else
 	{
+		proxy->connect( &qcProxyApp, SIGNAL(aboutToQuit()), proxy, SLOT(deleteLater()) );
 		// Okay! Start the main thread's event loop.
 		return qcProxyApp.exec();
 	}

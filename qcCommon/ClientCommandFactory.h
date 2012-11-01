@@ -2,13 +2,14 @@
 #define CLIENTCOMMANDFACTORY_H
 
 #include "ErrorHandlerBase.h"
-#include "ClientCommandBase.h"
 #include <QList>
 #include <QDomElement>
 #include "ClientCommands.h"
 
 namespace QtuC
 {
+
+class ClientCommandBase;
 
 /** Factory class to manage the different types of client commands,*/
 class ClientCommandFactory : public ErrorHandlerBase

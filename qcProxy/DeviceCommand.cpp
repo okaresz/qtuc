@@ -4,11 +4,14 @@
 
 using namespace QtuC;
 
-DeviceCommand::DeviceCommand( const QString &commandString ) : DeviceCommandBase()
-{
-	mSeparator = ProxySettingsManager::instance()->value( "device/commandSeparator" );
+DeviceCommand::DeviceCommand() : DeviceCommandBase(), mSeparator(' ')
+{}
 
-	QStringList cmdExploded = commandString.remove('\n').split( mSeparator, QString::SkipEmptyParts );
+DeviceCommand::DeviceCommand( const QString &commandString ) : DeviceCommandBase(), mSeparator(' ')
+{
+	mSeparator = ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar();
+
+	QStringList cmdExploded = QString(commandString).remove('\n').split( mSeparator, QString::SkipEmptyParts );
 	mType = commandTypeFromString( cmdExploded.at(0) );
 	mHwInterface = cmdExploded.at(1);
 	mVariable = cmdExploded.at(2);
@@ -24,22 +27,22 @@ DeviceCommand::DeviceCommand( const QString &commandString ) : DeviceCommandBase
 
 DeviceCommand *DeviceCommand::fromString( const QString &commandString )
 {
-	QStringList cmdExploded = commandString.remove('\n').split( mSeparator, QString::SkipEmptyParts );
+	QStringList cmdExploded = QString(commandString).remove('\n').split( ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar(), QString::SkipEmptyParts );
 
 	if( cmdExploded.isEmpty() )
 	{
-		error( QtWarningMsg, "Try to set empty command string, command ignored.", "fromString()" );
+		ErrorHandlerBase::error( QtWarningMsg, "Try to set empty command string, command ignored.", "fromString()", "DeviceCommand" );
 		return 0;
 	}
 	if( cmdExploded.size() < 3 )
 	{
-		error( QtWarningMsg, "Try to set command from string containing less than 3 parts, command ignored.", "fromString()" );
+		error( QtWarningMsg, "Try to set command from string containing less than 3 parts, command ignored.", "fromString()", "DeviceCommand" );
 		return 0;
 	}
 
-	if( Device::isValidHwInterface( cmdExploded.at(1) ) )
+	if( !Device::isValidHwInterface( cmdExploded.at(1) ) )
 	{
-		error( QtWarningMsg, QString("Try to set command from string with invalid hradware interface '%1', command ignored.").arg(cmdExploded.at(1)), "fromString()" );
+		error( QtWarningMsg, QString("Try to set command from string with invalid hradware interface '%1', command ignored.").arg(cmdExploded.at(1)), "fromString()", "DeviceCommand" );
 		return 0;
 	}
 
@@ -51,22 +54,33 @@ DeviceCommand *DeviceCommand::fromString( const QString &commandString )
 	{
 		errorDetails_t errDet;
 		errDet.insert( "cmdString", commandString );
-		error( QtWarningMsg, "DeviceCommand is invalid.", "fromString()" );
+		error( QtWarningMsg, "DeviceCommand is invalid.", "fromString()", "DeviceCommand" );
 		return 0;
 	}
 }
 
-DeviceCommand::DeviceCommand(const DeviceCommandBase &cmdBase) : DeviceCommandBase(cmdBase)
+bool DeviceCommand::setInterface(const QString &hwi)
 {
-	mSeparator = ProxySettingsManager::instance()->value( "device/commandSeparator" );
+	if( !Device::isValidHwInterface(hwi) )
+	{
+		error( QtWarningMsg, QString("Try to set command from string with invalid hradware interface '%1', command ignored.").arg(hwi), "setInterface()" );
+		return false;
+	}
+	else
+		{ mHwInterface = hwi; }
 }
 
-DeviceCommand::DeviceCommand(const DeviceCommandBase *cmdBase) : DeviceCommandBase(cmdBase)
+DeviceCommand::DeviceCommand(const DeviceCommandBase &cmdBase) : DeviceCommandBase(cmdBase), mSeparator(' ')
 {
-	mSeparator = ProxySettingsManager::instance()->value( "device/commandSeparator" );
+	mSeparator = ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar();
 }
 
-const QString DeviceCommand::getCommandString()
+DeviceCommand::DeviceCommand(const DeviceCommandBase *cmdBase) : DeviceCommandBase(cmdBase), mSeparator(' ')
+{
+	mSeparator = ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar();
+}
+
+const QString DeviceCommand::getCommandString() const
 {
 	if( !isValid() )
 	{
@@ -119,7 +133,7 @@ bool DeviceCommand::setArgumentString(const QString &argStr)
 	return checkSetValid();
 }
 
-const QString DeviceCommand::getArgumentString()
+const QString DeviceCommand::getArgumentString() const
 {
 	QStringList escapedArgStringList;
 	for( int i=0; i < mArgs.size(); ++i )

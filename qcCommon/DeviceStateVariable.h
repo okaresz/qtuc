@@ -6,6 +6,7 @@
 #include <QVariant>
 #include <QScriptEngine>
 #include "ErrorHandlerBase.h"
+#include <QTimer>
 
 namespace QtuC
 {
@@ -37,7 +38,7 @@ public:
 	 * @param varType Type of the variable. Valid values are: string, bool, boolean, int, double.
 	 * @param varRawType Type of the raw variable. If omitted, this will be the same as varType
 	 * @return A pointer to a new DeviceStateVariable object on success, null pointer on failure.*/
-	static DeviceStateVariable* init( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& varRawType = "", const QString convertScriptFromRaw = "", , const QString convertScriptToRaw = "" );
+	static DeviceStateVariable* init( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& varRawType = QString(), const QString convertScriptFromRaw = QString(), const QString convertScriptToRaw = QString() );
 
 	/** Retuns whether the variable is valid.
 	 * @returns True if the variable has a valid type, name, hardware interface and non-empty, valid values, otherwise returns false*/
@@ -47,13 +48,13 @@ public:
 	const QString getHwInterface() const;	/// Get the hardware interface name of the variable.
 	const QVariant getRawValue() const;		/// Get the device-side raw value as a QVariant
 	const QVariant getValue() const;		/// Get the user-side value as a QVariant
-	const QVariant::Type getRawType() const;	///< Get raw type of variable.
-	const QVariant::Type getType() const;	///< Get the <b>user-side</b> type of variable.
+	QVariant::Type getRawType() const;	///< Get raw type of variable.
+	QVariant::Type getType() const;	///< Get the <b>user-side</b> type of variable.
 
 	/** Get convert script.
 	  *	@param fromRaw Set to true, to get the device-side -> user-side convert script, or false to get the other direction.
 	  *	@return The convert script as a QSstring.*/
-	const QString getConvertScript( bool fromRaw );
+	const QString getConvertScript( bool fromRaw ) const;
 
 	/** Get last update time.
 	  * @returns The milliseconds (as a UNIX timestamp) when the variable was last updated (read from device).*/
@@ -75,7 +76,7 @@ public:
 	/** Get the raw value as a QString, ready to send to the device.
 	  *	Do the device-specific formatting here...
 	  *	@return The string formatted for the device.*/
-	const QString getDeviceReadyString();
+	const QString getDeviceReadyString() const;
 
 public slots:
 
@@ -211,7 +212,7 @@ private:
 	 * @param varName The name of the variable.
 	 * @param varType Type of the variable. Valid values are: string, bool, boolean, int, double.
 	 * @param varRawType Type of the raw variable. If omitted, this will be the same as vartype*/
-	DeviceStateVariable( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& varRawType = "", const QString convertScriptFromRaw, , const QString convertScriptToRaw );
+	DeviceStateVariable( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& varRawType, const QString convertScriptFromRaw, const QString convertScriptToRaw );
 
 	QString mName;			///< The name of the variable.
 	QString mHwInterface;	///< The name of the hardware interface containing the variable.
@@ -227,8 +228,8 @@ private:
 	int mAutoUpdateFrequency;	///< Auto update frequency [Hz].
 	QTimer* mAutoUpdateTimer;	///< Timer object for auto update.
 
-	void emitValueChanged() const;	///< Emit valueChanged signals for all types.
-	void emitValueChangedRaw() const; ///< Emit valueChangedRaw signals for all types.
+	void emitValueChanged();	///< Emit valueChanged signals for all types.
+	void emitValueChangedRaw(); ///< Emit valueChangedRaw signals for all types.
 
 	/** Create a QVariant from a string representation of the value, cast according to the given type.
 	 * @param strVal String representation of the value.
@@ -240,12 +241,12 @@ private:
 	 * Currently accepted values: string, int, double, bool, boolean.
 	 * @param strType The string to convert.
 	 * @return the corresponding QVariant::Type if the string could be converted, a QVariant::Invalid otherwise*/
-	QVariant::Type stringToType( const QString& strType );
+	static QVariant::Type stringToType( const QString& strType );
 
 	/** Check if passed string is a valid type name.
 	  *	@param typeStr The string to check.
 	  *	@return True if valid, false otherwise.*/
-	bool isValidType( const QString& typeStr );
+	static bool isValidType( const QString& typeStr );
 
 	/** Swap current raw value for the passed QVariant, if different.
 	  *	Also emit valueChangedRaw and setOnDevice signals, and call calculateValue().

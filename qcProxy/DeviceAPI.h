@@ -34,7 +34,7 @@ public:
 	  *	@param hwInterface Name of the hardware interface
 	  *	@param varName name of the variable.
 	  *	@return Pointer to a DeviceStateVariable object.*/
-	const DeviceStateVariable* getVar( const QString &hwInterface, const QString &varName );
+	DeviceStateVariable *getVar( const QString &hwInterface, const QString &varName );
 
 
 	/** Send a get command to the device to update this variable.

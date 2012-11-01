@@ -1,5 +1,4 @@
-#inc	lude "ClientPacket.h"
-#include "ConnectionServer.h"
+#include "ClientPacket.h"
 #include <QtEndian>
 #include "ClientCommandBase.h"
 #include <QDomDocument>
@@ -7,8 +6,10 @@
 using namespace QtuC;
 
 ClientCommandFactory *ClientPacket::mCommandFactoryPtr = 0;
+QString ClientPacket::mSelfId = QString("qcProxy");
+quint64 ClientPacket::mPacketCount = 0;
 
-ClientPacket::ClientPacket( const QDomElement &packetElement, QObject *parent ) : ErrorHandlerBase(parent), mClass(packetUndefined)
+ClientPacket::ClientPacket( const QDomElement &packetElement, QObject *parent ) : ErrorHandlerBase(parent)//, mClass(packetUndefined)
 {
 	mIdNum = mPacketCount++;
 
@@ -18,9 +19,9 @@ ClientPacket::ClientPacket( const QDomElement &packetElement, QObject *parent ) 
 		return;
 	}
 
-	mClass = (packetClass_t)metaObject()->enumerator( metaObject()->indexOfEnumerator("packetClass_t") ).keyToValue( packetElement.attribute("class").toStdString().c_str() );
+	//mClass = (packetClass_t)metaObject()->enumerator( metaObject()->indexOfEnumerator("packetClass_t") ).keyToValue( packetElement.attribute("class").toStdString().c_str() );
 
-	QDomElement commandElement = packetElement.firstChild();
+	QDomElement commandElement = packetElement.firstChildElement();
 	while( !commandElement.isNull() )
 	{
 		ClientCommandBase *cmd = mCommandFactoryPtr->cloneCommand(commandElement);
@@ -28,16 +29,16 @@ ClientPacket::ClientPacket( const QDomElement &packetElement, QObject *parent ) 
 			{ error( QtWarningMsg, "Invalid clientCommand, dropped.", "ClientPacket()" ); }
 		else
 		{
-			if( cmd->getPacketClass() != mClass )
-				{ error( QtWarningMsg, QString("Command (%1) packet class (%2) differs from packet class (%3)! Command dropped.").arg(cmd->getName(),cmd->getPacketClass(),mClass), "ClientPacket()" ); }
-			else
+			//if( cmd->getPacketClass() != mClass )
+				//{ error( QtWarningMsg, QString("Command (%1) packet class (%2) differs from packet class (%3)! Command dropped.").arg(cmd->getName(),cmd->getPacketClass(),mClass), "ClientPacket()" ); }
+			//else
 				{ mCmdList.append( cmd ); }
 		}
 		commandElement = commandElement.nextSiblingElement();
 	}
 }
 
-ClientPacket::ClientPacket( QObject *parent )  : ErrorHandlerBase(parent), mClass(packetUndefined)
+ClientPacket::ClientPacket( QObject *parent )  : ErrorHandlerBase(parent)//, mClass(packetUndefined)
 {
 	mIdNum = mPacketCount++;
 	if( mCommandFactoryPtr == 0 )
@@ -47,7 +48,7 @@ ClientPacket::ClientPacket( QObject *parent )  : ErrorHandlerBase(parent), mClas
 	}
 }
 
-ClientPacket::ClientPacket( ClientCommandBase *clientCommand, QObject *parent ) : ErrorHandlerBase(parent), mClass(packetUndefined)
+ClientPacket::ClientPacket( ClientCommandBase *clientCommand, QObject *parent ) : ErrorHandlerBase(parent)//, mClass(packetUndefined)
 {
 	mIdNum = mPacketCount++;
 
@@ -60,7 +61,7 @@ ClientPacket::ClientPacket( ClientCommandBase *clientCommand, QObject *parent ) 
 	if( !clientCommand->isValid() )
 		{ return; }
 
-	mClass = clientCommand->getPacketClass();
+	//mClass = clientCommand->getPacketClass();
 	mCmdList.append( clientCommand );
 }
 
@@ -77,21 +78,21 @@ bool ClientPacket::isValid()
 {
 	if(
 	   mCmdList.isEmpty() ||
-	   mIdNum == 0 ||
-	   mClass == packetUndefined
+	   mIdNum == 0
+	  // mClass == packetUndefined
 	  )
 	{ return false; }
 	return true;
 }
 
-int ClientPacket::getIDNumber() const
+quint64 ClientPacket::getIDNumber() const
 {
 	return mIdNum;
 }
 
 const QString ClientPacket::getID() const
 {
-	return QString( ConnectionServer::serverId + "#" + QString::number(mIdNum) );
+	return QString( mSelfId + "#" + QString::number(mIdNum) );
 }
 
 const QString ClientPacket::getReplyTo() const
@@ -99,10 +100,10 @@ const QString ClientPacket::getReplyTo() const
 	return mReplyTo;
 }
 
-ClientPacket::packetClass_t ClientPacket::getClass() const
-{
-	return mClass;
-}
+//ClientPacket::packetClass_t ClientPacket::getClass() const
+//{
+//	return mClass;
+//}
 
 const QList<ClientCommandBase *> ClientPacket::getCommands()
 {
@@ -119,7 +120,7 @@ void ClientPacket::setReplyTo(const ClientPacket &replyToPacket)
 	mReplyTo = replyToPacket.getID();
 }
 
-bool ClientPacket::setClass( packetClass_t pClass )
+/*bool ClientPacket::setClass( packetClass_t pClass )
 {
 	if( mCmdList.empty() )
 	{
@@ -131,30 +132,30 @@ bool ClientPacket::setClass( packetClass_t pClass )
 		error( QtWarningMsg, "Try to set packet class after commands have been appended, ignore.", "setClass()" );
 		return false;
 	}
-}
+}*/
 
 bool ClientPacket::appendCommand( ClientCommandBase *clientCommand )
 {
-	if( mClass == packetUndefined )
-	{
-		error( QtWarningMsg, "Try to append command, but packet class is undefined, ignore command", "append()" );
-		return false;
-	}
-	else
-	{
+//	if( mClass == packetUndefined )
+//	{
+//		error( QtWarningMsg, "Try to append command, but packet class is undefined, ignore command", "append()" );
+//		return false;
+//	}
+//	else
+//	{
 		if( !clientCommand->isValid() )
 		{
 			error( QtWarningMsg, QString("Failed to append client command (%1): command is invalid").arg(clientCommand->getName()), "appendCommand()" );
 			return false;
 		}
-		if( clientCommand->getPacketClass() != mClass )
-		{
-			error( QtWarningMsg, "Failed to append client command: packet class mismatch", "appendCommand()" );
-			return false;
-		}
+//		if( clientCommand->getPacketClass() != mClass )
+//		{
+//			error( QtWarningMsg, "Failed to append client command: packet class mismatch", "appendCommand()" );
+//			return false;
+//		}
 		mCmdList.append(clientCommand);
 		return true;
-	}
+//	}
 }
 
 void ClientPacket::destroyShell()
@@ -163,12 +164,12 @@ void ClientPacket::destroyShell()
 	deleteLater();
 }
 
-QDomDocument *ClientPacket::buildMarkup()
+QDomDocument *ClientPacket::buildMarkup() const
 {
 	QDomDocument *packetMarkup = new QDomDocument();
 	QDomElement packetElement = packetMarkup->createElement("packet");
 	packetElement.setAttribute( "id", getID() );
-	packetElement.setAttribute( "class", QString( metaObject()->enumerator( metaObject()->indexOfEnumerator("packetClass_t") ).valueToKey(mClass) ); );
+	//packetElement.setAttribute( "class", QString( metaObject()->enumerator( metaObject()->indexOfEnumerator("packetClass_t") ).valueToKey(mClass) ); );
 	if( !mReplyTo.isEmpty() )
 		{ packetElement.setAttribute( "re", mReplyTo ); }
 
@@ -184,7 +185,7 @@ const QByteArray ClientPacket::getPacketData() const
 	QDomDocument *packetMarkup = buildMarkup();
 	if( !packetMarkup )
 	{
-		error( QtWarningMsg, "Failed to build packet markup", "getPacketData()" );
+		error( QtWarningMsg, "Failed to build packet markup", "getPacketData()", "ClientPacket" );
 		return QByteArray();
 	}
 	else
@@ -195,7 +196,7 @@ const QByteArray ClientPacket::getPacketData() const
 		uchar packetSizeCharBigEndian[4];
 		qToBigEndian( packetSize, packetSizeCharBigEndian );
 
-		QByteArray rawPacket( packetSizeCharBigEndian, 4 );
+		QByteArray rawPacket( (const char*)packetSizeCharBigEndian, 4 );
 		rawPacket.append( packetData );
 		return rawPacket;
 	}
@@ -206,26 +207,27 @@ ClientPacket* ClientPacket::fromPacketData( const QByteArray &rawPacket )
 	qint16 packetSize = readPacketSize( rawPacket );
 	if( rawPacket.size() < packetSize + 4 )
 	{
-		error( QtWarningMsg, "Failed to create ClientPacket: data too short", "fromPacketData()" );
+		error( QtWarningMsg, "Failed to create ClientPacket: data too short", "fromPacketData()", "ClientPacket" );
 		return 0;
 	}
 
 	if( rawPacket.size() > packetSize + 4 )
-		{ debug( debugLevelVerbose, "Data length is more than packet size suggests! Bad things will happen?...", "fromPacketData()" ); }
+		{ debug( debugLevelVerbose, "Data length is more than packet size suggests! Bad things will happen?...", "fromPacketData()", "ClientPacket" ); }
 
 	QByteArray packetData( rawPacket.right( packetSize-1 ) );	// don't count null terminator
 
 	// Let's parse the data!
 	QString packetMarkupText = QString::fromUtf8( packetData.data() );
 	QDomDocument packetDom;
-	QString errMsg, errLine;
-	if( !packetDom.setContent( packetMarkupText, false, errMsg, errLine ) )
+	QString errMsg;
+	int errLine;
+	if( !packetDom.setContent( packetMarkupText, false, &errMsg, &errLine ) )
 	{
 		errorDetails_t errDet;
 		errDet.insert( "errMsg", errMsg );
 		errDet.insert( "errLine", QString::number(errLine) );
 		errDet.insert( "packetData", packetMarkupText );
-		error( QtWarningMsg, "Error while parsing packetData", "ClientPacket()", errDet );
+		error( QtWarningMsg, "Error while parsing packetData", "ClientPacket()", "ClientPacket", errDet );
 		return 0;
 	}
 
@@ -234,30 +236,45 @@ ClientPacket* ClientPacket::fromPacketData( const QByteArray &rawPacket )
 	{
 		errorDetails_t errDet;
 		errDet.insert( "packetMarkup", packetMarkupText );
-		error( QtWarningMsg, "Packet has no id", "fromPacketData()", errDet );
+		error( QtWarningMsg, "Packet has no id", "fromPacketData()", "ClientPacket", errDet );
 		return 0;
 	}
-	if( !packetElement.hasAttribute("class") )
+
+	/*if( !packetElement.hasAttribute("class") )
 	{
 		errorDetails_t errDet;
 		errDet.insert( "packetMarkup", packetMarkupText );
 		error( QtWarningMsg, "Packet has no class attribute", "fromPacketData()", errDet );
 		return 0;
-	}
+	}*/
 
 	return new ClientPacket( packetElement );
 }
 
-qint16 ClientPacket::readPacketSize( const QByteArray &rawData ) const
+qint16 ClientPacket::readPacketSize( const QByteArray &rawData )
 {
 	if( rawData.size() < 4 )
 	{
-		error( QtWarningMsg, "Unable to read packet size: data too short", "readPacketSize()" );
+		error( QtWarningMsg, "Unable to read packet size: data too short", "readPacketSize()", "ClientPacket" );
 		return 0;
 	}
 	else
 	{
-		return qFromBigEndian( rawData.left(4).data() );
+		return (qint16)qFromBigEndian( rawData.left(4).toShort() );
+	}
+}
+
+bool ClientPacket::setSelfId(const QString &newId)
+{
+	if( !newId.isEmpty() )
+	{
+		mSelfId = newId;
+		return true;
+	}
+	else
+	{
+		error( QtWarningMsg, "Failed to set selfId: empty string", "ClientPacket::setSelfId()", "ClientPacket" );
+		return false;
 	}
 }
 

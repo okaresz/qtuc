@@ -2,8 +2,9 @@
 #define CLIENTCOMMANDS_H
 
 /** @file
- *	This header collects th various ClientCommand declaration headers.*/
+ *	This header collects the various ClientCommand declaration headers.*/
 
 #include "ClientCommandHeartBeat.h"
+class ClientCommandHandShake;
 
 #endif // CLIENTCOMMANDS_H

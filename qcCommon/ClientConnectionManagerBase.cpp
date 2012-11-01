@@ -3,6 +3,8 @@
 
 using namespace QtuC;
 
+QHash<QString,QString> ClientConnectionManagerBase::mSelfInfo = QHash<QString,QString>();
+
 ClientConnectionManagerBase::ClientConnectionManagerBase( QTcpSocket *socket, QObject *parent ) : ErrorHandlerBase(parent), mState(connectionUnInitialized)
 {
 	mCommandFactory = new ClientCommandFactory(this);
@@ -20,7 +22,7 @@ ClientConnectionManagerBase::ClientConnectionManagerBase( QTcpSocket *socket, QO
 		connect( this, SIGNAL(commandReceived(ClientCommandBase*)), this, SLOT(reflex(ClientCommandBase*)) );
 
 		/// @todo Am I sure to handle it locally like this?
-		connect(connSocket, SIGNAL(disconnected()), connSocket, SLOT(deleteLater()));
+		connect(mClientSocket, SIGNAL(disconnected()), mClientSocket, SLOT(deleteLater()));
 
 		debug( debugLevelInfo, "New client socket connected", "ClientConnectionManagerBase()" );
 	}
@@ -67,6 +69,7 @@ void ClientConnectionManagerBase::setSelfInfo( const QString &key, const QString
 {
 	if( !value.isEmpty() )
 		{ mSelfInfo.insert( key, value ); }
+	ClientPacket::setSelfId( mSelfInfo.value(QString("id")) );
 }
 
 bool ClientConnectionManagerBase::setSelfInfo(const QHash<QString, QString> &infoList)
@@ -77,10 +80,11 @@ bool ClientConnectionManagerBase::setSelfInfo(const QHash<QString, QString> &inf
 		return false;
 	}
 	mSelfInfo = infoList;
+	ClientPacket::setSelfId( mSelfInfo.value(QString("id")) );
 	return true;
 }
 
-bool ClientConnectionManagerBase::sendCommand( const ClientCommandBase *cmd )
+bool ClientConnectionManagerBase::sendCommand( ClientCommandBase *cmd )
 {
 	if( !cmd->isValid() )
 	{
@@ -96,7 +100,7 @@ bool ClientConnectionManagerBase::sendCommands( const QList<ClientCommandBase*> 
 	if( cmdList.isEmpty() )
 	{
 		error( QtWarningMsg, "Command list is empty", "sendCommands()" );
-		return fasle;
+		return false;
 	}
 
 	ClientPacket *packet = new ClientPacket( cmdList.at(0), this );
@@ -185,14 +189,14 @@ void ClientConnectionManagerBase::handleReceivedPacket(ClientPacket *packet)
 void ClientConnectionManagerBase::reflex( ClientCommandBase *command )
 {
 	if( command->getName() == "heartBeat" )
-		{ replyHeartBeat( command ); }
+		{ replyHeartBeat( (ClientCommandHeartBeat*)command ); }
 	else if( command->getName() == "handShake" )
-	{ ackHandShake( command ); }
+		{ ackHandShake( (ClientCommandHandShake*)command ); }
 }
 
 void ClientConnectionManagerBase::replyHeartBeat( ClientCommandHeartBeat* incomingHeartBeat )
 {
-	sendCommand( ClientCommandHeartBeat::replyToBeat(incomingHeartBeat) );
+	sendCommand( incomingHeartBeat->cloneReply() );
 	incomingHeartBeat->deleteLater();
 }
 
@@ -200,7 +204,7 @@ void ClientConnectionManagerBase::ackHandShake( ClientCommandHandShake *handShak
 {
 	mState = connectionHandShaking;
 	/// @todo implement. Two-step? client must ack server hS reply, and just after that will the connection be ready
-	handShake->deleteLater();
+	//handShake->deleteLater();
 	mState = connectionReady;
 }
 

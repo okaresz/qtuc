@@ -2,6 +2,8 @@
 
 using namespace QtuC;
 
+QList<ClientCommandBase*> ClientCommandFactory::mCommandPrototypes = QList<ClientCommandBase*>();
+
 ClientCommandFactory::ClientCommandFactory( QObject *parent ) : ErrorHandlerBase(parent)
 {
 	registerCommand( new ClientCommandHeartBeat(this) );

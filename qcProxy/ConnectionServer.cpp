@@ -1,14 +1,12 @@
 #include "ConnectionServer.h"
 #include "ClientConnectionManagerBase.h"
 #include "ProxySettingsManager.h"
+#include <QCoreApplication>
 
 using namespace QtuC;
 
-QString ConnectionServer::serverId = "qcProxy";
-
 ConnectionServer::ConnectionServer(QObject *parent) : ErrorHandlerBase(parent)
 {
-	advertisedId = ProxySettingsManager::instance()->value( "serverSocket/serverId" );
 	mTcpServer = new QTcpServer(this);
 	connect( mTcpServer, SIGNAL(newConnection()), this, SLOT(handleNewConnection()) );
 }
@@ -26,6 +24,15 @@ void ConnectionServer::handleNewConnection()
 	if( newClientSocket )
 	{
 		ClientConnectionManagerBase *newClient = new ClientConnectionManagerBase(newClientSocket, this);
+		// set something, because this is required for communication; this will be overwritten from settings
+		QHash<QString,QString> minimalSelfInfo;
+		QString fallBackId = QCoreApplication::instance()->applicationName();
+		if( fallBackId.isEmpty() )
+			{ fallBackId = QString("unknown_client"); }
+		else
+			{ fallBackId = QString( fallBackId.simplified().trimmed().replace(' ', '_').toAscii() ); }
+		minimalSelfInfo.insert( QString("id"), fallBackId );
+		newClient->setSelfInfo(minimalSelfInfo);
 		mClients.append(newClient);
 		debug( debugLevelInfo, QString("New client connected: #%1").arg(mClients.size()-1), "handleNewConnection()" );
 		emit newClientConnected(newClient);
@@ -51,17 +58,17 @@ ClientConnectionManagerBase *ConnectionServer::getClient(int clientNumber)
 
 bool ConnectionServer::startListening()
 {
-	if( mTcpServer->listen( ProxySettingsManager::instance()->value("serverSocket/host"), ProxySettingsManager::instance()->value("serverSocket/port").toInt() ) )
+	if( mTcpServer->listen( QHostAddress(ProxySettingsManager::instance()->value("serverSocket/host").toString()), ProxySettingsManager::instance()->value("serverSocket/port").toInt() ) )
 	{
-		debug( debugLevelInfo, QString("Listening on %1, port %2.").arg( ProxySettingsManager::instance()->value("serverSocket/host"), ProxySettingsManager::instance()->value("serverSocket/port") ), "startListening()" );
+		debug( debugLevelInfo, QString("Listening on %1, port %2.").arg( ProxySettingsManager::instance()->value("serverSocket/host").toString(), ProxySettingsManager::instance()->value("serverSocket/port").toString() ), "startListening()" );
 		return true;
 	}
 
-	error( QtCriticalMsg, QString("Failed to listen on %1, port %2").arg( ProxySettingsManager::instance()->value("serverSocket/host"), ProxySettingsManager::instance()->value("serverSocket/port") ), "startListening()" );
+	error( QtCriticalMsg, QString("Failed to listen on %1, port %2").arg( ProxySettingsManager::instance()->value("serverSocket/host").toString(), ProxySettingsManager::instance()->value("serverSocket/port").toString() ), "startListening()" );
 	return false;
 }
 
-bool ConnectionServer::broadcast(const ClientCommandBase *cmd)
+bool ConnectionServer::broadcast( ClientCommandBase *cmd )
 {
 	if( !( cmd && cmd->isValid() ) )
 	{

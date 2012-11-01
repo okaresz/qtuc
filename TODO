@@ -21,3 +21,4 @@ delete all member object instances, created with new in constructors.
 
 validate deviceAPI.xml! : http://doc.qt.digia.com/4.7/xmlpatterns-schema.html
 
+packet/commandClass chaos...

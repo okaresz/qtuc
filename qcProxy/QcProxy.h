@@ -25,6 +25,10 @@ public:
 
 	~QcProxy();
 
+	/** Start proxy.
+	  *	@return True on success, false otherwise.*/
+	bool start();
+
 public slots:
 
 	bool route( ClientCommandBase *clientCommand );

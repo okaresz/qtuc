@@ -8,7 +8,6 @@
 namespace QtuC
 {
 
-class ClientCommandBase;
 class ClientConnectionManagerBase;
 
 /** ClientPacket class.
@@ -17,19 +16,7 @@ class ClientConnectionManagerBase;
 class ClientPacket : public ErrorHandlerBase
 {
 	Q_OBJECT
-	Q_ENUMS(packetClass_t)
 public:
-
-	/** Packet class type.
-	  *	 * <b>undefined</b>: Undefined, invalid packet.
-	  *  * <b>device</b>: These packets contain a deviceCommand, and are used to get/set a state variable or call a device function.
-	  *  * <b>control</b>: These packets are designated for the proxy or the client and can contain various control commands like quit or heartBeat, etc...*/
-	enum packetClass_t
-	{
-		packetUndefined,
-		packetControl,
-		packetDevice
-	};
 
 	/** An empty constructor.
 	 * Use when you want to build a packet from scratch.*/
@@ -49,7 +36,7 @@ public:
 	/** Get packet count.
 	  *	Count of all the packet that was instantiated from this class.
 	  *	@return Packet count.*/
-	static quint64 getPacketCount() const
+	static quint64 getPacketCount()
 		{ return mPacketCount; }
 
 	/** Get the ID number of the packet.
@@ -66,8 +53,9 @@ public:
 	const QString getReplyTo() const;
 
 	/** Get packet class.
+	  *	@todo Solve class chaos.
 	  *	@return packet class.*/
-	packetClass_t getClass() const;
+	//packetClass_t getClass() const;
 
 	/** Get the list of commands within this pocket.
 	  *	@return The lis of ClientCommands. May be empty if packet is invalid.*/
@@ -86,10 +74,16 @@ public:
 	  *	Can be used to determine whether the whole packet has arrived yet.
 	  *	@param rawData The raw data. Must be at least 4 byte long to read the packet size.
 	  *	@return The packet size, converted to host endianness. If passed data was shorter than 4 bytes, return 0.*/
-	static qint16 readPacketSize( const QByteArray &rawData ) const;
+	static qint16 readPacketSize( const QByteArray &rawData );
 
 	static void setCommandFactoryPtr( ClientCommandFactory *factoryPtr )
 		{ mCommandFactoryPtr = factoryPtr; }
+
+	/** Set self-id.
+	  *	The short name part of the packet id.
+	  *	@param newId The new selfId.
+	  *	@return True on success, false otherwise.*/
+	static bool setSelfId( const QString &newId );
 
 	/** Set the packet ID to which this packet is a reply.
 	  *	@param replyToID The reply-to packet id string.*/
@@ -103,7 +97,7 @@ public:
 	 *	You must set the class before appending any command. After a command has been appended, the packet class can not be set or changed.
 	 *	The packet class must be set before appending any commands.
 	 *	@param	True on success, false otherwise.*/
-	bool setClass( packetClass_t pClass );
+	//bool setClass( packetClass_t pClass );
 
 	/** Append a client command.
 	 *	Only client commands which are of the right class can be appended. (The class of the packet.)
@@ -125,12 +119,13 @@ private:
 
 	/** Build the XML markup of the packet.
 	  *	@return The packet element as a QDomElement of 0 on failure.*/
-	QDomDocument *buildMarkup();
+	QDomDocument *buildMarkup() const;
 
 	static quint64 mPacketCount;	///< Packet count, used for generating packet id.
 	quint64 mIdNum;		///< Packet ID number. Initialized from packet count.
 	QString mReplyTo;	///< Reply-to packet id.
-	packetClass_t mClass;		///< Class of the packet.
+	//packetClass_t mClass;		///< Class of the packet.
+	static QString mSelfId;
 	QList<ClientCommandBase*> mCmdList;		///< Commands to be included in the packet.
 	static ClientCommandFactory *mCommandFactoryPtr;	///< Pointer to the ClientCommandFactory instance in the connection manager object of this packet.
 };

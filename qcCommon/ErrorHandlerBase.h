@@ -19,6 +19,8 @@ class ErrorHandlerBase : public QObject
 	Q_OBJECT
 
 public:
+	typedef QHash<const char*,QString> errorDetails_t;
+
 	explicit ErrorHandlerBase(QObject *parent = 0);
 
 	/** A custom Qt message handler.
@@ -26,10 +28,7 @@ public:
 	static void customMessageHandler( QtMsgType msgType, const char *msg );
 	
 signals:
-	void signalError( QtMsgType severity, QString msg, QString location );
-
-protected:
-	typedef QHash<QString,QString> errorDetails_t;
+	void signalError( QtMsgType severity, QString msg, QString location ) const;
 
 protected slots:
 	/** Error handler (slot).
@@ -41,10 +40,21 @@ protected slots:
 	  * @param msg A message string.
 	  *	@param location Location (usually the function name) of the error.
 	  *	@param details An associative array of detail name and value.*/
-	virtual static void error( QtMsgType severity, const QString &msg, const QString &location = "", const QHash<QString,QString> &details = QHash<QString,QString>() );
+	void error( QtMsgType severity, const QString &msg, char const *location, const errorDetails_t &details = QHash<const char*,QString>() ) const;
+
+	/// Overloaded function.
+	void error( QtMsgType severity, char const *msg, char const *location, const errorDetails_t &details = QHash<const char*,QString>() ) const;
 
 	/// Alias for error().
-	virtual static void debug( debugLevel_t debugLevel, const QString &msg, const QString &location, const QHash<QString, QString> &details = "" );
+	void debug( debugLevel_t debugLevel, const QString &msg, char const *location, const errorDetails_t &details = QHash<const char*, QString>() ) const;
+	void debug( debugLevel_t debugLevel, char const *msg, char const *location, const errorDetails_t &details = QHash<const char*, QString>() ) const;
+
+	// static versions....
+
+	static void error( QtMsgType severity, const QString &msg, char const *functionName, char const*className, const errorDetails_t &details = QHash<const char*,QString>() );
+	static void error( QtMsgType severity, char const *msg, char const *functionName, char const *className, const errorDetails_t &details = QHash<const char*,QString>() );
+	static void debug( debugLevel_t debugLevel, const QString &msg, const char *functionName, const char *className, const errorDetails_t &details = QHash<const char*, QString>() );
+	static void debug( debugLevel_t debugLevel, const char *msg, const char *functionName, const char *className, const errorDetails_t &details = QHash<const char*, QString>() );
 };
 
 }	//QtuC::

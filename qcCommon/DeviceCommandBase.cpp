@@ -2,13 +2,13 @@
 
 using namespace QtuC;
 
-DeviceCommandBase::DeviceCommandBase()
+DeviceCommandBase::DeviceCommandBase() : ErrorHandlerBase()
 {
 	mType = deviceCmdUndefined;
 	mValid = false;
 }
 
-DeviceCommandBase::DeviceCommandBase( const DeviceCommandBase &deviceCommand )
+DeviceCommandBase::DeviceCommandBase( const DeviceCommandBase &deviceCommand ) : ErrorHandlerBase()
 {
 	mType = deviceCommand.getType();
 	mHwInterface = deviceCommand.getHwInterface();
@@ -17,7 +17,7 @@ DeviceCommandBase::DeviceCommandBase( const DeviceCommandBase &deviceCommand )
 	checkSetValid();
 }
 
-DeviceCommandBase::DeviceCommandBase( DeviceCommandBase* deviceCommand )
+DeviceCommandBase::DeviceCommandBase( const DeviceCommandBase *deviceCommand ) : ErrorHandlerBase()
 {
 	mType = deviceCommand->getType();
 	mHwInterface = deviceCommand->getHwInterface();
@@ -26,16 +26,16 @@ DeviceCommandBase::DeviceCommandBase( DeviceCommandBase* deviceCommand )
 	checkSetValid();
 }
 
-DeviceCommandBase *DeviceCommandBase::build( deviceCommandType_t cmdType, DeviceStateVariable *stateVar )
+DeviceCommandBase *DeviceCommandBase::build( deviceCommandType_t cmdType, const DeviceStateVariable *stateVar )
 {
 	if( cmdType == deviceCmdCall )
 	{
-		error( QtWarningMsg, "Try to build a variable command with call type", "build(deviceCommandType_t,DeviceStateVariable)" );
+		error( QtWarningMsg, "Try to build a variable command with call type", "build(deviceCommandType_t,DeviceStateVariable)", "DeviceCommandBase" );
 		return 0;
 	}
 	if( !stateVar->isValid() )
 	{
-		error( QtWarningMsg, "Try to build a variable command with invalid variable", "build(deviceCommandType_t,DeviceStateVariable)" );
+		error( QtWarningMsg, "Try to build a variable command with invalid variable", "build(deviceCommandType_t,DeviceStateVariable)", "DeviceCommandBase" );
 		return 0;
 	}
 
@@ -43,11 +43,11 @@ DeviceCommandBase *DeviceCommandBase::build( deviceCommandType_t cmdType, Device
 
 	deviceCommand->setType( cmdType );
 	deviceCommand->setVariable( stateVar->getName() );
-	deviceCommand->setArgList( stateVar->getDeviceReadyString() );
-	if( checkSetValid() )
+	deviceCommand->setArg( stateVar->getDeviceReadyString() );
+	if( deviceCommand->checkSetValid() )
 		{ return deviceCommand; }
 	else
-		{ error( QtWarningMsg, "Validity check failed after build()", "build(deviceCommandType_t,DeviceStateVariable)" ); }
+		{ error( QtWarningMsg, "Validity check failed after build()", "build(deviceCommandType_t,DeviceStateVariable)", "DeviceCommandBase" ); }
 }
 
 bool DeviceCommandBase::isValid() const
@@ -55,7 +55,7 @@ bool DeviceCommandBase::isValid() const
 	return mValid;
 }
 
-const QString DeviceCommandBase::getArg(int argIndex)
+const QString DeviceCommandBase::getArg(int argIndex) const
 {
 	if( argIndex < mArgs.size() )
 		{ return mArgs.at(argIndex); }
@@ -71,10 +71,7 @@ void DeviceCommandBase::setType( deviceCommandType_t type )
 
 bool DeviceCommandBase::setInterface( const QString &hwi )
 {
-	if( Device::isValidHwInterface(hwi) )
-		{ mHwInterface = hwi; }
-	else
-	{ error( QtWarningMsg, QString("Try to set invalid hardware interface '%1' for command").arg(hwi), "setType()" ); }
+	mHwInterface = hwi;
 }
 
 void DeviceCommandBase::setVariable( const QString& cv )
@@ -105,6 +102,16 @@ bool DeviceCommandBase::setArgList( const QStringList &argList )
 	return checkSetValid();
 }
 
+bool DeviceCommandBase::setArg(const QString &arg, int index)
+{
+	if( ( index == 0 && mArgs.isEmpty() ) || index >= mArgs.size() )
+	{
+		mArgs.append( arg );
+	}
+	else
+		{ mArgs[index] = arg; }
+}
+
 const QString DeviceCommandBase::commandTypeToString( deviceCommandType_t cmdType )
 {
 	switch( cmdType )
@@ -116,7 +123,7 @@ const QString DeviceCommandBase::commandTypeToString( deviceCommandType_t cmdTyp
 	}
 }
 
-void DeviceCommandBase::commandTypeFromString( const QString &typeStr )
+deviceCommandType_t DeviceCommandBase::commandTypeFromString( const QString &typeStr )
 {
 	if( typeStr == "get" ) { return deviceCmdGet; }
 	if( typeStr == "set" ) { return deviceCmdSet; }
@@ -128,7 +135,7 @@ bool DeviceCommandBase::checkSetValid()
 {
 	bool validity = true;
 	validity = validity && mType != deviceCmdUndefined;
-	validity = validity && !mHwInterface.isEmpty() && Device::isValidHwInterface(mHwInterface);
+	validity = validity && !mHwInterface.isEmpty();
 	validity = validity && !( mType == deviceCmdSet && mArgs.isEmpty() );
 	mValid = validity;
 	return mValid;

@@ -90,12 +90,6 @@ private:
 	 */
 	QByteArray mCurrentAPIHash;
 
-	/// @todo write back string literals, no need for variables...
-	const QString mRootNodeName = 'deviceAPI';
-	const QString mInfoNodeName = 'deviceInfo';
-	const QString mHwiNodeName = 'hardwareInterfaceList';
-	const QString mVarNodeName = 'stateVariableList';
-	const QString mFuncNodeName = 'functionList';
 };
 
 }	//QtuC::

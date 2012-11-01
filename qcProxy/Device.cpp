@@ -5,12 +5,12 @@ using namespace QtuC;
 
 Device *Device::mInstance = 0;
 QStringList Device::mHardwareInterfaces = QStringList();
-QHash<QString,QString> Device::mHardwareInterfaceInfo = QHash<QString,QString>();
+QStringList Device::mHardwareInterfaceInfo = QStringList();
 QList<QStringList> Device::mFunctions = QList<QStringList>();
 bool Device::mPositiveAck = false;
 QHash<QString,QString> Device::mInfo = QHash<QString,QString>();
 
-Device::Device( QObject *parent = 0 ) : ErrorHandlerBase( parent )
+Device::Device( QObject *parent ) : ErrorHandlerBase( parent ), mCreated(false)
 {
 	clear();
 	mInfo.insert( "name", QString() );
@@ -21,7 +21,7 @@ Device::Device( QObject *parent = 0 ) : ErrorHandlerBase( parent )
 	mHardwareInterfaces.append( "!proxy" );
 }
 
-Device::Device( const QStringList& hwInterfaceList, const QStringList& hwInterfaceInfoList, const QString & deviceName, QObject *parent ) : ErrorHandlerBase( parent )
+Device::Device( const QStringList& hwInterfaceList, const QStringList& hwInterfaceInfoList, const QString & deviceName, QObject *parent ) : ErrorHandlerBase( parent ), mCreated(false)
 {
 	clear();
 	mHardwareInterfaces = QStringList( hwInterfaceList );
@@ -35,13 +35,13 @@ Device::Device( const QStringList& hwInterfaceList, const QStringList& hwInterfa
 	mHardwareInterfaces.append( "!proxy" );
 }
 
-Device* Device::instance( QObject *parent )
+Device* Device::instance()
 {
-	if( mCreated )
+	if( mInstance->isCreated() )
 		{ return 0; }
 	else
 	{
-		error( QtWarningMsg, "Try to access Device instance, but it hasn't been created yet, use create()", "instance()" );
+		error( QtWarningMsg, "Try to access Device instance, but it hasn't been created yet, use create()", "instance()", "Device" );
 		return mInstance;
 	}
 }
@@ -59,32 +59,32 @@ Device *Device::create(QObject *parent)
 	return mInstance;
 }
 
-bool Device::isValidHwInterface( const QString& hwInterfaceName ) const
+bool Device::isValidHwInterface( const QString& hwInterfaceName )
 {
 	return mHardwareInterfaces.contains( hwInterfaceName );
 }
 
-const QString Device::getHwInterfaceInfo( const QString& name ) const
+const QString Device::getHwInterfaceInfo( const QString& name )
 {
-	return mHardwareInterfaceInfo.value( name, QString() );
+	return mHardwareInterfaceInfo.at( mHardwareInterfaces.indexOf(name) );
 }
 
-const QString Device::getInfo(const QString &key) const
+const QString Device::getInfo(const QString &key)
 {
 	return mInfo.value( key, QString() );
 }
 
-const QString Device::getDescription() const
+const QString Device::getDescription()
 {
 	return mInfo.value( "description" );
 }
 
-const QString Device::getPlatform() const
+const QString Device::getPlatform()
 {
 	return mInfo.value( "platform" );
 }
 
-const QString Device::getProject() const
+const QString Device::getProject()
 {
 	return mInfo.value( "project" );
 }
@@ -119,7 +119,7 @@ const QString Device::messageTypeToString(deviceMessageType_t msgType)
 	}
 }
 
-const QString Device::getName() const
+const QString Device::getName()
 {
 	return mInfo.value( "name" );
 }
@@ -128,7 +128,13 @@ const QString Device::getName() const
 void Device::addHardwareInterface(const QString &hwInterfaceName)
 {
 	if( !mCreated )
-	{ mHardwareInterfaces.append( hwInterfaceName ); }
+	{
+		if( !mHardwareInterfaces.contains(hwInterfaceName) )
+		{
+			mHardwareInterfaces.append( hwInterfaceName );
+			mHardwareInterfaceInfo.append(QString());
+		}
+	}
 }
 
 void Device::addFunction(const QString &hwInterface, const QString &name, const QString &args)
@@ -140,10 +146,24 @@ void Device::addFunction(const QString &hwInterface, const QString &name, const 
 	mFunctions.append(funcDef);
 }
 
+void Device::setInfo(const QString &key, const QString &value)
+{
+	if( !mCreated )
+		{ mInfo.insert( key, value ); }
+}
+
 void Device::addHardwareInterfaceInfo(const QString &hwInterfaceName, const QString &hwInterfaceInfo)
 {
 	if( !mCreated )
-		{ mHardwareInterfaceInfo.insert( hwInterfaceName, hwInterfaceInfo ); }
+	{
+		if( !mHardwareInterfaces.contains(hwInterfaceName) )
+		{
+			mHardwareInterfaces.append( hwInterfaceName );
+			mHardwareInterfaceInfo.append( hwInterfaceInfo );
+		}
+		else
+			{ mHardwareInterfaceInfo.replace( mHardwareInterfaces.indexOf(hwInterfaceName), hwInterfaceInfo ); }
+	}
 }
 
 void Device::setName( const QString & deviceName )
@@ -180,7 +200,7 @@ Device *Device::create( const QStringList& hwInterfaceList, const QStringList& h
 {
 	if( hwInterfaceList.isEmpty() )
 	{
-		ErrorHandlerBase::error( QtCriticalMsg, "Cannot create Device with no hardware interface!", "Device::create()" );
+		ErrorHandlerBase::error( QtCriticalMsg, "Cannot create Device with no hardware interface!", "create()", "Device" );
 		return false;
 	}
 

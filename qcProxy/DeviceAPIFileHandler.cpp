@@ -13,21 +13,22 @@ DeviceAPIFileHandler::DeviceAPIFileHandler( QObject *parent ) : DeviceAPIParser(
 
 bool DeviceAPIFileHandler::load(const QString &apiFilePath)
 {
-	if( apiFilePath.isEmpty() )
+	QString checkedApiFilePath(apiFilePath);
+	if( checkedApiFilePath.isEmpty() )
 	{
-		QString apiFileDir = ProxySettingsManager::instance()->value( "deviceAPIFile/dirPath" );
-		QString apiFileName = ProxySettingsManager::instance()->value( "deviceAPIFile/fileName" );
+		QString apiFileDir = ProxySettingsManager::instance()->value( "deviceAPIFile/dirPath" ).toString();
+		QString apiFileName = ProxySettingsManager::instance()->value( "deviceAPIFile/fileName" ).toString();
 
 		if( apiFileDir.isEmpty() )
 			{ apiFileDir = QDir::current().absolutePath() + "/"; }
 
-		apiFilePath = QDir::cleanPath( apiFileDir.append(apiFileName) );
+		checkedApiFilePath = QDir::cleanPath( apiFileDir.append(apiFileName) );
 	}
 
-	QFileInfo apiFileInfo(apiFilePath);
+	QFileInfo apiFileInfo(checkedApiFilePath);
 	if( !(apiFileInfo.isFile() && apiFileInfo.isReadable()) )
 	{
-		error( QtCriticalMsg, QString("Device API file doesn't exist at path %1").arg(apiFilePath), "load()", errDet );
+		error( QtCriticalMsg, QString("Device API file doesn't exist at path %1").arg(apiFilePath), "load()" );
 		return false;
 	}
 
@@ -53,15 +54,16 @@ bool DeviceAPIFileHandler::load(const QString &apiFilePath)
 
 bool DeviceAPIFileHandler::save(const QString &apiFilePath)
 {
-	if( apiFilePath.isEmpty() )
+	QString checkedPath(apiFilePath);
+	if( checkedPath.isEmpty() )
 	{
-		QString apiFileDir = ProxySettingsManager::instance()->value( "deviceAPIFile/dirPath" );
-		QString apiFileName = ProxySettingsManager::instance()->value( "deviceAPIFile/fileName" );
+		QString apiFileDir = ProxySettingsManager::instance()->value( "deviceAPIFile/dirPath" ).toString();
+		QString apiFileName = ProxySettingsManager::instance()->value( "deviceAPIFile/fileName" ).toString();
 
 		if( apiFileDir.isEmpty() )
 			{ apiFileDir = QDir::current().absolutePath() + "/"; }
 
-		apiFilePath = QDir::cleanPath( apiFileDir.append(apiFileName) );
+		checkedPath = QDir::cleanPath( apiFileDir.append(apiFileName) );
 	}
 	/// @todo Implement
 }

@@ -4,6 +4,7 @@
 #include "ErrorHandlerBase.h"
 #include <QTcpSocket>
 #include "ClientCommandFactory.h"
+#include "ClientPacket.h"
 
 namespace QtuC
 {
@@ -28,8 +29,6 @@ enum connectionState_t
 	connectionDisconnected,
 	connectionError
 };
-
-class ClientCommandBase;
 
 /** ClientConnectionManagerBase class.
  *	Provides a basic interface to communicate with a client.
@@ -93,7 +92,7 @@ public:
 	 *	Commands should be created with new on the heap.
 	 *	@param cmd The command to send.
 	 *	@return True on success, false otherwise.*/
-	bool sendCommand( const ClientCommandBase *cmd );
+	bool sendCommand( ClientCommandBase *cmd );
 
 	/** Send multiple commands to the client.
 	 *	The commands will be sent in one packet.

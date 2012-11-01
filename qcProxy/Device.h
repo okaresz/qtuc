@@ -60,43 +60,43 @@ public:
 	/** Get Device instance.
 	  *	You can only get the pointer, if the device object has been created with create(), and the initialization has not yet occured, so setCreated() hasn't been called yet.
 	  *	@return Pointer to the Device singleton, or 0 if it is already initialized.*/
-	static Device *instance( QObject *parent = 0 );
+	static Device *instance();
 
 	/** Get if hardware interface exists and is valid.
 	  *	@param hwInterfaceName Name of the hardware interface.
 	  *	@return True if hardware interface exists and is valid, false otherwise.*/
-	static bool isValidHwInterface( const QString& hwInterfaceName ) const;
+	static bool isValidHwInterface( const QString& hwInterfaceName );
 
 	/** Get info about a hardware interface.
 	  *	@param hwInterfaceName Name of the hardware interface.
 	  *	@return The info param of the hardware interface.*/
-	static const QString getHwInterfaceInfo( const QString& hwInterfaceName ) const;
+	static const QString getHwInterfaceInfo( const QString& hwInterfaceName );
 
 	/** Get device information.
 	  *	Returns valid value only after the device handshake has happened.
 	  *	@param key Name of the information.
 	  *	@return The requested device information.*/
-	static const QString getInfo( const QString & key ) const;
+	static const QString getInfo( const QString & key );
 
 	/** Get the device name.
 	 *	Returns valid value only after the device handshake has happened.
 	 *	@return The device name.*/
-	static const QString getName() const;
+	static const QString getName();
 
 	/** Get the device description.
 	 *	Returns valid value only after the device handshake has happened.
 	 *	@return The device description 8if exists, empty string otherwise.*/
-	static const QString getDescription() const;
+	static const QString getDescription();
 
 	/** Get the device platform.
 	 *	Returns valid value only after the device handshake has happened.
 	 *	@return The device platform if exists, empty string otherwise.*/
-	static const QString getPlatform() const;
+	static const QString getPlatform();
 
 	/** Get the device project.
 	 *	Returns valid value only after the device handshake has happened.
 	 *	@return The device project if exists, empty string otherwise.*/
-	static const QString getProject() const;
+	static const QString getProject();
 
 	/** Get device connection status. Will be true only after a successful handshake.
 	 *	@return COnnection status: true if connected, false if not or an error happened.*/
@@ -104,9 +104,14 @@ public:
 
 	/** Set whether the device uses positive acknowledge to verify received commands.
 	  *	@return True if device uses poitive acknowledge, false if not.*/
-	static bool positiveAck() const
+	static bool positiveAck()
 		{ return mPositiveAck; }
 
+	/** Get if device instance was created.
+	  *	If device is created, th device instance cannot be reached, only swapped with swap().
+	  *	@return True if the device has already been created, false otherwise.*/
+	bool isCreated()
+		{ return mCreated; }
 
 	/** Mark device as created.
 	  *	After this function call, the device singleton cannot be reached or modified, only the static getters will work.*/
@@ -137,7 +142,7 @@ public slots:
 	/** Add hardware interface with info (short description).
 	  *	@param hwInterfaceName Name of the new hardware interface.
 	  *	@param hwInterfaceInfo Info to add.*/
-	void addHardwareInterface( const QString &hwInterfaceName, const QString &hwInterfaceInfo );
+	void addHardwareInterfaceInfo( const QString &hwInterfaceName, const QString &hwInterfaceInfo );
 
 	/** Add new device function.
 	  *	@param hwInterface Hardware interface of the function.
@@ -171,10 +176,6 @@ public slots:
 	 *	@param project The new project for the device.*/
 	void setProject( const QString &project );
 
-	/** Set device project.
-	 *	@param project The new project for the device.*/
-	void setProject( const QString &project );
-
 	/** Set whether the device uses positive acknowledge to verify received commands.
 	  *	@param posAck Set to true if device uses poitive acknowledge, false if not.*/
 	void setPositiveAck( bool posAck );
@@ -182,9 +183,9 @@ public slots:
 private:
 
 	static Device *mInstance;	///< Pointer to the Device singleton.
-	bool mCreated = false;	///< After the Device is created, it cannot be modified.
+	bool mCreated;	///< After the Device is created, it cannot be modified.
 	static QStringList mHardwareInterfaces;	///< List of the valid hardware interfaces.
-	static QHash<QString,QString> mHardwareInterfaceInfo;	///< List of hardware interface informations.
+	static QStringList mHardwareInterfaceInfo;	///< List of hardware interface informations.
 	static QList<QStringList> mFunctions;		///< Device function list.
 	static bool mPositiveAck;	///< Whether the device uses positive acknowledge to verify received commands.
 	static QHash<QString,QString> mInfo;	///< Several device information, parsed from deviceAPI.

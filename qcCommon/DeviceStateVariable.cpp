@@ -3,7 +3,7 @@
 
 using namespace QtuC;
 
-DeviceStateVariable::DeviceStateVariable(const DeviceStateVariable &otherVar)
+DeviceStateVariable::DeviceStateVariable(const DeviceStateVariable &otherVar) : ErrorHandlerBase(0)
 {
 	mName = otherVar.getName();
 	mHwInterface = otherVar.getHwInterface();
@@ -23,38 +23,39 @@ DeviceStateVariable::DeviceStateVariable(const DeviceStateVariable &otherVar)
 	mConvertEngine.globalObject().setProperty( mName, mConvertEngine.newVariant(mRawValue) );
 }
 
-DeviceStateVariable::init( const QString &varHwInterface, const QString &varName, const QString &varType, const QString &varRawType, const QString convertScriptFromRaw, const QString convertScriptToRaw )
+DeviceStateVariable* DeviceStateVariable::init( const QString &varHwInterface, const QString &varName, const QString &varType, const QString &varRawType, const QString convertScriptFromRaw, const QString convertScriptToRaw )
 {
 	if( varName.isEmpty() )
 	{
-		error( QtWarningMsg, "DeviceStateVariable initialized without a name! Variable not created.", "DeviceStateVariable::init" );
+		error( QtWarningMsg, "DeviceStateVariable initialized without a name! Variable not created.", "init()", "DeviceStateVariable" );
 		return 0;
 	}
 	if( varHwInterface.isEmpty() )
 	{
-		error( QtWarningMsg, "DeviceStateVariable initialized without a hardwareInterface. Variable not created.", "DeviceStateVariable::init" );
+		error( QtWarningMsg, "DeviceStateVariable initialized without a hardwareInterface. Variable not created.", "init()", "DeviceStateVariable" );
 		return 0;
 	}
-	if( !Device::isValidHwInterface(varHwInterface) )
+	/// @todo hope only this one
+	/*if( !Device::isValidHwInterface(varHwInterface) )
 	{
-		error( QtWarningMsg, "Attempt to create a DeviceStateVariable with invalid hardware interface: "+varHwInterface+". Variable not created.", "DeviceStateVariable::init" );
+		error( QtWarningMsg, "Attempt to create a DeviceStateVariable with invalid hardware interface: "+varHwInterface+". Variable not created.", "init()", "DeviceStateVariable" );
 		return 0;
-	}
+	}*/
 	if( !( !varType.isEmpty() && isValidType(varType) ) )
 	{
-		error( QtWarningMsg, "DeviceStateVariable initialized without a valid type ("+varType+")! Variable not created.", "DeviceStateVariable::init" );
+		error( QtWarningMsg, "DeviceStateVariable initialized without a valid type ("+varType+")! Variable not created.", "init()", "DeviceStateVariable" );
 		return 0;
 	}
 	if( !varRawType.isEmpty() && !isValidType(varRawType) )
 	{
-		error( QtWarningMsg, "DeviceStateVariable initialized an invalid rawType ("+varRawType+")! Variable not created.", "DeviceStateVariable::init" );
+		error( QtWarningMsg, "DeviceStateVariable initialized an invalid rawType ("+varRawType+")! Variable not created.", "init()", "DeviceStateVariable" );
 		return 0;
 	}
 
 	return new DeviceStateVariable( varHwInterface, varName, varType, varRawType, convertScriptFromRaw, convertScriptToRaw );
 }
 
-DeviceStateVariable::DeviceStateVariable( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& varRawType, const QString convertScriptFromRaw, , const QString convertScriptToRaw ) : ErrorHandlerBase(0)
+DeviceStateVariable::DeviceStateVariable( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& varRawType, const QString convertScriptFromRaw, const QString convertScriptToRaw ) : ErrorHandlerBase(0)
 {
 	mName = varName;
 	mHwInterface = varHwInterface;
@@ -87,15 +88,15 @@ bool DeviceStateVariable::isValid() const
 
 void DeviceStateVariable::setFromDevice( const QString& newRawValue )
 {
-	QVariant castNewRawVal( variantFromString( newRawValue, rawType ) );
+	QVariant castNewRawVal( variantFromString( newRawValue, mRawType ) );
 
 	if( !castNewRawVal.isValid() || castNewRawVal.isNull() )
 	{
-		QHash errDetails;
+		errorDetails_t errDetails;
 		errDetails.insert( "name", mName );
-		errDetails.insert( "rawType", mRawType );
+		errDetails.insert( "rawType",  QString(QVariant::typeToName(mRawType)) );
 		errDetails.insert( "newRawValue", newRawValue );
-		error( QtWarningMsg, "Invalid value from device!", "setFromDevice", errDetails );
+		error( QtWarningMsg, "Invalid value from device!", "setFromDevice()", errDetails );
 		return;
 	}
 
@@ -130,17 +131,17 @@ const QVariant DeviceStateVariable::getValue() const
 	return mValue;
 }
 
-const QVariant::Type DeviceStateVariable::getRawType() const
+QVariant::Type DeviceStateVariable::getRawType() const
 {
 	return mRawType;
 }
 
-const QVariant::Type DeviceStateVariable::getType() const
+QVariant::Type DeviceStateVariable::getType() const
 {
 	return mType;
 }
 
-const QString DeviceStateVariable::getConvertScript(bool fromRaw)
+const QString DeviceStateVariable::getConvertScript(bool fromRaw) const
 {
 	if( fromRaw )
 		{ return mConvertFromRawScript; }
@@ -152,10 +153,10 @@ bool DeviceStateVariable::setRawValue( const QVariant& newRawValue )
 {
 	if( !newRawValue.isValid() )
 	{
-		QHash errDet;
+		errorDetails_t errDet;
 		errDet.insert( "varName", mName );
 		errDet.insert( "newRawValue", newRawValue.toString() );
-		error( QtWarningMsg, "New raw value is invalid.", errDet, "setRawValue(const QVariant&)" );
+		error( QtWarningMsg, "New raw value is invalid.", "setRawValue(const QVariant&)", errDet );
 		return false;
 	}
 	swapRawValue(newRawValue);
@@ -198,10 +199,10 @@ bool DeviceStateVariable::setValue( const QVariant& newValue )
 {
 	if( !newValue.isValid() )
 	{
-		QHash errDetails;
+		errorDetails_t errDetails;
 		errDetails.insert( "varName", mName );
 		errDetails.insert( "newValue", newValue.toString() );
-		error( QtWarningMsg, "New value is invalid.", errDetails, "setValue(const QVariant&)" );
+		error( QtWarningMsg, "New value is invalid.", "setValue(const QVariant&)", errDetails );
 		return false;
 	}
 	swapValue(newValue);
@@ -240,7 +241,7 @@ bool DeviceStateVariable::setValue( bool newValue )
 	return true;
 }
 
-DeviceStateVariable::emitValueChanged() const
+void DeviceStateVariable::emitValueChanged()
 {
 	if( !isValid() )
 	{
@@ -254,13 +255,13 @@ DeviceStateVariable::emitValueChanged() const
 
 	int v = mValue.toInt(&ok);
 	if( !ok )
-		{ error( QtWarningMsg, QString("StateVar conversion raw to int failed. Variable: %1, value: %2").arg( mName, mValue.toString() ) ); }
+	{ error( QtWarningMsg, QString("StateVar conversion raw to int failed. Variable: %1, value: %2").arg( mName, mValue.toString() ), "emitValueChanged()" ); }
 	else
 		{ emit valueChanged( v ); }
 
 	double vd = mValue.toDouble(&ok);
 	if( !ok )
-		{ error( QtWarningMsg, QString("StateVar conversion raw to double failed. Variable: %1, value: %2").arg( mName, mValue.toString() ) ); }
+		{ error( QtWarningMsg, QString("StateVar conversion raw to double failed. Variable: %1, value: %2").arg( mName, mValue.toString() ), "emitValueChanged()" ); }
 	else
 		{ emit valueChanged( vd ); }
 
@@ -269,7 +270,7 @@ DeviceStateVariable::emitValueChanged() const
 	emit valueChanged(b);
 }
 
-void DeviceStateVariable::emitValueChangedRaw() const
+void DeviceStateVariable::emitValueChangedRaw()
 {
 	if( !isValid() )
 	{
@@ -283,13 +284,13 @@ void DeviceStateVariable::emitValueChangedRaw() const
 
 	int v = mRawValue.toInt(&ok);
 	if( !ok )
-		{ error( QtWarningMsg, QString("StateVar conversion raw to int failed. Variable: %1, value: %2").arg( mName, mRawValue.toString() ) ); }
+		{ error( QtWarningMsg, QString("StateVar conversion raw to int failed. Variable: %1, value: %2").arg( mName, mRawValue.toString() ), "emitValueChangedRaw()" ); }
 	else
 		{ emit valueChangedRaw( v ); }
 
 	double vd = mRawValue.toDouble(&ok);
 	if( !ok )
-		{ error( QtWarningMsg, QString("StateVar conversion raw to double failed. Variable: %1, value: %2").arg( mName, mRawValue.toString() ) ); }
+		{ error( QtWarningMsg, QString("StateVar conversion raw to double failed. Variable: %1, value: %2").arg( mName, mRawValue.toString() ), "emitValueChangedRaw()" ); }
 	else
 		{ emit valueChangedRaw( vd ); }
 
@@ -302,9 +303,9 @@ void DeviceStateVariable::emitValueChangedRaw() const
 
 bool DeviceStateVariable::scriptConvert( bool fromRaw )
 {
-	QString convertScript;
+	QString *convertScript;
 	QVariant::Type fromType, toType;
-	QVariant fromValue, toValue;
+	QVariant *fromValue, *toValue;
 
 	if( fromRaw )
 	{
@@ -325,7 +326,7 @@ bool DeviceStateVariable::scriptConvert( bool fromRaw )
 
 	//----------------------------------------------
 
-	if( convertScript.isEmpty() )
+	if( convertScript->isEmpty() )
 	{
 		if( fromType == toType )
 		{
@@ -333,9 +334,9 @@ bool DeviceStateVariable::scriptConvert( bool fromRaw )
 		}
 		else
 		{
-			QVariant tmpVar( fromValue );
+			QVariant tmpVar( *fromValue );
 			if( !tmpVar.convert(toType) ) return false;
-			toValue = tmpVar;
+			*toValue = tmpVar;
 		}
 	}
 	else
@@ -345,9 +346,9 @@ bool DeviceStateVariable::scriptConvert( bool fromRaw )
 
 		if( mConvertEngine.hasUncaughtException() )
 		{
-			QHash errDetails;
+			errorDetails_t errDetails;
 			errDetails.insert( "varName", mName );
-			errDetails.insert( "line", mConvertEngine.uncaughtExceptionLineNumber() );
+			errDetails.insert( "line", QString::number(mConvertEngine.uncaughtExceptionLineNumber()) );
 			errDetails.insert( "message", mConvertEngine.uncaughtException().toString() );
 			QString dirStr = fromRaw? "fromRaw":"toRaw";
 			error( QtWarningMsg, QString("Error in convert script (%1)!").arg(dirStr), "calculateValue()", errDetails );
@@ -356,11 +357,12 @@ bool DeviceStateVariable::scriptConvert( bool fromRaw )
 		else
 		{
 			if( toType == scriptReturn.type() )
-				{ toValue = scriptReturn; }
+				{ *toValue = scriptReturn; }
 			else
 			{
-				if( !convertQVariant(scriptReturn, toType) ) return false;
-				toValue = scriptReturn;
+				if( !convertQVariant(scriptReturn, toType) )
+					{ return false; }
+				*toValue = scriptReturn;
 			}
 			return true;
 		}
@@ -399,14 +401,17 @@ QVariant DeviceStateVariable::variantFromString( const QString& strVal, QVariant
 	switch( varType )
 	{
 		case QVariant::String:
+		{
 			castedNewVal = strVal;
 			break;
+		}
 		case QVariant::Int:
+		{
 			bool ok;
 			castedNewVal = strVal.toInt(&ok, 0);
 			if( !ok )
 			{
-				QHash errDetails;
+				errorDetails_t errDetails;
 				errDetails.insert( "varName", mName );
 				errDetails.insert( "strVal", strVal );
 				errDetails.insert( "toType", QVariant::typeToName(varType) );
@@ -414,12 +419,14 @@ QVariant DeviceStateVariable::variantFromString( const QString& strVal, QVariant
 				return QVariant();
 			}
 			break;
+		}
 		case QVariant::Double:
+		{
 			bool ok;
 			castedNewVal = strVal.toDouble(&ok);
 			if( !ok )
 			{
-				QHash errDetails;
+				errorDetails_t errDetails;
 				errDetails.insert( "varName", mName );
 				errDetails.insert( "strVal", strVal );
 				errDetails.insert( "toType", QVariant::typeToName(varType) );
@@ -427,12 +434,17 @@ QVariant DeviceStateVariable::variantFromString( const QString& strVal, QVariant
 				return QVariant();
 			}
 			break;
+		}
 		case QVariant::Bool:
+		{
 			bool b = !( strVal == "false" || strVal == "off" || strVal == "low" || strVal == "0" );
 			castedNewVal = b;
+			break;
+		}
 		default:
-			error( QtWarningMsg, "Type ("+QVariant::typeToName(varType)+") is invalid", "variantFromString()" );
+			error( QtWarningMsg, QString("Type (")+QVariant::typeToName(varType)+") is invalid", "variantFromString()" );
 			return QVariant();
+			break;
 	}
 	return castedNewVal;
 }
@@ -458,9 +470,9 @@ bool DeviceStateVariable::isValidType( const QString &typeStr )
 
 void DeviceStateVariable::swapRawValue( const QVariant &newRawVal )
 {
-	if( mRawValue != newRawValue )
+	if( mRawValue != newRawVal )
 	{
-		mRawValue = newRawValue;
+		mRawValue = newRawVal;
 		/// @todo set update time?? depends on positive ack?
 		emitValueChangedRaw();
 		emit setOnDevice(getDeviceReadyString());
@@ -472,7 +484,7 @@ void DeviceStateVariable::swapValue( const QVariant &newValue )
 {
 	if( mValue != newValue )
 	{
-		mRawValue = newRawValue;
+		mValue = newValue;
 		emitValueChanged();
 		calculateRawValue();
 	}
@@ -480,10 +492,10 @@ void DeviceStateVariable::swapValue( const QVariant &newValue )
 
 bool DeviceStateVariable::convertQVariant( QVariant &var, QVariant::Type toType )
 {
-	if( fromType == toType ) return true;
+	if( var.type() == toType ) return true;
 	if( !var.convert(toType) )
 	{
-		QHash errDetails;
+		errorDetails_t errDetails;
 		errDetails.insert( "varName", mName );
 		errDetails.insert( "value (converted to string)", var.toString() );
 		errDetails.insert( "fromType", QVariant::typeToName(var.type()) );
@@ -504,7 +516,7 @@ qint64 DeviceStateVariable::getAgeMs() const
 	return QDateTime::currentMSecsSinceEpoch() - mLastUpdate;
 }
 
-bool DeviceStateVariable::startAutoUpdate()
+bool DeviceStateVariable::startAutoUpdate( int freqHz )
 {
 	/// @todo Implement
 }
@@ -514,7 +526,7 @@ bool DeviceStateVariable::setAutoUpdateFrequency( int freqHz )
 	/// @todo Implement
 }
 
-void DeviceStateVariable::setAutoUpdate( bool state )
+bool DeviceStateVariable::setAutoUpdate( bool state )
 {
 	/// @todo Implement
 }
@@ -524,9 +536,9 @@ bool DeviceStateVariable::setConvertScript( bool fromRaw, const QString &scriptS
 	QScriptSyntaxCheckResult syntaxCheck = mConvertEngine.checkSyntax(scriptStr);
 	if( syntaxCheck.state() != QScriptSyntaxCheckResult::Valid )
 	{
-		QHash errDetails;
+		errorDetails_t errDetails;
 		errDetails.insert( "varName", mName );
-		errDetails.insert( "line", syntaxCheck.errorLineNumber() );
+		errDetails.insert( "line", QString::number(syntaxCheck.errorLineNumber()) );
 		errDetails.insert( "message", syntaxCheck.errorMessage() );
 		QString dirStr = fromRaw? "fromRaw":"toRaw";
 		error( QtWarningMsg, QString("Invalid conversion script syntax (%1)!").arg(dirStr), "setConvertScript()", errDetails );
@@ -555,10 +567,10 @@ int DeviceStateVariable::getAutoUpdateFrequency() const
 	if( getAutoUpdate() )
 		{ return mAutoUpdateFrequency; }
 	else
-		{ return 0;
+		{ return 0; }
 }
 
-const QString DeviceStateVariable::getDeviceReadyString()
+const QString DeviceStateVariable::getDeviceReadyString() const
 {
 	switch(mRawType)
 	{

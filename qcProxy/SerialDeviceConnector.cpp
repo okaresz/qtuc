@@ -23,7 +23,7 @@ bool SerialDeviceConnector::sendCommand(const DeviceCommand &cmd)
 		return false;
 	}
 
-	if( mSerialPort->write( cmd.getCommandString() ) <= 0 )
+	if( mSerialPort->write( cmd.getCommandString().toStdString().c_str() ) <= 0 )
 	{
 		errorDetails_t errDet;
 		errDet.insert( "cmdStr", cmd.getCommandString() );
@@ -31,7 +31,7 @@ bool SerialDeviceConnector::sendCommand(const DeviceCommand &cmd)
 		error( QtWarningMsg, "Failed to send command to device.", "senmdCommand()", errDet );
 	}
 	else
-		{ debug( debugLevelVerbose, QString("Command sent on serial: %1").arg(cmd.getCommandString()) ); }
+		{ debug( debugLevelVerbose, QString("Command sent on serial: %1").arg(cmd.getCommandString()), "sendCommand()" ); }
 }
 
 void SerialDeviceConnector::receivePart()
@@ -82,9 +82,9 @@ void SerialDeviceConnector::closePort()
 
 bool QtuC::SerialDeviceConnector::connectPort()
 {
-	mSerialPort->setPort( ProxySettingsManager::instance()->value( "devicePort/portName" ); );
+	mSerialPort->setPort( ProxySettingsManager::instance()->value( "devicePort/portName" ).toString() );
 
-	QString serialBaud = ProxySettingsManager::instance()->value( "devicePort/baudRate" );
+	QString serialBaud = ProxySettingsManager::instance()->value( "devicePort/baudRate" ).toString();
 
 	if( mSerialPort->open( QIODevice::ReadWrite | QIODevice::Unbuffered ) )
 	{
@@ -118,11 +118,11 @@ bool QtuC::SerialDeviceConnector::connectPort()
 			return false;
 		}
 
-		debug( "Serial port opened", "connectPort()" );
+		debug( debugLevelInfo, "Serial port opened", "connectPort()" );
 	}
 	else
 	{
-		error( QtCriticalMsg, QString( "Opening serial port %1 failed" ).arg( ProxySettingsManager::instance()->value( "devicePort/portName" ) ), "connectPort()" );
+		error( QtCriticalMsg, QString( "Opening serial port %1 failed" ).arg( ProxySettingsManager::instance()->value( "devicePort/portName" ).toString() ), "connectPort()" );
 		return false;
 	}
 	return true;

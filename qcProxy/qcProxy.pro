@@ -4,16 +4,13 @@
 #
 #-------------------------------------------------
 
-QT       += core network xml
+QT       += core network xml script
 
 QT       -= gui
 
 TARGET = qcProxy
 CONFIG   += console serialport
 CONFIG   -= app_bundle
-
-#for static linking
-#CONFIG   += link_prl
 
 TEMPLATE = app
 
@@ -45,8 +42,21 @@ HEADERS += \
     QcProxy.h
 
 
-CONFIG(debug, debug|release):unix:!macx:!symbian: LIBS += -L$$PWD/../QSerialDevice/lib/ -lSerialPortd-qt481-x86_64
-CONFIG(release, debug|release):unix:!macx:!symbian: LIBS += -L$$PWD/../QSerialDevice/lib/ -lSerialPort-qt481-x86_64
+CONFIG(debug, debug|release):unix:!macx:!symbian: LIBS += -L$$PWD/../QSerialDevice/lib/ -lSerialPort
+#CONFIG(debug, debug|release):unix:!macx:!symbian: LIBS += -L$$PWD/../QSerialDevice/lib/ -lSerialPortd-qt481-x86
+CONFIG(release, debug|release):unix:!macx:!symbian: LIBS += -L$$PWD/../QSerialDevice/lib/ -lSerialPort-qt481-x86
 
 INCLUDEPATH += $$PWD/../QSerialDevice/include
 DEPENDPATH += $$PWD/../QSerialDevice/include
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/ -lqcCommon
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/ -lqcCommond
+else:symbian: LIBS += -lqcCommon
+else:unix: LIBS += -L$$OUT_PWD/../qcCommon/ -lqcCommon
+
+INCLUDEPATH += $$PWD/../qcCommon
+DEPENDPATH += $$PWD/../qcCommon
+
+win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/qcCommon.lib
+else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/qcCommond.lib
+else:unix:!symbian: PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/libqcCommon.a

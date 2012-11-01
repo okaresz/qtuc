@@ -14,7 +14,7 @@ class ClientCommandHeartBeat : public ClientCommandBase
 public:
 	ClientCommandHeartBeat( QObject *parent = 0 );
 
-	ClientCommandHeartBeat *replyToBeat( ClientCommandHeartBeat *heartBeat );
+	ClientCommandHeartBeat *cloneReply(  );
 
 	// Inherited methods
 
@@ -26,7 +26,7 @@ public:
 
 	ClientCommandBase *exactClone();
 
-	const QDomElement &getDomElement() const;
+	QDomElement getDomElement() const;
 
 	bool isValid() const;
 
@@ -39,7 +39,7 @@ private:
 	static quint32 heartBeatCounter;	///< The count heartBeat instantiations.
 	quint32 mId;	///< The Id of the heartBeat, set to heartBeatCounter on instantiation..
 	quint32 mAck;	///< Store the ID of the heartBeat this instance is a reply to.
-	bool mIsReply = false;	///< Whether this heartBeat instance is a reply to another,
+	bool mIsReply;	///< Whether this heartBeat instance is a reply to another,
 };
 
 }	//QtuC::

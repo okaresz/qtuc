@@ -17,13 +17,13 @@ public:
 	~SerialDeviceConnector();
 
 	/// Inherited from DeviceConnectionManagerBase.
-	virtual bool sendCommand( const DeviceCommand &cmd );
+	bool sendCommand( const DeviceCommand &cmd );
 
 	/// Inherited from DeviceConnectionManagerBase.
-	virtual void closeDevice();
+	void closeDevice();
 
 	/// Inherited from DeviceConnectionManagerBase.
-	virtual bool openDevice();
+	bool openDevice();
 
 	/** Close serial port.*/
 	void closePort();
