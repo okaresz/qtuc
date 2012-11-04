@@ -1,3 +1,8 @@
+Figure out some sane Packet and command deletion plan...
+	all packets and commands are deleted by sendPacket and send* functions
+	incoming packets and commands are deleted after use: packets are when commands are detached from them, commands are at higher level...
+	document this.
+
 check DeviceStateVariable action tree
 
 check and implement the device-safe string handling at receiving/sending commands
@@ -6,12 +11,16 @@ check destructor chains, proper object deletions
 
 implement connection lost detection
 
+USE INIT FUNCTIONS
+if multiple constructors exist, you will always forget to update one of them... (if some modifications needed in the common c'tor code)
+
 doc todo-s
 
 write a short how-to use for every class doc.
 
 fix doxygen errors
 check doc, write missing func/class doc
+class references must include namespace.... QtuC::
 
 check whole code for memleaks
 
@@ -22,3 +31,11 @@ delete all member object instances, created with new in constructors.
 validate deviceAPI.xml! : http://doc.qt.digia.com/4.7/xmlpatterns-schema.html
 
 packet/commandClass chaos...
+
+------------------
+QtSerialPort building:
+
+just build it.
+for debug build, change QT.serialport.name to SerialPortd in src/serialport/serialport.pri
+	this will be both the .so file name and the SONAME, which you can read with readelf -d <so file>
+copy somewhere, where the linker can find it. both compile- and runtime.

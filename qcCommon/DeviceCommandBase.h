@@ -110,6 +110,7 @@ public:
 	bool setArgList( const QStringList& argList );
 
 	/** Set argument.
+	  *	If argument already exist, overwrite, otherwise append. If index is greater than argument count, the argument is appended.
 	  *	@param arg The argument value.
 	  *	@param index The index of the argument to set. 0 if omitted.*/
 	bool setArg( const QString &arg, int index = 0 );

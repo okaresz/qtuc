@@ -11,7 +11,7 @@ quint64 ClientPacket::mPacketCount = 0;
 
 ClientPacket::ClientPacket( const QDomElement &packetElement, QObject *parent ) : ErrorHandlerBase(parent)//, mClass(packetUndefined)
 {
-	mIdNum = mPacketCount++;
+	mIdNum = ++mPacketCount;
 
 	if( mCommandFactoryPtr == 0 )
 	{
@@ -38,9 +38,9 @@ ClientPacket::ClientPacket( const QDomElement &packetElement, QObject *parent ) 
 	}
 }
 
-ClientPacket::ClientPacket( QObject *parent )  : ErrorHandlerBase(parent)//, mClass(packetUndefined)
+ClientPacket::ClientPacket()  : ErrorHandlerBase(0)//, mClass(packetUndefined)
 {
-	mIdNum = mPacketCount++;
+	mIdNum = ++mPacketCount;
 	if( mCommandFactoryPtr == 0 )
 	{
 		error( QtWarningMsg, "mCommandFactoryPtr is null, can't create ClientPacket, you must set it before creating a packet", "ClientPacket()" );
@@ -50,7 +50,7 @@ ClientPacket::ClientPacket( QObject *parent )  : ErrorHandlerBase(parent)//, mCl
 
 ClientPacket::ClientPacket( ClientCommandBase *clientCommand, QObject *parent ) : ErrorHandlerBase(parent)//, mClass(packetUndefined)
 {
-	mIdNum = mPacketCount++;
+	mIdNum = ++mPacketCount;
 
 	if( mCommandFactoryPtr == 0 )
 	{
@@ -69,6 +69,8 @@ ClientPacket::~ClientPacket()
 {
 	for( int i=0; i<mCmdList.size(); ++i )
 	{
+		// Commands may be destroyed from outside of this object
+		/// @todo What behaviour is this!?...
 		if( mCmdList.at(i) )
 			{ delete mCmdList.value(i); }
 	}
@@ -155,7 +157,23 @@ bool ClientPacket::appendCommand( ClientCommandBase *clientCommand )
 //		}
 		mCmdList.append(clientCommand);
 		return true;
-//	}
+		//	}
+}
+
+ClientCommandBase *ClientPacket::detachCommand(int index)
+{
+	return removeCommand(index);
+}
+
+ClientCommandBase *ClientPacket::detachCommand(ClientCommandBase *command)
+{
+	for( int i=0; i<mCmdList.size(); ++i )
+	{
+		if( mCmdList.at(i) == command )
+		{
+			return removeCommand(i);
+		}
+	}
 }
 
 void ClientPacket::destroyShell()
@@ -180,6 +198,13 @@ QDomDocument *ClientPacket::buildMarkup() const
 	return packetMarkup;
 }
 
+ClientCommandBase *ClientPacket::removeCommand(int index)
+{
+	ClientCommandBase *tmp = mCmdList.value(index);
+	mCmdList[index] = 0;
+	return tmp;
+}
+
 const QByteArray ClientPacket::getPacketData() const
 {
 	QDomDocument *packetMarkup = buildMarkup();
@@ -191,12 +216,13 @@ const QByteArray ClientPacket::getPacketData() const
 	else
 	{
 		QByteArray packetData = packetMarkup->toByteArray(-1);
+		delete packetMarkup;
 
-		quint16 packetSize = packetData.size() + 1;	// ha! the null terminator!
-		uchar packetSizeCharBigEndian[4];
+		quint16 packetSize = packetData.size();
+		uchar packetSizeCharBigEndian[sizeof(quint16)];
 		qToBigEndian( packetSize, packetSizeCharBigEndian );
 
-		QByteArray rawPacket( (const char*)packetSizeCharBigEndian, 4 );
+		QByteArray rawPacket = QByteArray::fromRawData( (const char*)packetSizeCharBigEndian, sizeof(quint16) );
 		rawPacket.append( packetData );
 		return rawPacket;
 	}
@@ -205,16 +231,16 @@ const QByteArray ClientPacket::getPacketData() const
 ClientPacket* ClientPacket::fromPacketData( const QByteArray &rawPacket )
 {
 	qint16 packetSize = readPacketSize( rawPacket );
-	if( rawPacket.size() < packetSize + 4 )
+	if( rawPacket.size() < packetSize + sizeof(quint16) )
 	{
 		error( QtWarningMsg, "Failed to create ClientPacket: data too short", "fromPacketData()", "ClientPacket" );
 		return 0;
 	}
 
-	if( rawPacket.size() > packetSize + 4 )
+	if( rawPacket.size() > packetSize + sizeof(quint16) )
 		{ debug( debugLevelVerbose, "Data length is more than packet size suggests! Bad things will happen?...", "fromPacketData()", "ClientPacket" ); }
 
-	QByteArray packetData( rawPacket.right( packetSize-1 ) );	// don't count null terminator
+	QByteArray packetData( rawPacket.right( packetSize ) );
 
 	// Let's parse the data!
 	QString packetMarkupText = QString::fromUtf8( packetData.data() );
@@ -253,14 +279,15 @@ ClientPacket* ClientPacket::fromPacketData( const QByteArray &rawPacket )
 
 qint16 ClientPacket::readPacketSize( const QByteArray &rawData )
 {
-	if( rawData.size() < 4 )
+	if( rawData.size() < sizeof(quint16) )
 	{
 		error( QtWarningMsg, "Unable to read packet size: data too short", "readPacketSize()", "ClientPacket" );
 		return 0;
 	}
 	else
 	{
-		return (qint16)qFromBigEndian( rawData.left(4).toShort() );
+		quint16 si = qFromBigEndian<quint16>( (const uchar*)(rawData.left(sizeof(quint16)).data()) );
+		return si;
 	}
 }
 

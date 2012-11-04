@@ -26,6 +26,23 @@ public:
 	/** A custom Qt message handler.
 	  *	See QtGlobal documentation for details.*/
 	static void customMessageHandler( QtMsgType msgType, const char *msg );
+
+	/** Get current application debug level.
+	  *	@return Current debug level.*/
+	static debugLevel_t getDebugLevel()
+		{ return mDebugLevel; }
+
+	/** Set the application debug level.
+	  *	@param level The new debug level to set.*/
+	static void setDebugLevel( debugLevel_t level )
+		{ mDebugLevel = level; }
+
+	// static versions....
+
+	static void error( QtMsgType severity, const QString &msg, char const *functionName, char const*className, const errorDetails_t &details = QHash<const char*,QString>() );
+	static void error( QtMsgType severity, char const *msg, char const *functionName, char const *className, const errorDetails_t &details = QHash<const char*,QString>() );
+	static void debug( debugLevel_t debugLevel, const QString &msg, const char *functionName, const char *className, const errorDetails_t &details = QHash<const char*, QString>() );
+	static void debug( debugLevel_t debugLevel, const char *msg, const char *functionName, const char *className, const errorDetails_t &details = QHash<const char*, QString>() );
 	
 signals:
 	void signalError( QtMsgType severity, QString msg, QString location ) const;
@@ -49,12 +66,11 @@ protected slots:
 	void debug( debugLevel_t debugLevel, const QString &msg, char const *location, const errorDetails_t &details = QHash<const char*, QString>() ) const;
 	void debug( debugLevel_t debugLevel, char const *msg, char const *location, const errorDetails_t &details = QHash<const char*, QString>() ) const;
 
-	// static versions....
+private:
 
-	static void error( QtMsgType severity, const QString &msg, char const *functionName, char const*className, const errorDetails_t &details = QHash<const char*,QString>() );
-	static void error( QtMsgType severity, char const *msg, char const *functionName, char const *className, const errorDetails_t &details = QHash<const char*,QString>() );
-	static void debug( debugLevel_t debugLevel, const QString &msg, const char *functionName, const char *className, const errorDetails_t &details = QHash<const char*, QString>() );
-	static void debug( debugLevel_t debugLevel, const char *msg, const char *functionName, const char *className, const errorDetails_t &details = QHash<const char*, QString>() );
+	static void printError( QtMsgType severity, const QString &msg, char const *functionName, char const*className, const errorDetails_t &details = QHash<const char*,QString>() );
+
+	static debugLevel_t mDebugLevel;	/// Application debug level, set as a command line switch
 };
 
 }	//QtuC::

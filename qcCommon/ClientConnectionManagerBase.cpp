@@ -1,33 +1,69 @@
 #include "ClientConnectionManagerBase.h"
 #include "ClientCommandBase.h"
+#include <QCoreApplication>
 
 using namespace QtuC;
 
+int ClientConnectionManagerBase::mInstanceCount = 0;
 QHash<QString,QString> ClientConnectionManagerBase::mSelfInfo = QHash<QString,QString>();
+ClientCommandFactory *ClientConnectionManagerBase::mCommandFactory = 0;
 
-ClientConnectionManagerBase::ClientConnectionManagerBase( QTcpSocket *socket, QObject *parent ) : ErrorHandlerBase(parent), mState(connectionUnInitialized)
+ClientConnectionManagerBase::ClientConnectionManagerBase( QTcpSocket *socket, bool isServerRole, QObject *parent ) :
+	ErrorHandlerBase(parent),
+	mState(connectionUnInitialized),
+	mServerRole(isServerRole)
 {
-	mCommandFactory = new ClientCommandFactory(this);
-	ClientPacket::setCommandFactoryPtr( mCommandFactory );
-
+	++mInstanceCount;
 	mClientSocket = socket;
 	if( mClientSocket->isOpen() )
 	{
+		if( !mCommandFactory )
+		{
+			mCommandFactory = new ClientCommandFactory(this);
+			ClientPacket::setCommandFactoryPtr( mCommandFactory );
+		}
+
+		if( !mSelfInfo.contains("id") )
+		{
+			debug( debugLevelVerbose, "Self-info is not set for ClientConnectionManagerBase! Call ClientConnectionManagerBase::setSelfInfo() before instantiation", "ClientConnectionManagerBase()" );
+			// set something, because this is required for communication; this will be overwritten from settings
+			QHash<QString,QString> minimalSelfInfo;
+			QString fallBackId = QCoreApplication::instance()->applicationName();
+			if( fallBackId.isEmpty() )
+				{ fallBackId = QString("unknown_client"); }
+			else
+				{ fallBackId = QString( fallBackId.simplified().trimmed().replace(' ', '_').toAscii() ); }
+			minimalSelfInfo.insert( QString("id"), fallBackId );
+			setSelfInfo(minimalSelfInfo);
+		}
+		ClientPacket::setSelfId( mSelfInfo.value(QString("id")) );
+
+		// set some socket params, fine-tune connection...
 		mState = connectionConnected;
 		mClientSocket->setSocketOption( QAbstractSocket::LowDelayOption, 1 );
 		//mClientSocket->setReadBufferSize(80);	//~one Command
 
 		connect( mClientSocket, SIGNAL(readyRead()), this, SLOT(receiveClientData()) );
 		connect( this, SIGNAL(packetReceived(ClientPacket*)), this, SLOT(handleReceivedPacket(ClientPacket*)) );
-		connect( this, SIGNAL(commandReceived(ClientCommandBase*)), this, SLOT(reflex(ClientCommandBase*)) );
 
 		/// @todo Am I sure to handle it locally like this?
-		connect(mClientSocket, SIGNAL(disconnected()), mClientSocket, SLOT(deleteLater()));
+		connect(mClientSocket, SIGNAL(disconnected()), this, SLOT(handleDisconnected()));
 
 		debug( debugLevelInfo, "New client socket connected", "ClientConnectionManagerBase()" );
 	}
 	else
-		{ error( QtWarningMsg, "Huh? Got an empty socket!?", "ClientConnectionManagerBase()" ); }
+	{ error( QtWarningMsg, "Huh? Got an empty socket!?", "ClientConnectionManagerBase()" ); }
+}
+
+ClientConnectionManagerBase::~ClientConnectionManagerBase()
+{
+	debug( debugLevelVerbose, "Disconnect client before closing...", "~ClientConnectionManagerBase()" );
+	if( mClientSocket )
+		mClientSocket->close();
+	if( --mInstanceCount == 0 )
+	{
+		delete mCommandFactory;
+	}
 }
 
 bool ClientConnectionManagerBase::isConnected() const
@@ -40,7 +76,7 @@ bool ClientConnectionManagerBase::isReady() const
 	return ( mState == connectionReady );
 }
 
-const QString &ClientConnectionManagerBase::getID() const
+const QString ClientConnectionManagerBase::getID() const
 {
 	return mClientInfo.value("id");
 }
@@ -76,7 +112,7 @@ bool ClientConnectionManagerBase::setSelfInfo(const QHash<QString, QString> &inf
 {
 	if( infoList.value("id", QString() ).isEmpty() )
 	{
-		error( QtWarningMsg, "Id is missing from selfInfo list", "setSelfInfo()" );
+		ErrorHandlerBase::error( QtWarningMsg, "Id is missing from selfInfo list", "setSelfInfo()", "ClientConnectionManagerBase" );
 		return false;
 	}
 	mSelfInfo = infoList;
@@ -91,7 +127,7 @@ bool ClientConnectionManagerBase::sendCommand( ClientCommandBase *cmd )
 		error( QtWarningMsg, QString("ClientCommand (%1) is invalid").arg(cmd->getName()), "sendCommand()" );
 		return false;
 	}
-	ClientPacket *packet = new ClientPacket( cmd, this );
+	ClientPacket *packet = new ClientPacket( cmd );
 	return sendPacket( packet );
 }
 
@@ -103,7 +139,7 @@ bool ClientConnectionManagerBase::sendCommands( const QList<ClientCommandBase*> 
 		return false;
 	}
 
-	ClientPacket *packet = new ClientPacket( cmdList.at(0), this );
+	ClientPacket *packet = new ClientPacket( cmdList.at(0) );
 	for( int i=1; i<cmdList.size(); ++i )
 	{
 		packet->appendCommand( cmdList.at(i) );
@@ -119,20 +155,42 @@ bool ClientConnectionManagerBase::sendPacket(ClientPacket *packet)
 		if( !checkSocket() )
 		{
 			error( QtWarningMsg, "Client socket is not ready, checkSocket() failed", "sendPacket()" );
+			delete packet;
 			return false;
 		}
 		if( mClientSocket->write( packet->getPacketData() ) < 0 )
 		{
 			error( QtWarningMsg, "Error during sending client packet", "sendPacket()" );
+			delete packet;
 			return false;
 		}
 		else
-			{ return true; }
+		{
+			delete packet;
+			return true;
+		}
 	}
 	else
 	{
 		error( QtWarningMsg, "Packet is invalid", "sendPacket()" );
+		delete packet;
 		return false;
+	}
+}
+
+bool ClientConnectionManagerBase::sendHandShake()
+{
+	mState = connectionHandShaking;
+	ClientCommandHandshake *hs = new ClientCommandHandshake( mSelfInfo );
+	if( !sendCommand( hs ) )
+	{
+		error( QtCriticalMsg, "Failed to send handshake", "sendHandShake()" );
+		return false;
+	}
+	else
+	{
+		debug( debugLevelVeryVerbose, "Sending initial handshake...", "sendHandShake()" );
+		return true;
 	}
 }
 
@@ -145,18 +203,21 @@ void ClientConnectionManagerBase::receiveClientData()
 	}
 
 	//is it worth to read?
-	if( mClientSocket->readBufferSize() < 5 )	//4bytes of packetSize + 1 is the minimum size
+	///  @todo It's not the responsibility ofClientConnectionManagerBase to know how big packet is needed... clean up this sizeof thing from here...
+	quint16 minPackeSize = sizeof(quint16)+1;
+	if( mClientSocket->peek(minPackeSize).size() < minPackeSize )	//2bytes of packetSize + 1 is the minimum size
 		{ return; }
 
 	// read packetSize
-	quint16 packetSize = ClientPacket::readPacketSize( mClientSocket->peek(4) );
-	if( mClientSocket->readBufferSize() < packetSize+4 )
+	quint16 packetSize = ClientPacket::readPacketSize( mClientSocket->peek(sizeof(quint16)) );
+	// has the whole packet arrived?
+	if( mClientSocket->peek(packetSize+sizeof(quint16)).size() < packetSize+sizeof(quint16) )
 		{ return; }
 
-	ClientPacket *packet = ClientPacket::fromPacketData( mClientSocket->read( packetSize+4 ) );
+	ClientPacket *packet = ClientPacket::fromPacketData( mClientSocket->read( packetSize+sizeof(quint16) ) );
 	if( !packet )
 	{
-		error( QtWarningMsg, "Failed to create CLientPacket from data", "receiveClientData()" );
+		error( QtWarningMsg, "Failed to create ClientPacket from data", "receiveClientData()" );
 		return;
 	}
 
@@ -175,37 +236,92 @@ void ClientConnectionManagerBase::handleReceivedPacket(ClientPacket *packet)
 	for( int i=0; i<packetCommands.size(); ++i )
 	{
 		if( packetCommands.at(i)->isValid() )
-		{ emit commandReceived( packetCommands.at(i) ); }
+		{
+			ClientCommandBase *cmd = packet->detachCommand(i);
+			if( !reflex( cmd ) )
+				{ emit commandReceived( cmd ); }
+		}
 		else
 		{
 			error( QtWarningMsg, QString("Received command (%1) is invalid, dropped").arg(packetCommands.at(i)->getName()), "handleReceivedPacket()" );
-			/// @todo This is just ugly... This way packet doesn't know that this command was deleted.
-			packetCommands.at(i)->deleteLater();
+			delete packet->detachCommand(i);
 		}
 	}
 	packet->destroyShell();
 }
 
-void ClientConnectionManagerBase::reflex( ClientCommandBase *command )
+bool ClientConnectionManagerBase::reflex( ClientCommandBase *command )
 {
 	if( command->getName() == "heartBeat" )
-		{ replyHeartBeat( (ClientCommandHeartBeat*)command ); }
-	else if( command->getName() == "handShake" )
-		{ ackHandShake( (ClientCommandHandShake*)command ); }
+	{
+		replyHeartBeat( (ClientCommandHeartBeat*)command );
+		return true;
+	}
+	else if( command->getName() == "handshake" )
+	{
+		ackHandShake( (ClientCommandHandshake*)command );
+		return true;
+	}
+	return false;
 }
 
 void ClientConnectionManagerBase::replyHeartBeat( ClientCommandHeartBeat* incomingHeartBeat )
 {
-	sendCommand( incomingHeartBeat->cloneReply() );
-	incomingHeartBeat->deleteLater();
+	ClientCommandHeartBeat *reply = incomingHeartBeat->cloneReply();
+	sendCommand( reply );
+	delete incomingHeartBeat;
 }
 
-void ClientConnectionManagerBase::ackHandShake( ClientCommandHandShake *handShake )
+void ClientConnectionManagerBase::ackHandShake( ClientCommandHandshake *handshake )
 {
-	mState = connectionHandShaking;
-	/// @todo implement. Two-step? client must ack server hS reply, and just after that will the connection be ready
-	//handShake->deleteLater();
-	mState = connectionReady;
+	if( mServerRole )
+	{
+		if( handshake->isValid() )
+		{
+			if( mState != connectionHandShaking )	//first hs received, reply with our info
+			{
+				mState = connectionHandShaking;
+				mClientInfo = handshake->getInfo();
+				ClientCommandHandshake *replyHs = new ClientCommandHandshake(mSelfInfo, true, this);
+				sendCommand( replyHs );
+				debug( debugLevelVeryVerbose, "Client handshake received, reply with ACK handshake...", "ackHandShake()" );
+			}
+			else	//second hs, an empty ack?
+			{
+				if( handshake->isAck() && handshake->getAck() )
+				{
+					mState = connectionReady;
+					debug( debugLevelInfo, "Client handshake successful, client is ready.", "ackHandShake()" );
+				}
+				else
+					{ error( QtWarningMsg, "Client sent a false ACK or a non-ACK handshake, state remains handshaking.", "ackHandShake()" ); }
+			}
+		}
+	}
+	else
+	{
+		if( mState == connectionHandShaking )
+		{
+			if( handshake->isValid() )
+			{
+				mClientInfo = handshake->getInfo();
+				ClientCommandHandshake *replyHs = new ClientCommandHandshake(true);
+				sendCommand( replyHs );
+				mState = connectionReady;
+				debug( debugLevelInfo, "Handshake successful, connected.", "ackHandShake()" );
+			}
+			//handleReceivedPacket() only pass valid commands
+		}
+		else
+			{ error( QtWarningMsg, "Received handshake, but never sent one. Misbehaving server?... connection state unchanged.", "ackHandShake()" ); }
+	}
+	delete handshake;
+}
+
+void ClientConnectionManagerBase::handleDisconnected()
+{
+	mState = connectionDisconnected;
+	emit clientDisconnected();
 }
 
 bool ClientConnectionManagerBase::checkSocket()

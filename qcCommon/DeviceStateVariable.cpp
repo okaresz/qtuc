@@ -331,12 +331,14 @@ bool DeviceStateVariable::scriptConvert( bool fromRaw )
 		if( fromType == toType )
 		{
 			toValue = fromValue;
+			return true;
 		}
 		else
 		{
 			QVariant tmpVar( *fromValue );
 			if( !tmpVar.convert(toType) ) return false;
 			*toValue = tmpVar;
+			return true;
 		}
 	}
 	else

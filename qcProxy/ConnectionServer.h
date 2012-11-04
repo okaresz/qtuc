@@ -56,6 +56,9 @@ private slots:
 	 *	This slot should be connected to QTcpServer::newConnection() signal.*/
 	void handleNewConnection();
 
+	/** Called when a client has disconnected.*/
+	void handleDisconnect();
+
 private:
 	QTcpServer* mTcpServer;	///< Holds the QTcpServer object
 	QList<ClientConnectionManagerBase*> mClients;	///< The list of connected clients

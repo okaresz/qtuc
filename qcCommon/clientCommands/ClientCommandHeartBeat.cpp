@@ -30,21 +30,6 @@ bool ClientCommandHeartBeat::applyDomElement(const QDomElement &cmdElement)
 	return true;
 }
 
-ClientCommandBase *ClientCommandHeartBeat::cloneWithDomElement(const QDomElement &cmdElement)
-{
-	if( !checkTagName(cmdElement) )
-		{ return 0; }
-
-	ClientCommandHeartBeat *cmd = (ClientCommandHeartBeat*)clone();
-	if( cmd->applyDomElement(cmdElement) )
-	{
-		error( QtWarningMsg, QString("Failed to apply markup element to %1").arg(mName), "cloneWithDomElement()" );
-		return 0;
-	}
-	else
-		{ return cmd; }
-}
-
 ClientCommandBase *ClientCommandHeartBeat::clone()
 {
 	return new ClientCommandHeartBeat(parent());

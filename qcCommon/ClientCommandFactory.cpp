@@ -7,6 +7,7 @@ QList<ClientCommandBase*> ClientCommandFactory::mCommandPrototypes = QList<Clien
 ClientCommandFactory::ClientCommandFactory( QObject *parent ) : ErrorHandlerBase(parent)
 {
 	registerCommand( new ClientCommandHeartBeat(this) );
+	registerCommand( new ClientCommandHandshake(this) );
 }
 
 ClientCommandFactory::~ClientCommandFactory()
@@ -16,7 +17,13 @@ ClientCommandFactory::~ClientCommandFactory()
 
 bool ClientCommandFactory::registerCommand( ClientCommandBase *cmdPrototype )
 {
-	mCommandPrototypes.append( cmdPrototype );
+	if( cmdPrototype )
+	{
+		mCommandPrototypes.append( cmdPrototype );
+		return true;
+	}
+	else
+		{ return false; }
 }
 
 const ClientCommandBase *ClientCommandFactory::getCommand(const QString &cmdName)

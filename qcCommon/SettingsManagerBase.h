@@ -14,9 +14,14 @@ class SettingsManagerBase : public QSettings
 	Q_OBJECT
 public:
 	explicit SettingsManagerBase(QObject *parent = 0);
+
+	~SettingsManagerBase();
+
+	/** Every settings class must reimplement this function, returning an instance of itself (the derived class).
+	 *	@param On first call, the object will be created, so a parent argument should  be passed. On subsequent calls, you can omit it.*/
 	static SettingsManagerBase* instance(QObject *parent = 0);
 
-private:
+protected:
 	static SettingsManagerBase *instancePtr;
 
 	//bool readXML(QIODevice &device, QSettings::SettingsMap &map);

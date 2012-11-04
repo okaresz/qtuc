@@ -144,6 +144,10 @@ public slots:
 	  *	@param hwInterfaceInfo Info to add.*/
 	void addHardwareInterfaceInfo( const QString &hwInterfaceName, const QString &hwInterfaceInfo );
 
+	/// Alias for addHardwareInterfaceInfo.
+	void addHardwareInterface( const QString &hwInterfaceName, const QString &hwInterfaceInfo )
+		{ addHardwareInterfaceInfo( hwInterfaceName, hwInterfaceInfo ); }
+
 	/** Add new device function.
 	  *	@param hwInterface Hardware interface of the function.
 	  *	@param name Name of the function.

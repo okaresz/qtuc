@@ -67,7 +67,10 @@ bool DeviceCommand::setInterface(const QString &hwi)
 		return false;
 	}
 	else
-		{ mHwInterface = hwi; }
+	{
+		mHwInterface = hwi;
+		return true;
+	}
 }
 
 DeviceCommand::DeviceCommand(const DeviceCommandBase &cmdBase) : DeviceCommandBase(cmdBase), mSeparator(' ')

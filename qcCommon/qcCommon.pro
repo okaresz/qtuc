@@ -18,7 +18,8 @@ SOURCES += SettingsManagerBase.cpp \
     DeviceAPIParser.cpp \
     ErrorHandlerBase.cpp \
     ClientCommandFactory.cpp \
-    ClientCommandHeartBeat.cpp
+    clientCommands/ClientCommandHeartBeat.cpp \
+    clientCommands/ClientCommandHandshake.cpp
 
 HEADERS += SettingsManagerBase.h \
     DeviceStateVariable.h \
@@ -31,7 +32,8 @@ HEADERS += SettingsManagerBase.h \
     DeviceAPIParser.h \
     ErrorHandlerBase.h \
     ClientCommandFactory.h \
-    ClientCommandHeartBeat.h \
-    ClientCommands.h
+    clientCommands/ClientCommands.h \
+    clientCommands/ClientCommandHeartBeat.h \
+    clientCommands/ClientCommandHandshake.h
 
-OTHER_FILES +=
+INCLUDEPATH += $$PWD/clientCommands

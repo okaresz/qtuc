@@ -47,7 +47,10 @@ DeviceCommandBase *DeviceCommandBase::build( deviceCommandType_t cmdType, const 
 	if( deviceCommand->checkSetValid() )
 		{ return deviceCommand; }
 	else
-		{ error( QtWarningMsg, "Validity check failed after build()", "build(deviceCommandType_t,DeviceStateVariable)", "DeviceCommandBase" ); }
+	{
+		error( QtWarningMsg, "Validity check failed after build()", "build(deviceCommandType_t,DeviceStateVariable)", "DeviceCommandBase" );
+		return 0;
+	}
 }
 
 bool DeviceCommandBase::isValid() const
@@ -72,6 +75,7 @@ void DeviceCommandBase::setType( deviceCommandType_t type )
 bool DeviceCommandBase::setInterface( const QString &hwi )
 {
 	mHwInterface = hwi;
+	return true;	// can't check, Device is in proxy
 }
 
 void DeviceCommandBase::setVariable( const QString& cv )
@@ -110,6 +114,7 @@ bool DeviceCommandBase::setArg(const QString &arg, int index)
 	}
 	else
 		{ mArgs[index] = arg; }
+	return checkSetValid();
 }
 
 const QString DeviceCommandBase::commandTypeToString( deviceCommandType_t cmdType )

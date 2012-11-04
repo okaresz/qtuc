@@ -26,7 +26,8 @@ SOURCES += main.cpp \
     Device.cpp \
     ConnectionServer.cpp \
     ProxySettingsManager.cpp \
-    QcProxy.cpp
+    QcProxy.cpp \
+    DummyFileDevice.cpp
 
 HEADERS += \
     SerialDeviceConnector.h \
@@ -39,12 +40,12 @@ HEADERS += \
     Device.h \
     ConnectionServer.h \
     ProxySettingsManager.h \
-    QcProxy.h
+    QcProxy.h \
+    DummyFileDevice.h
 
 
-CONFIG(debug, debug|release):unix:!macx:!symbian: LIBS += -L$$PWD/../QSerialDevice/lib/ -lSerialPort
-#CONFIG(debug, debug|release):unix:!macx:!symbian: LIBS += -L$$PWD/../QSerialDevice/lib/ -lSerialPortd-qt481-x86
-CONFIG(release, debug|release):unix:!macx:!symbian: LIBS += -L$$PWD/../QSerialDevice/lib/ -lSerialPort-qt481-x86
+CONFIG(debug, debug|release):unix:!macx:!symbian: LIBS += -lSerialPortd
+CONFIG(release, debug|release):unix:!macx:!symbian: LIBS += -lSerialPort
 
 INCLUDEPATH += $$PWD/../QSerialDevice/include
 DEPENDPATH += $$PWD/../QSerialDevice/include
@@ -55,6 +56,7 @@ else:symbian: LIBS += -lqcCommon
 else:unix: LIBS += -L$$OUT_PWD/../qcCommon/ -lqcCommon
 
 INCLUDEPATH += $$PWD/../qcCommon
+INCLUDEPATH += $$PWD/../qcCommon/clientCommands
 DEPENDPATH += $$PWD/../qcCommon
 
 win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/qcCommon.lib

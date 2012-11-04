@@ -5,22 +5,46 @@ using namespace QtuC;
 ProxySettingsManager::ProxySettingsManager(QObject *parent) :
 	SettingsManagerBase(parent)
 {
+	if( !contains("apiFilePath") )
+		{ setValue( "apiFilePath", "deviceAPI.xml" ); }
+
 	// Device
-	setValue( "device/commandSeparator", QChar(' ') );
+	if( !contains("device/commandSeparator") )
+		{ setValue( "device/commandSeparator", QChar(' ') ); }
 
 	// devicePort
-	setValue( "devicePort/portName", "/dev/ttyS1");
-	setValue( "devicePort/baudRate", 115200 );
+	if( !contains("devicePort/portName") )
+		{ setValue( "devicePort/portName", "/dev/ttyS1"); }
+
+	if( !contains("devicePort/baudRate") )
+		{ setValue( "devicePort/baudRate", 115200 ); }
 
 	// serverInfo
-	setValue( "serverInfo/id", "qcProxy" );
-	setValue( "serverInfo/name", "qcProxy" );
-	setValue( "serverInfo/desc", "Proxy application of QtuC framework." );
-	setValue( "serverInfo/author", "okaresz" );
+	if( !contains("serverInfo/id") )
+		{ setValue( "serverInfo/id", "qcProxy" ); }
+	if( !contains("serverInfo/name") )
+		{ setValue( "serverInfo/name", "qcProxy" ); }
+	if( !contains("serverInfo/desc") )
+		{ setValue( "serverInfo/desc", "Proxy application of QtuC framework." ); }
+	if( !contains("serverInfo/author") )
+		{ setValue( "serverInfo/author", "okaresz" ); }
 
 	// serverSocket
-	setValue( "serverSocket/host", "localhost" );
-	setValue( "serverSocket/port", 24563 );
-	setValue( "serverSocket/serverId", "qcProxy" );
-	setValue( "serverSocket/heartBeatTimeout", 3 );	// sec
+	if( !contains("serverSocket/host") )
+		{ setValue( "serverSocket/host", "localhost" ); }
+	if( !contains("serverSocket/port") )
+		{ setValue( "serverSocket/port", 24563 ); }
+	if( !contains("serverSocket/heartBeatTimeout") )
+		{ setValue( "serverSocket/heartBeatTimeout", 3 ); } // sec
+
+	sync();
+}
+
+ProxySettingsManager* ProxySettingsManager::instance(QObject *parent)
+{
+	if( !instancePtr )
+	{
+		instancePtr = new ProxySettingsManager(parent);
+	}
+	return (ProxySettingsManager*)instancePtr;
 }

@@ -10,6 +10,21 @@ ClientCommandBase::~ClientCommandBase()
 	/// @todo implement?
 }
 
+ClientCommandBase *ClientCommandBase::cloneWithDomElement(const QDomElement &cmdElement)
+{
+	if( !checkTagName(cmdElement) )
+		{ return 0; }
+
+	ClientCommandBase *cmd = clone();
+	if( !cmd->applyDomElement(cmdElement) )
+	{
+		error( QtWarningMsg, QString("Failed to apply markup element to %1").arg(mName), "cloneWithDomElement()" );
+		return 0;
+	}
+	else
+		{ return cmd; }
+}
+
 bool ClientCommandBase::isValid() const
 {
 	if(

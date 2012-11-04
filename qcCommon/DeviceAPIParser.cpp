@@ -8,6 +8,11 @@ DeviceAPIParser::DeviceAPIParser ( QObject* parent ) : ErrorHandlerBase(parent)
 
 }
 
+DeviceAPIParser::~DeviceAPIParser()
+{
+	debug( debugLevelVeryVerbose, "DeviceAPIParser destroyed", "~DeviceAPIParser()" );
+}
+
 bool DeviceAPIParser::parseAPI ( const QString& deviceAPIString )
 {
 	/// @todo api encoding!...

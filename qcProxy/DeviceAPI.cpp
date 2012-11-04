@@ -1,6 +1,7 @@
 #include "DeviceAPI.h"
 #include "DeviceCommand.h"
 #include "SerialDeviceConnector.h"
+#include "DummyFileDevice.h"
 #include "DeviceAPIFileHandler.h"
 
 using namespace QtuC;
@@ -8,7 +9,7 @@ using namespace QtuC;
 DeviceAPI::DeviceAPI( QObject *parent ) : ErrorHandlerBase(parent)
 {
 	mStateManager = new DeviceStateManager(this);
-	mDeviceLink = new SerialDeviceConnector(this);
+	mDeviceLink = new DummyFileDevice(this);
 	mDeviceAPI = new DeviceAPIFileHandler(this);
 	mDeviceInstance = 0;
 }
@@ -19,9 +20,10 @@ bool DeviceAPI::call( const QString &hwInterface, const QString &function, const
 	dCmd.setType( deviceCmdCall );
 	dCmd.setInterface( hwInterface );
 	dCmd.setFunction( function );
+	dCmd.setArgumentString(arg);
 	if( !mDeviceLink->sendCommand( dCmd ) )
 	{
-		error( QtWarningMsg, "Device function call failed", "call" );
+		error( QtWarningMsg, "Device function call failed", "call()" );
 		return false;
 	}
 	return true;
@@ -163,10 +165,13 @@ void DeviceAPI::handleDeviceCommand( DeviceCommandBase *cmd )
 {
 	if( cmd->getType() == deviceCmdCall )
 	{
-		if( cmd->getHwInterface() == "!proxy" && cmd->getVariable() == "message" )
-			{ emit messageReceived( Device::messageTypeFromString(cmd->getArg(0)), QStringList( cmd->getArgList().mid(1) ).join(" ") ); }
-		else if( cmd->getHwInterface() == "!proxy" )
-			{ emit commandReceived( cmd ); }
+		if( cmd->getHwInterface() == ":proxy" )
+		{
+			if( cmd->getVariable() == "message" )
+				{ emit messageReceived( Device::messageTypeFromString(cmd->getArg(0)), QStringList( cmd->getArgList().mid(1) ).join(" ") ); }
+			else
+				{ emit commandReceived( cmd ); }
+		}
 	}
 	else
 	{

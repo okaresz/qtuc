@@ -19,6 +19,8 @@ public:
 	/** c'tor*/
 	DeviceAPIParser ( QObject* parent = 0 );
 
+	~DeviceAPIParser();
+
 	/** Parse passed string or try to load from file
 	  *	@param deviceAPIString If passed, parse this string. This must be the full device API definition string, as in the deviceAPI.xml. The XML DTD is optional.
 	  *	If omitted, the parser tries to locate the API file (using the API file path from settings).

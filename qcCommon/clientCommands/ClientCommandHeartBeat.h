@@ -20,8 +20,6 @@ public:
 
 	bool applyDomElement( const QDomElement &cmdElement );
 
-	ClientCommandBase *cloneWithDomElement( const QDomElement &cmdElement );
-
 	ClientCommandBase *clone();
 
 	ClientCommandBase *exactClone();

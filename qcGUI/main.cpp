@@ -1,17 +1,11 @@
-#include <QCoreApplication>
-#include "QcProxy.h"
-#include <QDebug>
+#include <QtGui/QApplication>
+#include "QcGuiMainWindow.h"
 #include "ErrorHandlerBase.h"
-#include <signal.h>
+#include "QcGui.h"
 
 using namespace QtuC;
 
 void parseAppArg( const QString &, int & );
-
-/** Signal handling...
-  *	For more info, see http://www.cplusplus.com/forum/unices/16430/, http://linux.die.net/man/2/sigaction*/
-struct sigaction sigHandlerConf;
-void onSigInt( int signum );
 
 int main(int argc, char *argv[])
 {
@@ -19,18 +13,21 @@ int main(int argc, char *argv[])
 	int versionMinor = 5;
 	int versionFix = 0;
 
-	QCoreApplication qcProxyApp(argc, argv);
+	QApplication qcGuiApp(argc, argv);
 
-	qcProxyApp.setApplicationName( "qcProxy" );
-	qcProxyApp.setOrganizationName( "QtuC" );
-	qcProxyApp.setOrganizationDomain( "QtuC" );
-	qcProxyApp.setApplicationVersion( QString::number(versionMajor) + "." + QString::number(versionMinor) + "." + QString::number(versionFix) );
+	qcGuiApp.setApplicationName( "qcGUI" );
+	qcGuiApp.setOrganizationName( "QtuC" );
+	qcGuiApp.setOrganizationDomain( "QtuC" );
+	qcGuiApp.setApplicationVersion( QString::number(versionMajor) + "." + QString::number(versionMinor) + "." + QString::number(versionFix) );
 
 	// Install a custom mesage handler
 	qInstallMsgHandler( ErrorHandlerBase::customMessageHandler );
 
+	QcGuiMainWindow mainWindow;
+	mainWindow.setWindowTitle( qcGuiApp.applicationName() );
+
 	// Parse arguments
-	QStringList appArgs = qcProxyApp.arguments();
+	QStringList appArgs = qcGuiApp.arguments();
 	for( int i=0; i<appArgs.size(); )
 	{
 		if( i == 0 )	// the command that started this application
@@ -43,24 +40,22 @@ int main(int argc, char *argv[])
 	}
 
 	// ...and let the show begin!
-	QcProxy *proxy = new QcProxy();
-	if( !proxy->start() )
+	QcGui *gui = new QcGui();
+	if( !gui )
 	{
 		//  oops..
 		qCritical( "Fatal error, exit..." );
-		delete proxy;
+		delete gui;
 		return 1;
 	}
 	else
 	{
-		// add *nix signal handlers
-		sigHandlerConf.sa_handler = onSigInt;
-		sigemptyset(&sigHandlerConf.sa_mask);
-		sigHandlerConf.sa_flags = 0;
-		sigaction( SIGINT, &sigHandlerConf, 0 );
+		gui->connect( &qcGuiApp, SIGNAL(aboutToQuit()), gui, SLOT(deleteLater()) );
+		mainWindow.show();
+		gui->connectProxy();
 
 		// Okay! Start the main thread's event loop.
-		return qcProxyApp.exec();
+		return qcGuiApp.exec();
 	}
 }
 
@@ -87,10 +82,4 @@ void parseAppArg( const QString &appArg, int &argIndex )
 	{
 		arg = arg.mid(2);
 	}
-}
-
-void onSigInt(int signum)
-{
-	qDebug( "Cought SIGINT, quit..." );
-	QCoreApplication::instance()->quit();
 }

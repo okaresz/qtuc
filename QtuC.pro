@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
-SUBDIRS += qcProxy qcCommon
+SUBDIRS += qcProxy qcCommon qcGUI
 
-#qcGUI.depends = qcCommon
+qcGUI.depends = qcCommon
 qcProxy.depends = qcCommon

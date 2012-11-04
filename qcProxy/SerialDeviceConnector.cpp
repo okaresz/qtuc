@@ -4,13 +4,13 @@
 using namespace QtuC;
 using namespace QtAddOn::SerialPort;
 
-QtuC::SerialDeviceConnector::SerialDeviceConnector( QObject *parent ) : DeviceConnectionManagerBase( parent )
+SerialDeviceConnector::SerialDeviceConnector( QObject *parent ) : DeviceConnectionManagerBase( parent )
 {
 	mSerialPort = new SerialPort(this);
 	connect(mSerialPort, SIGNAL(readyRead()), this, SLOT(receivePart()));
 }
 
-QtuC::SerialDeviceConnector::~SerialDeviceConnector()
+SerialDeviceConnector::~SerialDeviceConnector()
 {
 	this->closePort();
 }
@@ -29,9 +29,11 @@ bool SerialDeviceConnector::sendCommand(const DeviceCommand &cmd)
 		errDet.insert( "cmdStr", cmd.getCommandString() );
 		errDet.insert( "serialPort error", mSerialPort->errorString() );
 		error( QtWarningMsg, "Failed to send command to device.", "senmdCommand()", errDet );
+		return false;
 	}
 	else
-		{ debug( debugLevelVerbose, QString("Command sent on serial: %1").arg(cmd.getCommandString()), "sendCommand()" ); }
+		{ debug( debugLevelVeryVerbose, QString("Command sent on serial: %1").arg(cmd.getCommandString()), "sendCommand()" ); }
+	return true;
 }
 
 void SerialDeviceConnector::receivePart()
@@ -80,9 +82,10 @@ void SerialDeviceConnector::closePort()
 	}
 }
 
-bool QtuC::SerialDeviceConnector::connectPort()
+bool SerialDeviceConnector::connectPort()
 {
-	mSerialPort->setPort( ProxySettingsManager::instance()->value( "devicePort/portName" ).toString() );
+	//mSerialPort->setPort( ProxySettingsManager::instance()->value( "devicePort/portName" ).toString() );
+	mSerialPort->setPort( "/dev/ttyUSB01" );
 
 	QString serialBaud = ProxySettingsManager::instance()->value( "devicePort/baudRate" ).toString();
 
@@ -122,7 +125,9 @@ bool QtuC::SerialDeviceConnector::connectPort()
 	}
 	else
 	{
-		error( QtCriticalMsg, QString( "Opening serial port %1 failed" ).arg( ProxySettingsManager::instance()->value( "devicePort/portName" ).toString() ), "connectPort()" );
+		errorDetails_t errDet;
+		errDet.insert( "error message", mSerialPort->errorString() );
+		error( QtCriticalMsg, QString( "Opening serial port %1 failed" ).arg( ProxySettingsManager::instance()->value( "devicePort/portName" ).toString() ), "connectPort()", errDet );
 		return false;
 	}
 	return true;
@@ -135,5 +140,5 @@ void SerialDeviceConnector::closeDevice()
 
 bool SerialDeviceConnector::openDevice()
 {
-	connectPort();
+	return connectPort();
 }

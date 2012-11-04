@@ -12,13 +12,15 @@ QcProxy::QcProxy( QObject *parent ) : ErrorHandlerBase( parent ), mDevice( 0 ), 
 	// Create the settings object, QcProxy as parent.
 	ProxySettingsManager::instance( this );
 
+	connect( QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(deleteLater()) );
+
 	mDevice = new DeviceAPI( this );
 	mConnectionServer = new ConnectionServer( this );
 }
 
 QcProxy::~QcProxy()
 {
-	debug( debugLevelInfo, "QcProxy destructor", "~QcProxy()" );
+	debug( debugLevelVeryVerbose, "QcProxy destructor", "~QcProxy()" );
 }
 
 bool QcProxy::start()
@@ -42,27 +44,23 @@ bool QcProxy::start()
 
 bool QcProxy::route(ClientCommandBase *clientCommand)
 {
-
+	/// @todo implement
+	return true;
 }
 
 bool QcProxy::route(DeviceCommandBase *deviceCommand)
-{
+{	// Only call commands in the special ":proxy" hwInterface should arrive here
+	/// @todo implement
+	return true;
 }
 
 bool QcProxy::handleDeviceMessage(deviceMessageType_t msgType, QString msg)
 {
 	/// @todo implement
+	debug( debugLevelVeryVerbose, QString("Device message received (%1): %2").arg( Device::messageTypeToString(msgType),msg), "handleDeviceMessage()" );
 }
 
 void QcProxy::handleNewClient( ClientConnectionManagerBase *newClient )
 {
-	QHash<QString,QString> selfInfo;
-	selfInfo.insert( QString("id"), ProxySettingsManager::instance()->value( "serverInfo/id" ).toString() );
-	selfInfo.insert( QString("id"), ProxySettingsManager::instance()->value( "serverInfo/name" ).toString() );
-	selfInfo.insert( QString("id"), ProxySettingsManager::instance()->value( "serverInfo/desc" ).toString() );
-	selfInfo.insert( QString("id"), ProxySettingsManager::instance()->value( "serverInfo/author" ).toString() );
-	selfInfo.insert( QString("id"), QCoreApplication::instance()->applicationVersion() );
-	newClient->setSelfInfo(selfInfo);
-
 	connect( newClient, SIGNAL(commandReceived(ClientCommandBase*)), this, SLOT(route(ClientCommandBase*)) );
 }

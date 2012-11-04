@@ -11,6 +11,8 @@ class ProxySettingsManager : public SettingsManagerBase
 	Q_OBJECT
 public:
 	explicit ProxySettingsManager(QObject *parent = 0);
+
+	static ProxySettingsManager *instance(QObject *parent = 0);
 	
 signals:
 	

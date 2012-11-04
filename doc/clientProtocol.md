@@ -58,7 +58,9 @@ There are several types of control packets, and the list is not yet complete... 
 
 #### Handshake ####		{#doc-clientProtocol-packets-handshake}
 
-The handshake packet is used as the first packet sent from the client to the proxy, and from the proxy to the client in return. An example handshake would be:
+The handshake packet is used as the first packet sent from the client to the proxy, and from the proxy to the client in return.
+The client must then acknowledge the server's reply with an empty handShake.
+An example handshake would be:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <packet class="control" id="clientID#2338">
@@ -70,20 +72,25 @@ The handshake packet is used as the first packet sent from the client to the pro
 	</handshake>
 </packet>
 
-<packet class="control" id="qcProxy#2339" re="clientID#2338">
-	<handshake from="proxy">
+<packet class="control" id="qcProxy#234" re="clientID#2338">
+	<handshake from="proxy" ack="true">
 		<id>qcProxy</id>
 		<name>QtuC Proxy</name>
 		<desc>desc...</desc>
-		<author>Károly Oláh</author>
+		<author>okaresz</author>
 		<version>1.3.4</version>
 	</handshake>
+</packet>
+
+packet class="control" id="clientID#2339" re="qcProxy#234">
+	<handshake from="client" ack="true" />
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   * **id**: Compulsory. The ID string of the client. A unique identifier, specific to this client. Can only contain letters from the english alphabet, numbers, and the underscore (regex: `[a-zA-Z0-9_]`), case sensitive.
   * **name**: A client name of your choice, optional.
   * **desc**: A description of the client, optional.
+  * **ack**: Whether the handShake was accepted. If the client is rejected, this will be false, and the connection is likely to be closed by the remote end.
 
 
 #### HeartBeat ####		{#doc-clientProtocol-packets-heartbeat}
@@ -191,7 +198,27 @@ A message from the proxy:
     * *error*: A (in most cases) non-fatal error.
     * *critical*: A critical error, likely to result in an unknown critical state or application shutdown.
 
+#### Status ####		{#doc-clientProtocol-packets-status}
 
+This is a one-direction command, only the proxy can send it to clients, to notify them of the current device and proxy status.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<packet class="control" id="qcProxy#554">
+	<status of="<source>" about="<message>"><![CDATA[<status>]]></status>
+</packet>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  * **source**: Source of the status
+    * *device*: Status of the device
+    * *proxy*: Status of the proxy
+  * **message**: A short description of the status change.
+  * **status**: status info. can be:
+    * *init*:	Initializing.
+    * *configure*: (re)configure/change. Usually means a temporary pause in communication.
+    * *ready*: Everithing is ok and usable.
+    * *error*: In error state, communication stopped.
+    
+    
 #### Re-read deviceAPI ####		{#doc-clientProtocol-packets-reReadDeviceAPI}
 
 When the proxy receives this package, it will re-read the deviceAPI file, and reinitialize itself, considering the changes. After this command, all autoUpdates will stop.

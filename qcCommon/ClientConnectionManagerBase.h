@@ -32,6 +32,9 @@ enum connectionState_t
 
 /** ClientConnectionManagerBase class.
  *	Provides a basic interface to communicate with a client.
+ *	This class expects an open socket to operate on. It's your responsibility, to create and open a QTcpSocket socket,and then to pass it to the constructor. From that on, ClientConnectionManagerBase takes control of the socket and destroys it if disconnected.
+ *	Before creating a new instance, ClientConnectionManagerBase needs the selfInfo hash to provide valid client information about itself. To give ClientConnectionManagerBase the self-info, call the static function ClientConnectionManagerBase::setSelfInfo().
+ *	Otherwise only an automatic id will be generated from the application name.
  *	@todo more detailed doc, howto use, and about deleting packets and commands,,, (responsibility of higher level code, ClientConnectionManagerBase won't delete them)
  *	Specific client connection manager classes should inherit this.*/
 class ClientConnectionManagerBase : public ErrorHandlerBase
@@ -40,8 +43,11 @@ class ClientConnectionManagerBase : public ErrorHandlerBase
 public:
 
 	/** Constructor.
-	 *	@param socket The TCP socket of the client.*/
-	ClientConnectionManagerBase( QTcpSocket *socket, QObject *parent = 0 );
+	 *	@param socket The TCP socket of the client.
+	 *	@param roleIsServer Set this to true if this client instance behaves as a server. When implementing a client to connect to proxy, this must be false, so you don't have to worry about it.*/
+	ClientConnectionManagerBase( QTcpSocket *socket, bool isServerRole = false, QObject *parent = 0 );
+
+	virtual ~ClientConnectionManagerBase();
 
 	/** Get whether the client is connected.
 	  *	For more detailed information, call getState().
@@ -55,7 +61,7 @@ public:
 
 	/** Get the client's ID string.
 	 *	@return The client's ID string.*/
-	const QString &getID() const;
+	const QString getID() const;
 
 	/** Get connection state.
 	 *	@return Connection state.*/
@@ -80,12 +86,12 @@ public:
 	 *	To set more info at a time, see setSelfInfo( const QHash<QString,QString>& ).
 	 *	@param key Name of the info.
 	 *	@param value Info value.*/
-	void setSelfInfo( const QString &key, const QString &value );
+	static void setSelfInfo( const QString &key, const QString &value );
 
 	/** Set the advertised self-information.
 	  *	@warning This must be set before the handshake. Calling after will do nothing.
 	  *	@param The information lis to set.*/
-	bool setSelfInfo( const QHash<QString,QString> &infoList );
+	static bool setSelfInfo( const QHash<QString,QString> &infoList );
 
 	/** Send a command to the client.
 	 *  Grab the command, wrap it into a packet and send it.
@@ -108,6 +114,10 @@ public:
 	  *	@return True on success, false otherwise.*/
 	bool sendPacket( ClientPacket *packet );
 
+	/** Send handshake command.
+	  *	@return True on success, false otherwise.*/
+	bool sendHandShake();
+
 signals:
 
 	/** Emitted when a packet is received from the client.
@@ -122,14 +132,8 @@ signals:
 	  *	@param clientCommand The client command object. The object is the instance of the Client command class corresponding to the command.*/
 	void commandReceived( ClientCommandBase *clientCommand );
 
-protected:
-
-	connectionState_t mState;	///< Connection state.
-	qint64 mHeartBeatCount;		///< heartBeat count.
-	static QHash<QString,QString> mSelfInfo;	///< Self-information to send to the client during handShake.
-	QHash<QString,QString> mClientInfo;		///< Client information sent by the client during handShake.
-	QTcpSocket* mClientSocket;	///< TCP socket for the client connection.
-	ClientCommandFactory *mCommandFactory;	///< A ClientCommandFactory instance to build and initialize client commands.
+	/// Emitted when the client got disconnected.
+	void clientDisconnected();
 
 protected slots:
 
@@ -143,9 +147,9 @@ protected slots:
 	void handleReceivedPacket( ClientPacket *packet );
 
 	/** Reflex.
-	  *	Reflexes are instant actions to an incoming packet/command.
-	  *	this slot is connected to commandReceived(), and handles reflexes.*/
-	void reflex( ClientCommandBase *command );
+	  *	Reflexes are instant actions to an incoming command. Always called before emitting the command to anybody higher.
+	  *	@return True if reflex catched the command, processed and destroyed it. False, if reflex ignored (or processed, but passed back) the command, and it can be emitted.*/
+	bool reflex( ClientCommandBase *command );
 
 	/** Reply to a heartBeat command.
 	 *	This will construct an acknowledge heartBeat in reply for the passed command.
@@ -154,16 +158,31 @@ protected slots:
 
 	/** Acknowledge and reply to a handShake command.
 	 *	This will set client information based on the received handShake, and construct a handShake in reply.
+	 *	The actions will be taken regarding mServerRole.
 	 *	@param handShake The handShake command sent by the client.*/
-	void ackHandShake( ClientCommandHandShake *handShake );
+	void ackHandShake( ClientCommandHandshake *handshake );
 
-private:
+	/** Handle client disconnection.*/
+	void handleDisconnected();
+
+protected:
 
 	/** Check client socket.
 	  *	Check if it is open, readable and writable.
 	  *	@return True if socket is open, readable and writable, false if not.*/
 	bool checkSocket();
 
+	connectionState_t mState;	///< Connection state.
+
+	/** Whether this instance behaves as a server-side client.
+	  *	Server-side client means it doesn't initiate handshake, only acknowledges it, or don't have to sen hartbeats, only reply to them, and other usually internally handled actions.*/
+	bool mServerRole;
+	qint64 mHeartBeatCount;		///< heartBeat count.
+	static QHash<QString,QString> mSelfInfo;	///< Self-information to send to the client during handShake.
+	QHash<QString,QString> mClientInfo;		///< Client information sent by the client during handShake.
+	QTcpSocket* mClientSocket;	///< TCP socket for the client connection.
+	static ClientCommandFactory *mCommandFactory;	///< A ClientCommandFactory instance to build and initialize client commands. @todo Can this be only in ClientPcket as static? Qho destroys it?
+	static int mInstanceCount;	// Number of client instances
 };
 
 }	//QtuC::

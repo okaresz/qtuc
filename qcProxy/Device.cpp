@@ -18,7 +18,7 @@ Device::Device( QObject *parent ) : ErrorHandlerBase( parent ), mCreated(false)
 	mInfo.insert( "platform", QString() );
 	mInfo.insert( "project", QString() );
 
-	mHardwareInterfaces.append( "!proxy" );
+	mHardwareInterfaces.append( ":proxy" );
 }
 
 Device::Device( const QStringList& hwInterfaceList, const QStringList& hwInterfaceInfoList, const QString & deviceName, QObject *parent ) : ErrorHandlerBase( parent ), mCreated(false)
@@ -32,7 +32,7 @@ Device::Device( const QStringList& hwInterfaceList, const QStringList& hwInterfa
 	mInfo.insert( "platform", QString() );
 	mInfo.insert( "project", QString() );
 
-	mHardwareInterfaces.append( "!proxy" );
+	mHardwareInterfaces.append( ":proxy" );
 }
 
 Device* Device::instance()
@@ -149,7 +149,18 @@ void Device::addFunction(const QString &hwInterface, const QString &name, const 
 void Device::setInfo(const QString &key, const QString &value)
 {
 	if( !mCreated )
-		{ mInfo.insert( key, value ); }
+	{
+		if( key == "positiveAck" )
+		{
+			if( value == "true" )
+				{ mPositiveAck = true; }
+			else if( value == "false" )
+				{ mPositiveAck = false; }
+			else
+				{ error( QtWarningMsg, "Invalid value set for positiveAck. If parsed from API, check API file.", "setInfo()" ); }
+		}
+		mInfo.insert( key, value );
+	}
 }
 
 void Device::addHardwareInterfaceInfo(const QString &hwInterfaceName, const QString &hwInterfaceInfo)
@@ -201,7 +212,7 @@ Device *Device::create( const QStringList& hwInterfaceList, const QStringList& h
 	if( hwInterfaceList.isEmpty() )
 	{
 		ErrorHandlerBase::error( QtCriticalMsg, "Cannot create Device with no hardware interface!", "create()", "Device" );
-		return false;
+		return 0;
 	}
 
 	mInstance = new Device( hwInterfaceList, hwInterfaceInfoList, deviceName, parent);

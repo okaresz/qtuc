@@ -14,6 +14,12 @@ DeviceAPIFileHandler::DeviceAPIFileHandler( QObject *parent ) : DeviceAPIParser(
 bool DeviceAPIFileHandler::load(const QString &apiFilePath)
 {
 	QString checkedApiFilePath(apiFilePath);
+
+	if( apiFilePath.isEmpty() )
+	{
+		checkedApiFilePath = ProxySettingsManager::instance()->value( "apiFilePath" ).toString();
+	}
+
 	if( checkedApiFilePath.isEmpty() )
 	{
 		QString apiFileDir = ProxySettingsManager::instance()->value( "deviceAPIFile/dirPath" ).toString();
@@ -28,7 +34,10 @@ bool DeviceAPIFileHandler::load(const QString &apiFilePath)
 	QFileInfo apiFileInfo(checkedApiFilePath);
 	if( !(apiFileInfo.isFile() && apiFileInfo.isReadable()) )
 	{
-		error( QtCriticalMsg, QString("Device API file doesn't exist at path %1").arg(apiFilePath), "load()" );
+		// for those who are not so geek.
+		if( apiFilePath.isEmpty() )
+			{ checkedApiFilePath = "current working directory"; }
+		error( QtCriticalMsg, QString("Device API file doesn't exist at %1").arg(checkedApiFilePath), "load()" );
 		return false;
 	}
 

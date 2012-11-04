@@ -35,7 +35,7 @@ public:
 	  *	@return The new client command object or 0 on failure.*/
 	virtual bool applyDomElement( const QDomElement &cmdElement ) = 0;
 
-	virtual ClientCommandBase *cloneWithDomElement( const QDomElement &cmdElement ) = 0;
+	virtual ClientCommandBase *cloneWithDomElement( const QDomElement &cmdElement );
 
 	/** Clone Clientcommand object.
 	  *	@warning When implementing this method, do not clone the instance-specific members (like id, or isReplyTo, etc..)! There's exactClone() for that.*/

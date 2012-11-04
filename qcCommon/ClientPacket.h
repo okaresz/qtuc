@@ -20,11 +20,11 @@ public:
 
 	/** An empty constructor.
 	 * Use when you want to build a packet from scratch.*/
-	ClientPacket( QObject *parent );
+	ClientPacket(  );
 
 	/** Wrap a client command with a packet.
 	  *	@param clientCommand The client command tho wrap in a packet.*/
-	ClientPacket( ClientCommandBase *clientCommand, QObject *parent );
+	ClientPacket( ClientCommandBase *clientCommand, QObject *parent = 0 );
 
 	/** Destroy packet.*/
 	~ClientPacket();
@@ -105,6 +105,18 @@ public:
 	 *	@return True on success, false otherwise.*/
 	bool appendCommand( ClientCommandBase *clientCommand );
 
+	/** Detach and return a command.
+	  * This will delete command from the packet.
+	  *	@param index Index of the command in the command list.
+	  *	@return The detached client command object.*/
+	ClientCommandBase *detachCommand( int index );
+
+	/** Detach and return a command.
+	  * This will delete command from the packet.
+	  *	@param command The command in the command list.
+	  *	@return The detached client command object.*/
+	ClientCommandBase *detachCommand( ClientCommandBase *command );
+
 	/** Delete packet without deleting commands within the packet.
 	  *	useful if you want to work with the commands later on, but the packet can be deleted*/
 	void destroyShell();
@@ -120,6 +132,11 @@ private:
 	/** Build the XML markup of the packet.
 	  *	@return The packet element as a QDomElement of 0 on failure.*/
 	QDomDocument *buildMarkup() const;
+
+	/** Remove command from the command list.
+	  *	@param index Index of the command in the command list.
+	  *	@return Pointer to the removed command object.*/
+	ClientCommandBase *removeCommand( int index );
 
 	static quint64 mPacketCount;	///< Packet count, used for generating packet id.
 	quint64 mIdNum;		///< Packet ID number. Initialized from packet count.

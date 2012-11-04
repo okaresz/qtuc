@@ -32,12 +32,13 @@ The basic structure of the file is the following:
 </deviceAPI>
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-# deviceInfo #
+# deviceInfo #		{#doc-deviceAPIxml-deviceInfo}
 
 Some basic information about the device. This node is optional, but strongly recommended!
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <deviceInfo>
+	<positiveAck>false</positiveAck>
 	<name>deviceName</name>
 	<desc>A short description of the device</desc>
 	<platform>A short platform string, eg.: STM32F4</platform>
@@ -45,6 +46,7 @@ Some basic information about the device. This node is optional, but strongly rec
 </deviceInfo>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+**positiveAck**: Whether the device uses positive acknowledgment. Can be ''true'' or ''false''. If not defined, ''false'' will be used. See [set command](@ref doc-deviceCommand-set) for details.<br>
 **name**: A short name of the device. (max 50 char, ASCII)<br>
 **desc**: Description of the device.<br>
 **platform**: A short platform description.<br>
@@ -92,7 +94,7 @@ The bare minimum information you must define is the name, the hardware interface
 		<hwInterface>hwI_name</hwInterface>
 		<name>varName</name>
 		<type>varType</type>
-	<stateVariable>
+	</stateVariable>
 </stateVariableList>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -126,7 +128,7 @@ There's a lot more options however to fine-tune the behavior of the variable. Th
 		<guiHint>
 			...
 		</guiHint>
-	<stateVariable>
+	</stateVariable>
 </stateVariableList>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -182,7 +184,7 @@ Here you can define the functions you want to call on the device. This node is o
 <function>
 	<hwInterface>hwI_name</hwInterface>
 	<name>funcName</name>
-	<args> arg1 arg2 "argument 3 with spaces..."<args>	<!-- optional -->
+	<args> arg1 arg2 "argument 3 with spaces..."</args>	<!-- optional -->
 </function>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

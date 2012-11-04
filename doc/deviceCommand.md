@@ -10,24 +10,32 @@ The device command is a cleartext message between the device and the proxy, alwa
 The command consists of several chunks, separated by space. Double quotes can be used to escape chunks containing spaces.
 Commands are and should be parsed case-sensitively throughout the framework.
 
-# Type #
+# Type #	{#doc-deviceCommand-types}
 The command type can be:
 
   * `set`
   * `get`
   * `call`
 
-## set ##
+## set ##	{#doc-deviceCommand-set}
 
 The set command always represents a write action. If the device gets a set command from the proxy, the embedded software should update the variable described in the command.
-After successfully updating the value, a reply with a similar set command, containing the new value must be sent back to the proxy. If an error occurs and the variable can't be updated, a reply is not needed.
 If the device sends a set command to the proxy, the variable will be updated on the proxy.
 
-## get ##
+**Positive acknowledgement**<br>
+If device uses positive ACK, after receiving a set command and successfully updating the variable, a reply with a similar set command, containing the new value must be sent back to the proxy. If an error occurs and the variable can't be updated, a reply is not needed.
+
+Without positive ACK, the proxy sends out the set command, but no acknowledgment will be received from the device, whether the set command was successful is unknown.
+Positive ACK is safer but a bit slower.
+
+You can notify the proxy if the device uses positive ACK in the deviceAPI.xml, [deviceInfo](@ref doc-deviceAPIxml-deviceInfo) node.
+
+
+## get ##	{#doc-deviceCommand-get}
 
 Both the device and the proxy can read stateVariables from each other with the get commands.
 
-## call ##
+## call ##	{#doc-deviceCommand-call}
 
 You can call functions with the call command, with optional arguments.
 
