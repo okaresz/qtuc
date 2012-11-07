@@ -7,15 +7,33 @@
 namespace QtuC
 {
 
-/**
- * Class ClientCommandDevice
- * Client Command used to wrap a deviceCommand.*/
-class ClientCommandDevice : public DeviceCommandBase, public ClientCommandBase
+/** ClientCommandDevice class.
+ *	Client Command used to represent a deviceCommand on the client side.*/
+class ClientCommandDevice : public ClientCommandBase, public DeviceCommandBase
 {
+	Q_OBJECT
 public:
-	ClientCommandDevice();
+	ClientCommandDevice( deviceCommandType_t type );
 
-	ClientCommandDevice( DeviceCommandBase* deviceCommand );
+	ClientCommandDevice( DeviceCommandBase *deviceCommand );
+
+	// Inherited from ClientCommandBase
+
+	bool applyDomElement( const QDomElement &cmdElement );
+
+	ClientCommandBase *clone();
+
+	ClientCommandBase *exactClone();
+
+	QDomElement getDomElement() const;
+
+	bool isValid();
+
+private:
+
+	/** Do initializations which are common in all constructors.
+	  *	@param type Type of the device command.*/
+	void commonConstruct( deviceCommandType_t type );
 
 };
 

@@ -6,13 +6,23 @@ QList<ClientCommandBase*> ClientCommandFactory::mCommandPrototypes = QList<Clien
 
 ClientCommandFactory::ClientCommandFactory( QObject *parent ) : ErrorHandlerBase(parent)
 {
-	registerCommand( new ClientCommandHeartBeat(this) );
-	registerCommand( new ClientCommandHandshake(this) );
+	registerCommand( new ClientCommandHeartBeat() );
+	registerCommand( new ClientCommandHandshake() );
+	registerCommand( new ClientCommandDeviceApi() );
+
+	// Hah! How tricky I am! The deviceCommands with one class.
+	registerCommand( new ClientCommandDevice(deviceCmdGet) );
+	registerCommand( new ClientCommandDevice(deviceCmdSet) );
+	registerCommand( new ClientCommandDevice(deviceCmdCall) );
 }
 
 ClientCommandFactory::~ClientCommandFactory()
 {
-
+	for( int i=0; i<mCommandPrototypes.size(); ++i )
+	{
+		if( mCommandPrototypes.at(i) )
+			{ delete mCommandPrototypes.value(i); }
+	}
 }
 
 bool ClientCommandFactory::registerCommand( ClientCommandBase *cmdPrototype )

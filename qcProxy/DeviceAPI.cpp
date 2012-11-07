@@ -6,7 +6,9 @@
 
 using namespace QtuC;
 
-DeviceAPI::DeviceAPI( QObject *parent ) : ErrorHandlerBase(parent)
+DeviceAPI::DeviceAPI( QObject *parent ) :
+	ErrorHandlerBase(parent),
+	mEmitAllCmd(false)
 {
 	mStateManager = new DeviceStateManager(this);
 	mDeviceLink = new DummyFileDevice(this);
@@ -16,11 +18,11 @@ DeviceAPI::DeviceAPI( QObject *parent ) : ErrorHandlerBase(parent)
 
 bool DeviceAPI::call( const QString &hwInterface, const QString &function, const QString &arg )
 {
-	DeviceCommand dCmd;
-	dCmd.setType( deviceCmdCall );
-	dCmd.setInterface( hwInterface );
-	dCmd.setFunction( function );
-	dCmd.setArgumentString(arg);
+	DeviceCommandBuilder *dCmd = new DeviceCommandBuilder();
+	dCmd->setType( deviceCmdCall );
+	dCmd->setInterface( hwInterface );
+	dCmd->setFunction( function );
+	dCmd->setArgumentString(arg);
 	if( !mDeviceLink->sendCommand( dCmd ) )
 	{
 		error( QtWarningMsg, "Device function call failed", "call()" );
@@ -44,7 +46,7 @@ DeviceStateVariable *DeviceAPI::getVar( const QString &hwInterface, const QStrin
 
 bool DeviceAPI::update( const QString &hwInterface, const QString &varName )
 {
-	if( !mDeviceLink->sendCommand( DeviceCommand( DeviceCommandBase::build( deviceCmdGet, getVar( hwInterface, varName ) ) ) ) )
+	if( !mDeviceLink->sendCommand( DeviceCommand::build( deviceCmdGet, getVar( hwInterface, varName ) ) ) )
 	{
 		errorDetails_t errDet;
 		errDet.insert( "hwInterface", hwInterface );
@@ -60,7 +62,7 @@ bool DeviceAPI::set( const QString &hwInterface, const QString &varName, const Q
 	if( Device::positiveAck() )
 	{
 		/// @todo this QVariant.toString is not an elegant solution... somehow a static deviceformatter function?
-		DeviceCommand *cmd = new DeviceCommand();
+		DeviceCommandBuilder *cmd = new DeviceCommandBuilder();
 		cmd->setType( deviceCmdSet);
 		cmd->setInterface( hwInterface );
 		cmd->setVariable( varName );
@@ -100,40 +102,71 @@ bool DeviceAPI::initAPI( const QString &apiDefString )
 	/// @todo Implement argument (at reinit also)
 	/// @todo don't allow loading if something is alrady loaded.
 
-	//=== Load deviceAPI ===================
-
-	// Connect nothing on first pass, only if API is successfully parsed
-	if( !mDeviceAPI->load() )
+	if( mDeviceInstance )
 	{
-		error( QtCriticalMsg, "Failed to pre-load deviceAPI", "initAPI()" );
+		error( QtWarningMsg, "API already initialized (use reInit()!)", "initAPI()" );
 		return false;
+	}
+
+	if( !apiDefString.isEmpty() )
+	{
+		// Connect nothing on first pass, only if API is successfully parsed
+		if( !mDeviceAPI->parseAPI(apiDefString) )
+		{
+			error( QtCriticalMsg, "Failed to parse deviceAPI string", "initAPI()" );
+			return false;
+		}
+		else
+		{
+			mDeviceInstance = Device::create(this);
+			connect( mDeviceAPI, SIGNAL(newDeviceInfo(QString,QString)), mDeviceInstance, SLOT(setInfo(QString,QString)) );
+			connect( mDeviceAPI, SIGNAL(newHardwareInterface(QString,QString)), mDeviceInstance, SLOT(addHardwareInterface(QString,QString)) );
+			connect( mDeviceAPI, SIGNAL(newStateVariable(QHash<QString,QString>)), mStateManager, SLOT(registerStateVariable(QHash<QString,QString>)) );
+			connect( mDeviceAPI, SIGNAL(newDeviceFunction(QString,QString,QString)), mDeviceInstance, SLOT(addFunction(QString,QString,QString)) );
+			if( !mDeviceAPI->parseAPI(apiDefString) )
+			{
+				error( QtCriticalMsg, "Failed to re-parse deviceAPI string", "initAPI()" );
+				return false;
+			}
+			mDeviceInstance->setCreated();
+		}
 	}
 	else
 	{
-		mDeviceInstance = Device::create(this);
-		connect( mDeviceAPI, SIGNAL(newDeviceInfo(QString,QString)), mDeviceInstance, SLOT(setInfo(QString,QString)) );
-		connect( mDeviceAPI, SIGNAL(newHardwareInterface(QString,QString)), mDeviceInstance, SLOT(addHardwareInterface(QString,QString)) );
-		connect( mDeviceAPI, SIGNAL(newStateVariable(QHash<QString,QString>)), mStateManager, SLOT(registerStateVariable(QHash<QString,QString>)) );
-		connect( mDeviceAPI, SIGNAL(newDeviceFunction(QString,QString,QString)), mDeviceInstance, SLOT(addFunction(QString,QString,QString)) );
-		if( !mDeviceAPI->reload() )
+		// Connect nothing on first pass, only if API is successfully parsed
+		if( !mDeviceAPI->load() )
 		{
-			error( QtCriticalMsg, "Failed to reload deviceAPI", "initAPI()" );
+			error( QtCriticalMsg, "Failed to pre-load deviceAPI", "initAPI()" );
 			return false;
 		}
-		mDeviceInstance->setCreated();
-		debug( debugLevelInfo, "deviceAPI loaded, Device created", "initAPI()" );
-
-		// === Connect to device ================
-
-		connect( mDeviceLink, SIGNAL(commandReceived(DeviceCommandBase*)), this, SLOT(handleDeviceCommand(DeviceCommandBase*)) );
-		if( !mDeviceLink->openDevice() )
+		else
 		{
-			error( QtCriticalMsg, "Failed to connect to device", "initAPI()" );
-			return false;
+			mDeviceInstance = Device::create(this);
+			connect( mDeviceAPI, SIGNAL(newDeviceInfo(QString,QString)), mDeviceInstance, SLOT(setInfo(QString,QString)) );
+			connect( mDeviceAPI, SIGNAL(newHardwareInterface(QString,QString)), mDeviceInstance, SLOT(addHardwareInterface(QString,QString)) );
+			connect( mDeviceAPI, SIGNAL(newStateVariable(QHash<QString,QString>)), mStateManager, SLOT(registerStateVariable(QHash<QString,QString>)) );
+			connect( mDeviceAPI, SIGNAL(newDeviceFunction(QString,QString,QString)), mDeviceInstance, SLOT(addFunction(QString,QString,QString)) );
+			if( !mDeviceAPI->reload() )
+			{
+				error( QtCriticalMsg, "Failed to reload deviceAPI", "initAPI()" );
+				return false;
+			}
+			mDeviceInstance->setCreated();
 		}
-
-		return true;
 	}
+
+	debug( debugLevelInfo, "deviceAPI loaded, Device created", "initAPI()" );
+
+	// === Connect to device ================
+
+	connect( mDeviceLink, SIGNAL(commandReceived(DeviceCommand*)), this, SLOT(handleDeviceCommand(DeviceCommand*)) );
+	if( !mDeviceLink->openDevice() )
+	{
+		error( QtCriticalMsg, "Failed to connect to device", "initAPI()" );
+		return false;
+	}
+
+	return true;
 }
 
 bool DeviceAPI::reInitAPI( const QString &apiDefString )
@@ -149,9 +182,11 @@ bool DeviceAPI::reInitAPI( const QString &apiDefString )
 	mDeviceLink->closeDevice();
 
 	Device *oldDevice = mDeviceInstance;
+	mDeviceInstance = 0;
 	if( !initAPI(apiDefString) )
 	{
 		error( QtCriticalMsg, "Failed to initialize deviceAPI", "reInitAPI()" );
+		mDeviceInstance = oldDevice;
 		return false;
 	}
 	else
@@ -161,14 +196,23 @@ bool DeviceAPI::reInitAPI( const QString &apiDefString )
 	}
 }
 
-void DeviceAPI::handleDeviceCommand( DeviceCommandBase *cmd )
+void DeviceAPI::handleDeviceCommand( DeviceCommand *cmd )
 {
+	if( mEmitAllCmd )
+	{
+		emit commandReceived( cmd );
+		return;
+	}
+
 	if( cmd->getType() == deviceCmdCall )
 	{
 		if( cmd->getHwInterface() == ":proxy" )
 		{
 			if( cmd->getVariable() == "message" )
-				{ emit messageReceived( Device::messageTypeFromString(cmd->getArg(0)), QStringList( cmd->getArgList().mid(1) ).join(" ") ); }
+			{
+				emit messageReceived( Device::messageTypeFromString(cmd->getArg(0)), QStringList( cmd->getArgList().mid(1) ).join(" ") );
+				cmd->deleteLater();
+			}
 			else
 				{ emit commandReceived( cmd ); }
 		}
@@ -177,10 +221,9 @@ void DeviceAPI::handleDeviceCommand( DeviceCommandBase *cmd )
 	{
 		if( cmd->getType() == deviceCmdGet )
 		{
-			DeviceCommandBase *setCmd = DeviceCommandBase::build( deviceCmdSet, mStateManager->getVar( cmd->getHwInterface(), cmd->getVariable() ) );
-			if( !mDeviceLink->sendCommand( *setCmd ) )
+			DeviceCommand *setCmd = DeviceCommand::build( deviceCmdSet, mStateManager->getVar( cmd->getHwInterface(), cmd->getVariable() ) );
+			if( !mDeviceLink->sendCommand( setCmd ) )
 				{ error( QtWarningMsg, "Failed to reply to device get", "handleDeviceCommand()" ); }
-			delete setCmd;
 		}
 		else if( cmd->getType() == deviceCmdSet )
 		{
@@ -192,11 +235,12 @@ void DeviceAPI::handleDeviceCommand( DeviceCommandBase *cmd )
 		}
 		else
 			{ error( QtWarningMsg, "Got an undefined command?! Weird...", "handleDeviceCommand()" ); }
+		cmd->deleteLater();
 	}
 }
 
 void DeviceAPI::handleStateVariableUpdateRequest(DeviceStateVariable *stateVar)
 {
-	if( !mDeviceLink->sendCommand( DeviceCommand( DeviceCommandBase::build( deviceCmdGet, stateVar ) ) ) )
+	if( !mDeviceLink->sendCommand( DeviceCommand::build( deviceCmdGet, stateVar ) ) )
 		{ error( QtWarningMsg, QString("Failed to update stateVar: %1").arg(stateVar->getName()), "handleStateVariableUpdateRequest()" ); }
 }

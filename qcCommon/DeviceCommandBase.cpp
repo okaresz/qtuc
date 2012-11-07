@@ -2,60 +2,27 @@
 
 using namespace QtuC;
 
-DeviceCommandBase::DeviceCommandBase() : ErrorHandlerBase()
+DeviceCommandBase::DeviceCommandBase()
 {
 	mType = deviceCmdUndefined;
-	mValid = false;
 }
 
-DeviceCommandBase::DeviceCommandBase( const DeviceCommandBase &deviceCommand ) : ErrorHandlerBase()
+DeviceCommandBase::DeviceCommandBase( const DeviceCommandBase &deviceCommand )
 {
 	mType = deviceCommand.getType();
 	mHwInterface = deviceCommand.getHwInterface();
 	mVariable = deviceCommand.getVariable();
 	mArgs = QStringList( deviceCommand.getArgList() );
-	checkSetValid();
-}
-
-DeviceCommandBase::DeviceCommandBase( const DeviceCommandBase *deviceCommand ) : ErrorHandlerBase()
-{
-	mType = deviceCommand->getType();
-	mHwInterface = deviceCommand->getHwInterface();
-	mVariable = deviceCommand->getVariable();
-	mArgs = QStringList( deviceCommand->getArgList() );
-	checkSetValid();
-}
-
-DeviceCommandBase *DeviceCommandBase::build( deviceCommandType_t cmdType, const DeviceStateVariable *stateVar )
-{
-	if( cmdType == deviceCmdCall )
-	{
-		error( QtWarningMsg, "Try to build a variable command with call type", "build(deviceCommandType_t,DeviceStateVariable)", "DeviceCommandBase" );
-		return 0;
-	}
-	if( !stateVar->isValid() )
-	{
-		error( QtWarningMsg, "Try to build a variable command with invalid variable", "build(deviceCommandType_t,DeviceStateVariable)", "DeviceCommandBase" );
-		return 0;
-	}
-
-	DeviceCommandBase *deviceCommand = new DeviceCommandBase();
-
-	deviceCommand->setType( cmdType );
-	deviceCommand->setVariable( stateVar->getName() );
-	deviceCommand->setArg( stateVar->getDeviceReadyString() );
-	if( deviceCommand->checkSetValid() )
-		{ return deviceCommand; }
-	else
-	{
-		error( QtWarningMsg, "Validity check failed after build()", "build(deviceCommandType_t,DeviceStateVariable)", "DeviceCommandBase" );
-		return 0;
-	}
 }
 
 bool DeviceCommandBase::isValid() const
 {
-	return mValid;
+	bool validity = true;
+	validity = validity && mType != deviceCmdUndefined;
+	validity = validity && !mHwInterface.isEmpty();
+	validity = validity && !( mType == deviceCmdSet && (mArgs.isEmpty() || mHwInterface.isEmpty()) );
+	validity = validity && !( mType == deviceCmdCall && (mArgs.isEmpty() || mHwInterface.isEmpty()) );
+	return validity;
 }
 
 const QString DeviceCommandBase::getArg(int argIndex) const
@@ -69,7 +36,6 @@ const QString DeviceCommandBase::getArg(int argIndex) const
 void DeviceCommandBase::setType( deviceCommandType_t type )
 {
 	mType = type;
-	checkSetValid();
 }
 
 bool DeviceCommandBase::setInterface( const QString &hwi )
@@ -81,29 +47,12 @@ bool DeviceCommandBase::setInterface( const QString &hwi )
 void DeviceCommandBase::setVariable( const QString& cv )
 {
 	mVariable = cv;
-	checkSetValid();
-}
-
-bool DeviceCommandBase::applyVariable( DeviceStateVariable *stateVar )
-{
-	if( stateVar->isValid() )
-	{
-		mVariable = stateVar->getName();
-		mArgs.clear();
-		mArgs.append( stateVar->getDeviceReadyString() );
-		return checkSetValid();
-	}
-	else
-	{
-		error( QtWarningMsg, "Try to set invalid variable object for command", "applyVariable()" );
-		return false;
-	}
 }
 
 bool DeviceCommandBase::setArgList( const QStringList &argList )
 {
 	mArgs = QStringList( argList );
-	return checkSetValid();
+	return isValid();
 }
 
 bool DeviceCommandBase::setArg(const QString &arg, int index)
@@ -114,7 +63,13 @@ bool DeviceCommandBase::setArg(const QString &arg, int index)
 	}
 	else
 		{ mArgs[index] = arg; }
-	return checkSetValid();
+	return isValid();
+}
+
+bool DeviceCommandBase::appendArg(const QString &arg)
+{
+	mArgs.append( arg );
+	return isValid();
 }
 
 const QString DeviceCommandBase::commandTypeToString( deviceCommandType_t cmdType )
@@ -135,14 +90,3 @@ deviceCommandType_t DeviceCommandBase::commandTypeFromString( const QString &typ
 	if( typeStr == "call" ) { return deviceCmdCall; }
 	return deviceCmdUndefined;
 }
-
-bool DeviceCommandBase::checkSetValid()
-{
-	bool validity = true;
-	validity = validity && mType != deviceCmdUndefined;
-	validity = validity && !mHwInterface.isEmpty();
-	validity = validity && !( mType == deviceCmdSet && mArgs.isEmpty() );
-	mValid = validity;
-	return mValid;
-}
-

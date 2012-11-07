@@ -24,7 +24,9 @@ public:
 		clientCommandControl,
 		clientCommandDevice
 	};
-	Q_ENUMS(commandClass_t)
+
+	//static QString commandClassToString( commandClass_t cmdClass );
+	//static commandClass_t commandClassFromString( const QString &cmdClassStr );
 
 	ClientCommandBase( QObject *parent = 0 );
 
@@ -63,6 +65,9 @@ public:
 
 	virtual const QString getName() const
 		{ return mName; }
+
+	/** @todo slkdjfsdlfjsdlkfjsdlfk*/
+	bool operator==( ClientCommandBase *otherCommand );
 
 protected:
 

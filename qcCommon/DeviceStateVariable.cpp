@@ -248,7 +248,7 @@ void DeviceStateVariable::emitValueChanged()
 		error( QtWarningMsg, "StateVariable is invalid. Signals not sent. Variable: "+mName, "emitValueChanged()" );
 		return;
 	}
-
+/// @todo don't try to convert to number if statevar type is string.... and vica versa, emit only type correct signals
 	bool ok = true;
 	emit valueChanged( mValue );	//QVariant
 	emit valueChanged( mValue.toString() );	//QString
@@ -330,7 +330,7 @@ bool DeviceStateVariable::scriptConvert( bool fromRaw )
 	{
 		if( fromType == toType )
 		{
-			toValue = fromValue;
+			*toValue = *fromValue;
 			return true;
 		}
 		else
@@ -344,7 +344,7 @@ bool DeviceStateVariable::scriptConvert( bool fromRaw )
 	else
 	{
 		mConvertEngine.globalObject().setProperty( mName, mConvertEngine.newVariant(fromType) );
-		QVariant scriptReturn = mConvertEngine.evaluate(mConvertFromRawScript).toVariant();
+		QVariant scriptReturn = mConvertEngine.evaluate(*convertScript).toVariant();
 
 		if( mConvertEngine.hasUncaughtException() )
 		{

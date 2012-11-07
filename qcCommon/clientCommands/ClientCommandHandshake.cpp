@@ -2,15 +2,15 @@
 
 using namespace QtuC;
 
-ClientCommandHandshake::ClientCommandHandshake(QObject *parent) :
-	ClientCommandBase(parent)
+ClientCommandHandshake::ClientCommandHandshake() :
+	ClientCommandBase()
 {
 	mName = "handshake";
 	mClass = clientCommandControl;
 }
 
-ClientCommandHandshake::ClientCommandHandshake(bool ack, QObject *parent) :
-	ClientCommandBase(parent),
+ClientCommandHandshake::ClientCommandHandshake(bool ack) :
+	ClientCommandBase(),
 	mIsAck(true),
 	mAckVal(ack)
 {
@@ -18,8 +18,8 @@ ClientCommandHandshake::ClientCommandHandshake(bool ack, QObject *parent) :
 	mClass = clientCommandControl;
 }
 
-ClientCommandHandshake::ClientCommandHandshake(QHash<QString, QString> &info, QObject *parent) :
-	ClientCommandBase(parent),
+ClientCommandHandshake::ClientCommandHandshake(QHash<QString, QString> &info) :
+	ClientCommandBase(),
 	mIsAck(false)
 {
 	mName = "handshake";
@@ -27,8 +27,8 @@ ClientCommandHandshake::ClientCommandHandshake(QHash<QString, QString> &info, QO
 	setInfo(info);
 }
 
-ClientCommandHandshake::ClientCommandHandshake(QHash<QString, QString> &info, bool ack, QObject *parent) :
-	ClientCommandBase(parent),
+ClientCommandHandshake::ClientCommandHandshake(QHash<QString, QString> &info, bool ack) :
+	ClientCommandBase(),
 	mIsAck(true),
 	mAckVal(ack)
 {
@@ -55,12 +55,12 @@ bool ClientCommandHandshake::applyDomElement(const QDomElement &cmdElement)
 
 ClientCommandBase *ClientCommandHandshake::clone()
 {
-	return new ClientCommandHandshake( parent() );
+	return new ClientCommandHandshake();
 }
 
 ClientCommandBase *ClientCommandHandshake::exactClone()
 {
-	ClientCommandHandshake *clone = new ClientCommandHandshake( parent() );
+	ClientCommandHandshake *clone = new ClientCommandHandshake();
 	clone->mAckVal = mAckVal;
 	clone->mIsAck = mIsAck;
 	clone->mInfo = mInfo;
@@ -101,7 +101,7 @@ bool ClientCommandHandshake::setInfo(QHash<QString, QString> &info)
 {
 	if( !info.contains("id") )
 	{
-		error( QtWarningMsg, "incomplete info was supplied to handshake command, can not create handshake", "ClientCommandHandshake()" );
+		//error( QtWarningMsg, "incomplete info was supplied to handshake command, can not create handshake", "ClientCommandHandshake()" );
 		return false;
 	}
 	else

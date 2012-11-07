@@ -1,29 +1,24 @@
-#ifndef DEVICECOMMAND_H
-#define DEVICECOMMAND_H
+#ifndef DEVICECOMMANDBUILDER_H
+#define DEVICECOMMANDBUILDER_H
 
-#include <QObject>
-#include <QString>
-#include <DeviceCommandBase.h>
+#include "DeviceCommandBase.h"
+#include "ErrorHandlerBase.h"
 
 namespace QtuC
 {
 
-/** DeviceCommand class.
- *	Represents a device command. Use to communicate with the device. Inherits DeviceCommandBase.*/
-class DeviceCommand : public DeviceCommandBase
+/** DeviceCommandBuilder class.
+ *	Used to build and parsed device command strings sent to/from the device.*/
+class DeviceCommandBuilder : public ErrorHandlerBase, public DeviceCommandBase
 {
 	Q_OBJECT
 public:
 	/**	Constructor: create an invalid deviceCommand object.*/
-	DeviceCommand();
+	DeviceCommandBuilder();
 
-	/** Create a DeviceCommand from a DeviceCommandBase object.
-	 *	@param cmdBase A DeviceCommandBase object,*/
-	DeviceCommand( const DeviceCommandBase &cmdBase );
-
-	/** Create a DeviceCommand from a DeviceCommandBase object pointer.
-	 *	@param cmdBase Pointer to a DeviceCommandBase object,?*/
-	DeviceCommand( const DeviceCommandBase *cmdBase );
+	/** Create a DeviceCommandBuilder from a DeviceCommandBase object.
+	 *	@param cmdBase A DeviceCommandBase object.*/
+	DeviceCommandBuilder( const DeviceCommandBase &cmdBase );
 
 	/** Get the command string (as the device understands it).
 	 *	@return The command as a QString, or an empty string if invalid.*/
@@ -32,7 +27,7 @@ public:
 	/** Parse th passed command string, and create a DeviceCOmmand instance from it.
 	 *	@param commandString The new command string.
 	 *	@return The new DeviceCommand instance on success, 0 otherwise.*/
-	static DeviceCommand *fromString( const QString &commandString );
+	static DeviceCommandBuilder *fromString( const QString &commandString );
 
 	/// Inherited from DeviceCommandBase
 	bool setInterface( const QString & hwi );
@@ -46,7 +41,7 @@ private:
 	/**	Create a deviceCommand object from a command string.
 	  * Private c'tor, use fromString() instead.
 	 *	@param	commandString The valid command string.*/
-	DeviceCommand( const QString &commandString );
+	DeviceCommandBuilder( const QString &commandString );
 
 	/** get arguments string from the command arguments.
 	  *	Join arguments with command separator and generates a device-compatible string.
@@ -57,5 +52,5 @@ private:
 };
 
 }	//QtuC::
-#endif //DEVICECOMMAND_H
+#endif //DEVICECOMMANDBUILDER_H
 

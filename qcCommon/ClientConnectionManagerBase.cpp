@@ -155,25 +155,25 @@ bool ClientConnectionManagerBase::sendPacket(ClientPacket *packet)
 		if( !checkSocket() )
 		{
 			error( QtWarningMsg, "Client socket is not ready, checkSocket() failed", "sendPacket()" );
-			delete packet;
+			packet->deleteLater();
 			return false;
 		}
 		if( mClientSocket->write( packet->getPacketData() ) < 0 )
 		{
 			error( QtWarningMsg, "Error during sending client packet", "sendPacket()" );
-			delete packet;
+			packet->deleteLater();
 			return false;
 		}
 		else
 		{
-			delete packet;
+			packet->deleteLater();
 			return true;
 		}
 	}
 	else
 	{
 		error( QtWarningMsg, "Packet is invalid", "sendPacket()" );
-		delete packet;
+		packet->deleteLater();
 		return false;
 	}
 }
@@ -269,7 +269,7 @@ void ClientConnectionManagerBase::replyHeartBeat( ClientCommandHeartBeat* incomi
 {
 	ClientCommandHeartBeat *reply = incomingHeartBeat->cloneReply();
 	sendCommand( reply );
-	delete incomingHeartBeat;
+	incomingHeartBeat->deleteLater();
 }
 
 void ClientConnectionManagerBase::ackHandShake( ClientCommandHandshake *handshake )
@@ -282,7 +282,7 @@ void ClientConnectionManagerBase::ackHandShake( ClientCommandHandshake *handshak
 			{
 				mState = connectionHandShaking;
 				mClientInfo = handshake->getInfo();
-				ClientCommandHandshake *replyHs = new ClientCommandHandshake(mSelfInfo, true, this);
+				ClientCommandHandshake *replyHs = new ClientCommandHandshake(mSelfInfo, true);
 				sendCommand( replyHs );
 				debug( debugLevelVeryVerbose, "Client handshake received, reply with ACK handshake...", "ackHandShake()" );
 			}
@@ -315,7 +315,7 @@ void ClientConnectionManagerBase::ackHandShake( ClientCommandHandshake *handshak
 		else
 			{ error( QtWarningMsg, "Received handshake, but never sent one. Misbehaving server?... connection state unchanged.", "ackHandShake()" ); }
 	}
-	delete handshake;
+	handshake->deleteLater();
 }
 
 void ClientConnectionManagerBase::handleDisconnected()

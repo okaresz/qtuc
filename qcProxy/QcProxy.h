@@ -3,7 +3,7 @@
 
 #include "ErrorHandlerBase.h"
 #include "ClientCommandBase.h"
-#include "DeviceCommandBase.h"
+#include "DeviceCommand.h"
 #include "Device.h"
 
 namespace QtuC
@@ -29,10 +29,15 @@ public:
 	  *	@return True on success, false otherwise.*/
 	bool start();
 
+	/** Set behaviour to pass through.
+	  *	In pass through mode, proxy will immediately relay all device commands to all clients (as a ClientCommandDevice).
+	  *	@param pass True to pass through commands, falsi to normal mode.*/
+	void setPassThrough( bool pass );
+
 public slots:
 
 	bool route( ClientCommandBase *clientCommand );
-	bool route( DeviceCommandBase *deviceCommand );
+	bool route( DeviceCommand *deviceCommand );
 
 	/** Handle incoming device message*
 	  *	@param msgType Message type.
@@ -49,6 +54,8 @@ private:
 	DeviceAPI *mDevice;
 	//GuiConnectionManager mGui;
 	ConnectionServer *mConnectionServer;
+
+	bool mPassThrough;	///< If true, proxy will immediately relay all device commands to all clients (as a ClientCommandDevice)
 
 };
 

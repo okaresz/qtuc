@@ -17,7 +17,7 @@ public:
 	~SerialDeviceConnector();
 
 	/// Inherited from DeviceConnectionManagerBase.
-	bool sendCommand( const DeviceCommand &cmd );
+	bool sendCommand( DeviceCommandBuilder *cmd );
 
 	/// Inherited from DeviceConnectionManagerBase.
 	void closeDevice();

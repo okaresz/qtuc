@@ -74,6 +74,7 @@ ClientPacket::~ClientPacket()
 		if( mCmdList.at(i) )
 			{ delete mCmdList.value(i); }
 	}
+	debug( debugLevelVeryVerbose, "Destroyed", "~ClientPacket()" );
 }
 
 bool ClientPacket::isValid()
@@ -174,6 +175,7 @@ ClientCommandBase *ClientPacket::detachCommand(ClientCommandBase *command)
 			return removeCommand(i);
 		}
 	}
+	return 0;
 }
 
 void ClientPacket::destroyShell()
@@ -187,6 +189,7 @@ QDomDocument *ClientPacket::buildMarkup() const
 	QDomDocument *packetMarkup = new QDomDocument();
 	QDomElement packetElement = packetMarkup->createElement("packet");
 	packetElement.setAttribute( "id", getID() );
+	/// @todo packetClass
 	//packetElement.setAttribute( "class", QString( metaObject()->enumerator( metaObject()->indexOfEnumerator("packetClass_t") ).valueToKey(mClass) ); );
 	if( !mReplyTo.isEmpty() )
 		{ packetElement.setAttribute( "re", mReplyTo ); }

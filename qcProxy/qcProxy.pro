@@ -20,28 +20,28 @@ SOURCES += main.cpp \
     GuiConnectionManager.cpp \
     DeviceStateManager.cpp \
     DeviceConnectionManagerBase.cpp \
-    DeviceCommand.cpp \
     DeviceAPIFileHandler.cpp \
     DeviceAPI.cpp \
     Device.cpp \
     ConnectionServer.cpp \
     ProxySettingsManager.cpp \
     QcProxy.cpp \
-    DummyFileDevice.cpp
+    DummyFileDevice.cpp \
+    DeviceCommandBuilder.cpp
 
 HEADERS += \
     SerialDeviceConnector.h \
     GuiConnectionManager.h \
     DeviceStateManager.h \
     DeviceConnectionManagerBase.h \
-    DeviceCommand.h \
     DeviceAPIFileHandler.h \
     DeviceAPI.h \
     Device.h \
     ConnectionServer.h \
     ProxySettingsManager.h \
     QcProxy.h \
-    DummyFileDevice.h
+    DummyFileDevice.h \
+    DeviceCommandBuilder.h
 
 
 CONFIG(debug, debug|release):unix:!macx:!symbian: LIBS += -lSerialPortd

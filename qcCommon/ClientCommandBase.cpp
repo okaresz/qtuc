@@ -2,12 +2,15 @@
 
 using namespace QtuC;
 
-ClientCommandBase::ClientCommandBase( QObject *parent ) : ErrorHandlerBase(parent), mClass(clientCommandUndefined)
+ClientCommandBase::ClientCommandBase( QObject *parent ) :
+	ErrorHandlerBase(parent),
+	mClass(clientCommandUndefined)
 {}
 
 ClientCommandBase::~ClientCommandBase()
 {
 	/// @todo implement?
+	debug( debugLevelVeryVerbose, "Destroyed", "~ClientCommandBase()" );
 }
 
 ClientCommandBase *ClientCommandBase::cloneWithDomElement(const QDomElement &cmdElement)
@@ -33,6 +36,11 @@ bool ClientCommandBase::isValid() const
 	  )
 	{ return false; }
 	return true;
+}
+
+bool ClientCommandBase::operator ==(ClientCommandBase *otherCommand)
+{
+	return ( otherCommand->getName() == getName() );
 }
 
 bool ClientCommandBase::checkTagName(const QDomElement &cmdElement)

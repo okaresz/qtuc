@@ -63,5 +63,20 @@ void QcGui::proxyDisconnected()
 
 void QcGui::handleCommand(ClientCommandBase *cmd)
 {
-	debug( debugLevelInfo, QString("Command received: %1").arg(cmd->getName()), "handleCommand()" );
+	if( cmd->getClass() == ClientCommandBase::clientCommandDevice )
+	{
+		ClientCommandDevice *ccd = (ClientCommandDevice*)cmd;
+		debug( debugLevelInfo, QString("Device command received: %1 %2 %3 %4").arg(ccd->getName(), ccd->getHwInterface(), ccd->getVariable(), ccd->getArg() ), "handleCommand()" );
+	}
+	else	//control
+	{
+		if( cmd->getName() == "deviceAPI" )
+		{
+			ClientCommandDeviceApi *apiCmd = (ClientCommandDeviceApi*)cmd;
+			debug( debugLevelInfo, QString("API received: %1 | %2").arg(QString(apiCmd->getHash()),QString(apiCmd->getEncodedApi())), "handleCommand()" );
+		}
+		else
+			{ debug( debugLevelInfo, QString("Command received: %1").arg(cmd->getName()), "handleCommand()" ); }
+	}
+	cmd->deleteLater();
 }
