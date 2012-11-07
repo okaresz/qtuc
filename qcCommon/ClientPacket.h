@@ -114,7 +114,8 @@ public:
 	/** Detach and return a command.
 	  * This will delete command from the packet.
 	  *	@param command The command in the command list.
-	  *	@return The detached client command object.*/
+	  *	@return The detached client command object, if found, 0 if not.
+	  * @warning This function may return null, watch for deletions on a nullpointer, always check return value!*/
 	ClientCommandBase *detachCommand( ClientCommandBase *command );
 
 	/** Delete packet without deleting commands within the packet.

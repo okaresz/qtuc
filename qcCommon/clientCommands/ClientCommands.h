@@ -7,6 +7,8 @@
 
 #include "ClientCommandHeartBeat.h"
 #include "ClientCommandHandshake.h"
+#include "ClientCommandDevice.h"
+#include "ClientCommandDeviceApi.h"
 class ClientCommandStatus;
 
 #endif // CLIENTCOMMANDS_H

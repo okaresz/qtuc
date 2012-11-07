@@ -1,13 +1,21 @@
-#include "DeviceCommand.h"
+#include "DeviceCommandBuilder.h"
 #include "Device.h"
 #include "ProxySettingsManager.h"
 
 using namespace QtuC;
 
-DeviceCommand::DeviceCommand() : DeviceCommandBase(), mSeparator(' ')
-{}
+DeviceCommandBuilder::DeviceCommandBuilder() :
+	ErrorHandlerBase(),
+	DeviceCommandBase(),
+	mSeparator(' ')
+{
+	mSeparator = ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar();
+}
 
-DeviceCommand::DeviceCommand( const QString &commandString ) : DeviceCommandBase(), mSeparator(' ')
+DeviceCommandBuilder::DeviceCommandBuilder( const QString &commandString ) :
+	ErrorHandlerBase(),
+	DeviceCommandBase(),
+	mSeparator(' ')
 {
 	mSeparator = ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar();
 
@@ -25,7 +33,14 @@ DeviceCommand::DeviceCommand( const QString &commandString ) : DeviceCommandBase
 	}
 }
 
-DeviceCommand *DeviceCommand::fromString( const QString &commandString )
+DeviceCommandBuilder::DeviceCommandBuilder(const DeviceCommandBase &cmdBase) :
+	DeviceCommandBase(cmdBase),
+	mSeparator(' ')
+{
+	mSeparator = ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar();
+}
+
+DeviceCommandBuilder *DeviceCommandBuilder::fromString( const QString &commandString )
 {
 	QStringList cmdExploded = QString(commandString).remove('\n').split( ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar(), QString::SkipEmptyParts );
 
@@ -46,7 +61,7 @@ DeviceCommand *DeviceCommand::fromString( const QString &commandString )
 		return 0;
 	}
 
-	DeviceCommand *cmd = new DeviceCommand( commandString );
+	DeviceCommandBuilder *cmd = new DeviceCommandBuilder( commandString );
 
 	if( cmd->isValid() )
 		{ return cmd; }
@@ -59,7 +74,7 @@ DeviceCommand *DeviceCommand::fromString( const QString &commandString )
 	}
 }
 
-bool DeviceCommand::setInterface(const QString &hwi)
+bool DeviceCommandBuilder::setInterface(const QString &hwi)
 {
 	if( !Device::isValidHwInterface(hwi) )
 	{
@@ -73,17 +88,7 @@ bool DeviceCommand::setInterface(const QString &hwi)
 	}
 }
 
-DeviceCommand::DeviceCommand(const DeviceCommandBase &cmdBase) : DeviceCommandBase(cmdBase), mSeparator(' ')
-{
-	mSeparator = ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar();
-}
-
-DeviceCommand::DeviceCommand(const DeviceCommandBase *cmdBase) : DeviceCommandBase(cmdBase), mSeparator(' ')
-{
-	mSeparator = ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar();
-}
-
-const QString DeviceCommand::getCommandString() const
+const QString DeviceCommandBuilder::getCommandString() const
 {
 	if( !isValid() )
 	{
@@ -96,7 +101,7 @@ const QString DeviceCommand::getCommandString() const
 	strCmd = QString( commandTypeToString(mType) + mSeparator + mHwInterface + mSeparator + mVariable );
 
 	if( !mArgs.isEmpty() )
-		{ strCmd = QString( mSeparator + getArgumentString() ); }
+		{ strCmd += QString( mSeparator + getArgumentString() ); }
 
 	if( !strCmd.endsWith('\n') )
 		{ strCmd.append('\n'); }
@@ -104,7 +109,7 @@ const QString DeviceCommand::getCommandString() const
 	return strCmd.toAscii();
 }
 
-bool DeviceCommand::setArgumentString(const QString &argStr)
+bool DeviceCommandBuilder::setArgumentString(const QString &argStr)
 {
 	QStringList rawArgList = argStr.split(mSeparator);
 	QStringList argList;
@@ -114,9 +119,9 @@ bool DeviceCommand::setArgumentString(const QString &argStr)
 	{
 		if( rawArgList.at(i).startsWith(QChar('"')) )	// start an escaped argument
 		{
-			escapedArgCache = rawArgList.at(0).mid(1);
+			escapedArgCache = rawArgList.at(i).mid(1);
 		}
-		else if( rawArgList.at(i).startsWith(QChar('"')) )	// end of an escaped argument
+		else if( rawArgList.at(i).endsWith(QChar('"')) )	// end of an escaped argument
 		{
 			escapedArgCache.append(mSeparator).append( rawArgList.at(i).left(rawArgList.at(i).size()-1) );
 			argList.append( escapedArgCache );
@@ -133,10 +138,10 @@ bool DeviceCommand::setArgumentString(const QString &argStr)
 	}
 
 	mArgs = QStringList(argList);
-	return checkSetValid();
+	return isValid();
 }
 
-const QString DeviceCommand::getArgumentString() const
+const QString DeviceCommandBuilder::getArgumentString() const
 {
 	QStringList escapedArgStringList;
 	for( int i=0; i < mArgs.size(); ++i )

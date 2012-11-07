@@ -1,46 +1,41 @@
 #include "DummyFileDevice.h"
+#include <iostream>
 
 using namespace QtuC;
 
 DummyFileDevice::DummyFileDevice(QObject *parent) :
 	DeviceConnectionManagerBase(parent)
 {
-	mDeviceFile = new QFile( "dummyDevice", this );
-	connect(mDeviceFile, SIGNAL(readyRead()), this, SLOT(receivePart()));
+	mSocketNotifier = new QSocketNotifier( 0, QSocketNotifier::Read, this);
+	connect( mSocketNotifier, SIGNAL(activated(int)), this, SLOT(receivePart()) );
+	mDeviceInFile = new QFile( this );
+	//connect(mDeviceFile, SIGNAL(readyRead()), this, SLOT(receivePart()));
 }
 
 DummyFileDevice::~DummyFileDevice()
 {
-	mDeviceFile->close();
+	mDeviceInFile->close();
+	mSocketNotifier->deleteLater();
 }
 
-bool DummyFileDevice::sendCommand(const DeviceCommand &cmd)
+bool DummyFileDevice::sendCommand( DeviceCommandBuilder *cmd )
 {
-	if( !mDeviceFile->isOpen() )
-	{
-		error( QtWarningMsg, "Dummyd evice file is closed, sendCommand failed", "sendCommand()" );
-		return false;
-	}
+	if( !cmd )
+		{ return false; }
 
-	if( mDeviceFile->write( cmd.getCommandString().toStdString().c_str() ) <= 0 )
-	{
-		errorDetails_t errDet;
-		errDet.insert( "cmdStr", cmd.getCommandString() );
-		errDet.insert( "file IO error", mDeviceFile->errorString() );
-		error( QtWarningMsg, "Failed to send command to device.", "senmdCommand()", errDet );
-		return false;
-	}
-	else
-		{ debug( debugLevelVeryVerbose, QString("Command wrote to file: %1").arg(cmd.getCommandString()), "sendCommand()" ); }
+	std::cout << cmd->getCommandString().toStdString();
+
+	//debug( debugLevelVeryVerbose, QString("Command wrote to file: %1").arg(cmd->getCommandString()), "sendCommand()" );
+	cmd->deleteLater();
 	return true;
 }
 
 void DummyFileDevice::receivePart()
-{
+{ qDebug("recpart");
 	QByteArray block;
 	char c=0;
 	bool fullCmd = false;
-	while( mDeviceFile->getChar(&c) )
+	while( mDeviceInFile->getChar(&c) )
 	{
 		if( c && c != '\n' )
 		{
@@ -63,9 +58,9 @@ void DummyFileDevice::receivePart()
 		mCmdRxBuffer = mCmdRxBufferShadow;
 		debug( debugLevelInfo, QString("Command received on serial: %1").arg(mCmdRxBuffer), "receivePart()" );
 
-		DeviceCommand *cmd = DeviceCommand::fromString( mCmdRxBuffer );
+		DeviceCommandBuilder *cmd = DeviceCommandBuilder::fromString( mCmdRxBuffer );
 		if( cmd )
-			{ emit commandReceived(cmd); }
+			{ emit commandReceived((DeviceCommand*)cmd); }
 		else
 			{ error( QtWarningMsg, "Invalid device command received, command dropped", "receivePart()"); }
 		mCmdRxBufferShadow.clear();
@@ -74,24 +69,24 @@ void DummyFileDevice::receivePart()
 
 void DummyFileDevice::closeFile()
 {
-	if( mDeviceFile->isOpen() )
+	if( mDeviceInFile->isOpen() )
 	{
-		mDeviceFile->close();
+		mDeviceInFile->close();
 		debug( debugLevelInfo, "Dummy device file closed.", "closePort()" );
 	}
 }
 
-bool DummyFileDevice::openFile()
+bool DummyFileDevice::openInFile()
 {
-	if( mDeviceFile->open( QIODevice::ReadWrite ) )
+	if( mDeviceInFile->open( 0, QIODevice::ReadOnly ) )
 	{
-		debug( debugLevelInfo, "Dummy device file opened", "openFile()" );
+		debug( debugLevelInfo, "Dummy device in file opened", "openFile()" );
 	}
 	else
 	{
 		errorDetails_t errDet;
-		errDet.insert( "error message", mDeviceFile->errorString() );
-		error( QtCriticalMsg, "Opening dummy device file failed", "openFile()", errDet );
+		errDet.insert( "error message", mDeviceInFile->errorString() );
+		error( QtCriticalMsg, "Opening dummy device in file failed", "openFile()", errDet );
 		return false;
 	}
 	return true;
@@ -104,5 +99,5 @@ void DummyFileDevice::closeDevice()
 
 bool DummyFileDevice::openDevice()
 {
-	return openFile();
+	return openInFile();
 }

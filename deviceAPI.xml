@@ -1,0 +1,40 @@
+<!DOCTYPE QtuCDeviceAPIDef>
+<deviceAPI>
+
+    <deviceInfo>
+       <name>testDevice</name>
+		<desc>Short description for testDevice</desc>
+		<platform>A short platform for testDevice</platform>
+		<project>projName for testDevice</project>
+		<positiveAck>false</positiveAck>
+    </deviceInfo>
+
+    <hardwareInterfaceList>
+        <hardwareInterface>
+			<name>hw1</name>
+			<info>Test hw interface 1 for testDevice.</info>
+		</hardwareInterface>
+    </hardwareInterfaceList>
+
+    <stateVariableList>
+        <stateVariable>
+			<hwInterface>hw1</hwInterface>
+			<name>var1i</name>
+			<type>int</type>
+		</stateVariable>
+		<stateVariable>
+			<hwInterface>hw1</hwInterface>
+			<name>var2s</name>
+			<type>string</type>
+		</stateVariable>
+    </stateVariableList>
+
+    <functionList>
+        <function>
+			<hwInterface>hw1</hwInterface>
+			<name>f1</name>
+			<args> arg1 arg2 "argument 3 with spaces..."</args>  
+		</function>
+    </functionList>
+
+</deviceAPI>

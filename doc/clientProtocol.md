@@ -42,12 +42,15 @@ A device packet is essentially a device command. Three example for the three typ
 </packet>
 
 <packet class="device" id="clientID#2367">
-	<call hwi="LCD" func="write"><![CDATA[Hi LCD!]]></call>
+	<call hwi="LCD" func="write">
+		<arg><![CDATA[0,0]]</arg>
+		<arg><![CDATA[Hi LCD!]]></arg>
+	</call>
 	<call hwi="drive" func="eStop"/>
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The argument must always be wrapped in a CDATA node.
+The arguments must always be wrapped in a CDATA node.
 
 Special cases of commands are possible for requesting several variables at a time. To get all variable in a hardware interface, send `<get hwi="hwI_name"/>` in a device packet. Or if you want to get ALL the variables (don't do this very often though... Use [subscribe](#doc-clientProtocol-packets-subscribe) instead.), send `<get/>`.
 

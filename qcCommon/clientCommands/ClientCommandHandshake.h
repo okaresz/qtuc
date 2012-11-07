@@ -2,6 +2,7 @@
 #define CLIENTCOMMANDHANDSHAKE_H
 
 #include "ClientCommandBase.h"
+#include <QObject>
 
 namespace QtuC
 {
@@ -13,22 +14,22 @@ class ClientCommandHandshake : public ClientCommandBase
 {
 	Q_OBJECT
 public:
-	ClientCommandHandshake( QObject *parent = 0 );
+	ClientCommandHandshake();
 
 	/** Create an empty acknowledge handshake.
 	  *	To an ACK handshake, info is not needed, as this is used after both ends sent their info handshake.
 	  *	@param ack ACK value. True if client is accepted, false if not.*/
-	ClientCommandHandshake( bool ack, QObject *parent = 0 );
+	ClientCommandHandshake( bool ack );
 
 	/** Create handshake.
 	  *	@param info The self-info to send with handshake. must contain id at least.*/
-	ClientCommandHandshake( QHash<QString,QString> &info, QObject *parent = 0) ;
+	ClientCommandHandshake( QHash<QString,QString> &info ) ;
 
 	/** Create acknowledge handshake.
 	  *	Create a handshake in reply to another.
 	  *	@param info The self-info to send with handshake. must contain id at least.
 	  *	@param ack The value of the ack param.*/
-	ClientCommandHandshake( QHash<QString,QString> &info, bool ack, QObject *parent = 0 );
+	ClientCommandHandshake( QHash<QString,QString> &info, bool ack );
 
 	// Inherited methods
 

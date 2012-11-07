@@ -5,7 +5,9 @@ using namespace QtuC;
 /// 0 means invalid
 quint32 ClientCommandHeartBeat::heartBeatCounter = 1;
 
-ClientCommandHeartBeat::ClientCommandHeartBeat( QObject *parent ) : ClientCommandBase(parent), mIsReply(false)
+ClientCommandHeartBeat::ClientCommandHeartBeat() :
+	ClientCommandBase(),
+	mIsReply(false)
 {
 	mName = "heartBeat";
 	mClass = clientCommandControl;
@@ -32,12 +34,12 @@ bool ClientCommandHeartBeat::applyDomElement(const QDomElement &cmdElement)
 
 ClientCommandBase *ClientCommandHeartBeat::clone()
 {
-	return new ClientCommandHeartBeat(parent());
+	return new ClientCommandHeartBeat();
 }
 
 ClientCommandBase *ClientCommandHeartBeat::exactClone()
 {
-	ClientCommandHeartBeat *clone = new ClientCommandHeartBeat(parent());
+	ClientCommandHeartBeat *clone = new ClientCommandHeartBeat();
 	--heartBeatCounter;
 	clone->mId = mId;
 	clone->mName = mName;
@@ -48,8 +50,9 @@ ClientCommandBase *ClientCommandHeartBeat::exactClone()
 
 QDomElement ClientCommandHeartBeat::getDomElement() const
 {
-	QDomElement cmdElement;
-	cmdElement.setTagName( mName );
+	QDomDocument dom;
+	QDomElement cmdElement = dom.createElement(mName);
+
 	if( mIsReply )
 		{ cmdElement.setAttribute( "ack", mAck ); }
 	else
@@ -59,5 +62,5 @@ QDomElement ClientCommandHeartBeat::getDomElement() const
 
 bool ClientCommandHeartBeat::isValid() const
 {
-	return !( mIsReply && mAck == 0 );
+	return !( mIsReply && mAck == 0 ) && ClientCommandBase::isValid();
 }

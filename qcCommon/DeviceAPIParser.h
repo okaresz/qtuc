@@ -29,14 +29,21 @@ public:
 
 	/** Get the hash of current API.
 	  *	@return Hash of the current API as a QByteArray. If API is invalid, returns an empty QByteArray.*/
-	const QByteArray getHash();
+	const QByteArray getHash() const;
+
+	/** Get the current API string.
+	  *	@return Current API as a QString. If API is invalid, returns an empty QString.*/
+	const QString getString() const;
 
 	/** Get hash of the passed deviceAPI string.
 	  *	@param The deviceAPI string (content of the deviceAPI.xm, with or without the DTD.
 	  *	@return The hash as a QByteArray.*/
 	static const QByteArray getHash( const QString &apiString );
 
-	bool operator==( const QString &newAPIString );
+	/** Just for your convenience.
+	  *	@param deviceAPIString API string to compare.
+	  *	@return True if deviceAPIString equals the current, false otherwise.*/
+	bool operator==( const QString &deviceAPIString );
 
 signals:
 
@@ -88,10 +95,8 @@ private:
 	 *	@return True on success, false otherwise.*/
 	bool parseNodeStateVariable( const QDomElement &stateVariableElement );
 
-	/** MD5 hash of the current API file.
-	 */
-	QByteArray mCurrentAPIHash;
-
+	QByteArray mCurrentApiHash;	///< MD5 hash of the current API file.
+	QString mCurrentApiString;	///< Current API string.
 };
 
 }	//QtuC::

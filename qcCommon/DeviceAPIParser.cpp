@@ -83,7 +83,8 @@ bool DeviceAPIParser::parseAPI ( const QString& deviceAPIString )
 		}
 	}
 
-	mCurrentAPIHash = getHash( deviceAPIString );
+	mCurrentApiHash = getHash( deviceAPIString );
+	mCurrentApiString = deviceAPIString;
 
 	return true;
 }
@@ -272,12 +273,23 @@ bool DeviceAPIParser::parseNodeStateVariable( const QDomElement &stateVariableEl
 	return true;
 }
 
-bool DeviceAPIParser::operator ==(const QString &newAPIString)
+bool DeviceAPIParser::operator ==( const QString &deviceAPIString )
 {
-	return ( mCurrentAPIHash == getHash(newAPIString) );
+	return ( mCurrentApiHash == getHash(deviceAPIString) );
+}
+
+
+const QByteArray DeviceAPIParser::getHash() const
+{
+	return mCurrentApiHash;
 }
 
 const QByteArray DeviceAPIParser::getHash(const QString &apiString)
 {
 	return QCryptographicHash::hash( apiString.toAscii(), QCryptographicHash::Md5 );
+}
+
+const QString DeviceAPIParser::getString() const
+{
+	return mCurrentApiString;
 }

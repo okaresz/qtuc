@@ -12,9 +12,9 @@ class ClientCommandHeartBeat : public ClientCommandBase
 {
 	Q_OBJECT
 public:
-	ClientCommandHeartBeat( QObject *parent = 0 );
+	ClientCommandHeartBeat();
 
-	ClientCommandHeartBeat *cloneReply(  );
+	ClientCommandHeartBeat *cloneReply();
 
 	// Inherited methods
 

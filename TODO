@@ -11,6 +11,8 @@ check destructor chains, proper object deletions
 
 implement connection lost detection
 
+statevariable rawvval and val are not initialised upon creation, and the variable will be invalid, unable to get
+
 USE INIT FUNCTIONS
 if multiple constructors exist, you will always forget to update one of them... (if some modifications needed in the common c'tor code)
 

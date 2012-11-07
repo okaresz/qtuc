@@ -72,9 +72,19 @@ public:
 	 *	@return True if API is valid and is successfully applied, false otherwise. If API change fails, the previous API (if any) remains active.*/
 	bool reInitAPI( const QString &apiDefString = QString() );
 
+	/** Whether to emit all received device command.*
+	  *	@param emitAllCmd True to emit, false to not.*/
+	void setEmitAllCommand( bool emitAllCmd )
+		{ mEmitAllCmd = emitAllCmd; }
+
+	/** Get the deviceApiParse instance.
+	  *	@return The deviceApiParse instance.*/
+	const DeviceAPIParser *getDeviceApiParser()
+		{ return (DeviceAPIParser*)mDeviceAPI; }
+
 public slots:
 
-	void handleDeviceCommand( DeviceCommandBase *cmd );
+	void handleDeviceCommand( DeviceCommand *cmd );
 
 	void handleStateVariableUpdateRequest( DeviceStateVariable *stateVar );
 
@@ -87,14 +97,15 @@ signals:
 
 	/** Emitted when a new deviceCommand  is received, addressed for proxy.
 	  *	@param cmd The device command.*/
-	void commandReceived( DeviceCommandBase *cmd );
+	void commandReceived( DeviceCommand *cmd );
 
 private:
 
 	DeviceStateManager* mStateManager;		///< The DeviceStateManager instance. Handles the device variables
 	DeviceConnectionManagerBase* mDeviceLink;	///< DeviceConnectionManagerBase instance. Handles the connection to the device.
 	DeviceAPIFileHandler *mDeviceAPI;		///< DeviceAPIFileHandler intance. handles deviceAPI and device API file.
-	Device* mDeviceInstance;
+	Device* mDeviceInstance;		///< Pointer to the current device singleton.
+	bool mEmitAllCmd;	///< If true, emit all received device command.
 };
 
 }	//QtuC::

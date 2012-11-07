@@ -3,6 +3,7 @@
 
 #include "DeviceConnectionManagerBase.h"
 #include <QFile>
+#include <QSocketNotifier>
 
 namespace QtuC
 {
@@ -18,7 +19,7 @@ public:
 	~DummyFileDevice();
 
 	/// Inherited from DeviceConnectionManagerBase.
-	bool sendCommand( const DeviceCommand &cmd );
+	bool sendCommand( DeviceCommandBuilder *cmd );
 
 	/// Inherited from DeviceConnectionManagerBase.
 	void closeDevice();
@@ -31,7 +32,7 @@ public:
 
 	/** Open dummy device file.
 	  *	@return True on success, false otherwise.*/
-	bool openFile();
+	bool openInFile();
 
 private slots:
 
@@ -42,7 +43,8 @@ private slots:
 private:
 	QString mCmdRxBuffer;
 	QString mCmdRxBufferShadow;
-	QFile *mDeviceFile;
+	QFile *mDeviceInFile;
+	QSocketNotifier *mSocketNotifier;
 };
 
 }	//QtuC::

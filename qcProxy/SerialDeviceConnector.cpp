@@ -15,24 +15,30 @@ SerialDeviceConnector::~SerialDeviceConnector()
 	this->closePort();
 }
 
-bool SerialDeviceConnector::sendCommand(const DeviceCommand &cmd)
+bool SerialDeviceConnector::sendCommand( DeviceCommandBuilder *cmd )
 {
+	if( !cmd )
+		{ return false; }
+
 	if( !mSerialPort->isOpen() )
 	{
 		error( QtWarningMsg, "Serial port is closed, sendCommand failed", "sendCommand()" );
+		cmd->deleteLater();
 		return false;
 	}
 
-	if( mSerialPort->write( cmd.getCommandString().toStdString().c_str() ) <= 0 )
+	if( mSerialPort->write( cmd->getCommandString().toStdString().c_str() ) <= 0 )
 	{
 		errorDetails_t errDet;
-		errDet.insert( "cmdStr", cmd.getCommandString() );
+		errDet.insert( "cmdStr", cmd->getCommandString() );
 		errDet.insert( "serialPort error", mSerialPort->errorString() );
 		error( QtWarningMsg, "Failed to send command to device.", "senmdCommand()", errDet );
+		cmd->deleteLater();
 		return false;
 	}
 	else
-		{ debug( debugLevelVeryVerbose, QString("Command sent on serial: %1").arg(cmd.getCommandString()), "sendCommand()" ); }
+		{ debug( debugLevelVeryVerbose, QString("Command sent on serial: %1").arg(cmd->getCommandString()), "sendCommand()" ); }
+	cmd->deleteLater();
 	return true;
 }
 
@@ -64,9 +70,9 @@ void SerialDeviceConnector::receivePart()
 		mCmdRxBuffer = mCmdRxBufferShadow;
 		debug( debugLevelInfo, QString("Command received on serial: %1").arg(mCmdRxBuffer), "receivePart()" );
 
-		DeviceCommand *cmd = DeviceCommand::fromString( mCmdRxBuffer );
+		DeviceCommandBuilder *cmd = DeviceCommandBuilder::fromString( mCmdRxBuffer );
 		if( cmd )
-			{ emit commandReceived(cmd); }
+			{ emit commandReceived((DeviceCommand*)cmd); }
 		else
 			{ error( QtWarningMsg, "Invalid device command received, command dropped", "receivePart()"); }
 		mCmdRxBufferShadow.clear();

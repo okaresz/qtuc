@@ -6,6 +6,9 @@
 
 using namespace QtuC;
 
+/// .... :S
+bool proxyPassThrough = false;
+
 void parseAppArg( const QString &, int & );
 
 /** Signal handling...
@@ -44,6 +47,7 @@ int main(int argc, char *argv[])
 
 	// ...and let the show begin!
 	QcProxy *proxy = new QcProxy();
+	proxy->setPassThrough(proxyPassThrough);
 	if( !proxy->start() )
 	{
 		//  oops..
@@ -67,30 +71,34 @@ int main(int argc, char *argv[])
 void parseAppArg( const QString &appArg, int &argIndex )
 {
 	QString arg(appArg);
-	// switches
-	if( arg.startsWith('-') )
+
+	if( arg.startsWith("--") )
+	{
+		arg = arg.mid(2);
+		if( arg == "passthrough" )
+		{
+			proxyPassThrough = true;
+		}
+		++argIndex;
+	}
+	else if( arg.startsWith('-') )
 	{
 		arg = arg.mid(1);
 		if( arg == "v" )
 		{
 			ErrorHandlerBase::setDebugLevel( debugLevelVerbose );
-			++argIndex;
 		}
 		else if( arg == "vv" )
 		{
 			ErrorHandlerBase::setDebugLevel( debugLevelVeryVerbose );
-			++argIndex;
+
 		}
-	}
-	// args
-	else if( arg.startsWith("--") )
-	{
-		arg = arg.mid(2);
+		++argIndex;
 	}
 }
 
 void onSigInt(int signum)
 {
-	qDebug( "Cought SIGINT, quit..." );
+	qDebug( "Cought SIGINT (%d), quit...", signum );
 	QCoreApplication::instance()->quit();
 }

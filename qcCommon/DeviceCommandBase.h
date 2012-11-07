@@ -1,10 +1,8 @@
 #ifndef DEVICECOMMANDBASE_H
 #define DEVICECOMMANDBASE_H
 
-#include <QObject>
 #include <QStringList>
 #include "DeviceStateVariable.h"
-#include "ErrorHandlerBase.h"
 
 namespace QtuC
 {
@@ -18,9 +16,9 @@ enum deviceCommandType_t
 	deviceCmdCall
 };
 
-class DeviceCommandBase : public ErrorHandlerBase
+/** Base class for all device command classes.*/
+class DeviceCommandBase
 {
-	Q_OBJECT
 public:
 
 	/** Create an empty, invalid command object.*/
@@ -29,19 +27,10 @@ public:
 	/** Copy constructor.*/
 	DeviceCommandBase( const DeviceCommandBase &deviceCommand );
 
-	/** Copy from a pointer.*/
-	DeviceCommandBase( const DeviceCommandBase* deviceCommand );
-
-	/** Build a command from/for a device variable.
-	  *	This c'tor builds a command from the passed type, de variable name and the raw (device-side) value of the passed device variable.
-	  *	@param cmdType Type of the command. Can be set or get, any other value will trigger an error.
-	  *	@param stateVar Pointer to the device variable.
-	  *	@return A command object, or 0 on failure.*/
-	static DeviceCommandBase* build( deviceCommandType_t cmdType, const DeviceStateVariable* stateVar );
-
 	/** Get whether the current command object makes a valid device command.
+	  *	This is a virtual function, you can reimplement it if necessary, but don't forget to call this also (DeviceCommandBase::isValid()).
 	  *	@return True if valid, false if not.*/
-	bool isValid() const;
+	virtual bool isValid() const;
 
 	/** Get command type.
 	  *	@return Command type.*/
@@ -91,11 +80,6 @@ public:
 	 *	@return True on success, false otherwise.*/
 	void setVariable( const QString& cv );
 
-	/** Apply a device variable to the command.
-	 *	This will set the command variable and value from a DeviceStateVariable instance.
-	 *	@param stateVar Pointer to a DeviceStateVariable instance.*/
-	bool applyVariable( DeviceStateVariable* stateVar );
-
 	/** Set command function.
 	  *	This is an alias for setVariable().
 	  *	@param fn Function name to set.
@@ -112,8 +96,14 @@ public:
 	/** Set argument.
 	  *	If argument already exist, overwrite, otherwise append. If index is greater than argument count, the argument is appended.
 	  *	@param arg The argument value.
-	  *	@param index The index of the argument to set. 0 if omitted.*/
+	  *	@param index The index of the argument to set. 0 if omitted.
+	  *	@return True on success, false otherwise.*/
 	bool setArg( const QString &arg, int index = 0 );
+
+	/** Append an argument.
+	  *	@param arg The argument value.
+	  *	@return True on success, false otherwise.*/
+	bool appendArg( const QString &arg );
 
 	/** Convert commandType to QString.
 	 *	@param cmdType Command type to convert.
@@ -127,15 +117,10 @@ public:
 
 protected:
 
-	/** Check the minimum number of arguments for the current command type.
-	  *	@return True if arguments are valid, false otherwise.*/
-	bool checkSetValid();
-
 	QString mHwInterface;		///< Hardware interface name
 	deviceCommandType_t mType;	///< Command type.
 	QString mVariable;			///< Command variable.
 	QStringList mArgs;			///< Command arguments
-	bool mValid;				///< Validity of this command,
 };
 
 }	//QtuC::
