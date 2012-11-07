@@ -9,7 +9,13 @@ ClientCommandDeviceApi::ClientCommandDeviceApi( const QString &deviceApiString )
 	mClass = clientCommandControl;
 	mIsPermanent = false;	///< @todo make settable
 
+<<<<<<< HEAD
 	mApiB64 = deviceApiString.toUtf8().toBase64();
+=======
+	QString noconstStr( "ljlkjlkj klj lkj éjáj" );
+	QByteArray utf = noconstStr.toUtf8();
+	mApiB64 = utf.toBase64();
+>>>>>>> 7498045c1dc8d45420b6af5e3044049572b1ba51
 	mApiHash = QCryptographicHash::hash( mApiB64, QCryptographicHash::Md5 );
 }
 
