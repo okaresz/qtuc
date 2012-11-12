@@ -36,7 +36,6 @@ public:
 	  *	@return Pointer to a DeviceStateVariable object.*/
 	DeviceStateVariable *getVar( const QString &hwInterface, const QString &varName );
 
-
 	/** Send a get command to the device to update this variable.
 	 *	Use the valueUpdated() signal of the variable to know when the value has been updated.
 	 *	This function returns immediately.
@@ -46,6 +45,10 @@ public:
 	 *	@return True if update sent successfully, false otherwise.*/
 	bool update( const QString &hwInterface, const QString &varName );
 
+	/** Send a command to the device.
+	  *	@param cmd The device command to send.
+	  *	@return True on success, false otherwise.*/
+	bool command( DeviceCommand *cmd );
 
 	/** Set a new value for a state variable, asynchronously.
 	 *	If device uses positive acknowledgement, this function only sends a set command to the device to which the device must respond with a similar set command.
@@ -65,7 +68,6 @@ public:
 	 *	@return True if API is valid and is successfully applied, false otherwise.*/
 	bool initAPI( const QString &apiDefString = QString() );
 
-
 	/** Re-initialize the deviceAPI.
 	 *	This function can only be used to update the API. To initialize DevieAPI for the first time, use initAPI().
 	 *	@param apiDefString The API definition string. If omitted, the API will be loaded from file (path can be set in settings).
@@ -79,7 +81,7 @@ public:
 
 	/** Get the deviceApiParse instance.
 	  *	@return The deviceApiParse instance.*/
-	const DeviceAPIParser *getDeviceApiParser()
+	const DeviceAPIParser *getApiParser()
 		{ return (DeviceAPIParser*)mDeviceAPI; }
 
 public slots:

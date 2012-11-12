@@ -5,7 +5,7 @@ With this XML file you can define the "interface" for the device. Here you shoul
 
 The file **must be in the same directory as the qcProxy executable**. If this file is missing, the proxy will emit an error message and will exit immediately.
 
-# Basic layout #
+# Basic layout #		{#doc-deviceAPIxml-layout}
 
 The basic structure of the file is the following:
 
@@ -52,7 +52,7 @@ Some basic information about the device. This node is optional, but strongly rec
 **platform**: A short platform description.<br>
 **project**: A string to identify the project. What for? For example you have one device, but you use it in several projects, each needing a different API file.<br>
 
-# hardwareInterfaceList #
+# hardwareInterfaceList #		{#doc-deviceAPIxml-hwList}
 
 Here you can define the hardware interfaces used on the device. The hwI name will be chacked on every received command, and a warning will be generated if it's invalid, and the command will be dropped.
 
@@ -82,7 +82,7 @@ Example:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-# stateVariableList #
+# stateVariableList #		{#doc-deviceAPIxml-stateVarList}
 
 In this node you can define the various state variables you wish to use with the dervice.
 
@@ -176,7 +176,7 @@ Example:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-# functionList #
+# functionList #		{#doc-deviceAPIxml-funcList}
 
 Here you can define the functions you want to call on the device. This node is otional.
 

@@ -5,10 +5,11 @@
  *	This header collects the various ClientCommand declaration headers.
  *	@note Don't forget to register the command in QtuC::ClientCommandFactory!*/
 
-#include "ClientCommandHeartBeat.h"
 #include "ClientCommandHandshake.h"
-#include "ClientCommandDevice.h"
+#include "ClientCommandHeartBeat.h"
+#include "ClientCommandReqDeviceApi.h"
 #include "ClientCommandDeviceApi.h"
+#include "ClientCommandDevice.h"
 class ClientCommandStatus;
 
 #endif // CLIENTCOMMANDS_H

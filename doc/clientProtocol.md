@@ -30,7 +30,7 @@ If you want to send more commands which belong to the same packet class, you can
 
 ### Device packets ###		{#doc-clientProtocol-packets-device}
 
-A device packet is essentially a device command. Three example for the three types of deviceCommand:
+A client-side device packet is essentially a device command. Three example for the three types of deviceCommand:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <packet class="device" id="clientID#2328">

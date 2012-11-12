@@ -50,19 +50,43 @@ void QcProxy::setPassThrough(bool pass)
 {
 	mPassThrough = pass;
 	mDevice->setEmitAllCommand( pass );
+	if( mPassThrough )
+		{ debug( debugLevelInfo, "qcProxy is in PassThrough mode", "setPassThrough()" ); }
 }
 
 bool QcProxy::route(ClientCommandBase *clientCommand)
 {
-	/// @todo implement (with mPassThrough also)
-	debug( debugLevelVeryVerbose, QString("Got client command: %1").arg(clientCommand->getName()), "route(ClientCommandBase*)" );
+	ClientConnectionManagerBase *client = (ClientConnectionManagerBase*)sender();
+	/// @todo implement, break apart into more subfunctions
+
+	if( clientCommand->getClass() == ClientCommandBase::clientCommandControl )
+	{
+		if( clientCommand->getName() == "reqDeviceAPI" )
+		{	/// @todo Permission to send API?
+			client->sendCommand( new ClientCommandDeviceApi( mDevice->getApiParser()->getString() ) );
+		}
+		/// @todo implement
+	}
+	else if( clientCommand->getClass() == ClientCommandBase::clientCommandDevice )
+	{
+		if( mPassThrough )
+		{
+			if( !mDevice->command( new DeviceCommand(*(DeviceCommandBase*)clientCommand) ) )
+				{ error( QtWarningMsg, QString("Failed to send command %1"), "route(ClientCommandBase*)" ); }
+		}
+		else
+		{
+			/// @todo implement
+		}
+	}
+	debug( debugLevelVeryVerbose, QString("Route client command: %1").arg(clientCommand->getName()), "route(ClientCommandBase*)" );
 	clientCommand->deleteLater();
 	return true;
 }
 
 bool QcProxy::route(DeviceCommand *deviceCommand)
 {
-	debug( debugLevelVeryVerbose, QString("Got device command: %1").arg( DeviceCommandBuilder(*deviceCommand).getCommandString() ), "route(DeviceCommand*)" );
+	debug( debugLevelVeryVerbose, QString("Route device command: %1").arg( DeviceCommandBuilder(*deviceCommand).getCommandString() ), "route(DeviceCommand*)" );
 	if( mPassThrough )
 	{
 		mConnectionServer->broadcast( new ClientCommandDevice(deviceCommand) );
@@ -85,5 +109,5 @@ bool QcProxy::handleDeviceMessage(deviceMessageType_t msgType, QString msg)
 void QcProxy::handleNewClient( ClientConnectionManagerBase *newClient )
 {
 	connect( newClient, SIGNAL(commandReceived(ClientCommandBase*)), this, SLOT(route(ClientCommandBase*)) );
-	mConnectionServer->getClient()->sendCommand( new ClientCommandDeviceApi( mDevice->getDeviceApiParser()->getString() ) );
+	mConnectionServer->getClient()->sendCommand( new ClientCommandDeviceApi( mDevice->getApiParser()->getString() ) );
 }

@@ -37,6 +37,13 @@ ProxySettingsManager::ProxySettingsManager(QObject *parent) :
 	if( !contains("serverSocket/heartBeatTimeout") )
 		{ setValue( "serverSocket/heartBeatTimeout", 3 ); } // sec
 
+	// Dummy device
+	if( !contains("dummyDeviceSocket/host") )
+		{ setValue( "dummyDeviceSocket/host", "localhost" ); }
+
+	if( !contains("dummyDeviceSocket/port") )
+		{ setValue( "dummyDeviceSocket/port", 8246 ); }
+
 	sync();
 }
 

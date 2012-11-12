@@ -14,6 +14,11 @@ DeviceCommand::DeviceCommand(const DeviceCommand &deviceCommand) :
 {
 }
 
+DeviceCommand::DeviceCommand(const DeviceCommandBase &commandBase) :
+	ErrorHandlerBase(),
+	DeviceCommandBase(commandBase)
+{}
+
 DeviceCommand *DeviceCommand::build( deviceCommandType_t cmdType, const DeviceStateVariable *stateVar )
 {
 	if( cmdType == deviceCmdCall )

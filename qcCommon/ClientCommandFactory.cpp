@@ -9,6 +9,7 @@ ClientCommandFactory::ClientCommandFactory( QObject *parent ) : ErrorHandlerBase
 	registerCommand( new ClientCommandHeartBeat() );
 	registerCommand( new ClientCommandHandshake() );
 	registerCommand( new ClientCommandDeviceApi() );
+	registerCommand( new ClientCommandReqDeviceApi() );
 
 	// Hah! How tricky I am! The deviceCommands with one class.
 	registerCommand( new ClientCommandDevice(deviceCmdGet) );

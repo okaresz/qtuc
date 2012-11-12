@@ -14,6 +14,8 @@ enum debugLevel_t
 	debugLevelVeryVerbose
 };
 
+/** Error and debug print functions.
+*	@todo console colors, formatting; simple "message" type print, where INFO is the beginning, and no location is printed.*/
 class ErrorHandlerBase : public QObject
 {
 	Q_OBJECT

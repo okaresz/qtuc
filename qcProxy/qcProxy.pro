@@ -26,8 +26,8 @@ SOURCES += main.cpp \
     ConnectionServer.cpp \
     ProxySettingsManager.cpp \
     QcProxy.cpp \
-    DummyFileDevice.cpp \
-    DeviceCommandBuilder.cpp
+    DeviceCommandBuilder.cpp \
+    DummySocketDevice.cpp
 
 HEADERS += \
     SerialDeviceConnector.h \
@@ -40,8 +40,8 @@ HEADERS += \
     ConnectionServer.h \
     ProxySettingsManager.h \
     QcProxy.h \
-    DummyFileDevice.h \
-    DeviceCommandBuilder.h
+    DeviceCommandBuilder.h \
+    DummySocketDevice.h
 
 
 CONFIG(debug, debug|release):unix:!macx:!symbian: LIBS += -lSerialPortd

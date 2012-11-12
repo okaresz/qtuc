@@ -22,7 +22,7 @@ You only need this part, if you are a client / proxy developer. For everyday use
 
 As the starting order of the components are unknown, the init sequence must be defined accordingly.
 
-### Proxy <-> device ###
+### Proxy <-> device ###		{#doc-session_example-init_seq-proxy-device}
 
   1. After the device is powered on, it has no obligation, just to listen on the communication port for commands.
   2. When the proxy starts, first it reads the settings and the device API. If any of this fails, exits with an error message.
@@ -30,7 +30,7 @@ As the starting order of the components are unknown, the init sequence must be d
   4. After a successful handshake, the proxy will sync all the variables defined in the deviceAPI (send a get command for each of them), to wich the device must reply with the right set commands.
   5. The proxy sets up the autoUpdates according to the deviceAPI file, and starts the update loop.
 
-### Proxy <-> client ###
+### Proxy <-> client ###		{#doc-session_example-init_seq-proxy-client}
 
 A client can be any compatible application which complies with the clientCommand syntax, and connects to the proxy through a TCP socket.
 

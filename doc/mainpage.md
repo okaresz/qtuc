@@ -4,21 +4,23 @@ QtuC		{#mainpage}
 A fast prototyping framework for embedded systems, in a client (GUI) - server
 (proxy) configuration.
 
-# Motivation #
+
+# Motivation #		{#mainpage-motivation}
 
 Are you fed up with the common practice that at the beginning of every project,
 you spend a ridiculously long time implementing the same trivial tasks (serial
 communication, communication protocolls, PC-side control program, etc..) again
 and again?
-Because I was, and so QtuC was created. QtuC takes care of these "basic"
-features so that you can concentrate on the *real* developement.
+I was, and so QtuC was created. QtuC takes care of these "basic"
+features so you can concentrate on the *real* developement.
 
-# Components #
+
+# Components #			{#mainpage-components}
 
 The framework consists of the following separate applications:
 
   * **qcDevice**: The code running on the embedded device (denoted as *device*
-throughout the documentation). This sofware is not part of the provided
+throughout the documentation). This sofware is not essential part of the provided
 framework, only some bare minimum examples are provided, the implementation is
 up to the device developer.
   * **qcProxy**: This is a *command-line* application, running usually on an x86
@@ -32,7 +34,8 @@ custom port (can be set in the qcGuiSettings.xml).
 If the connection is successful, the GUI will show the state of the device and
 provides basic control.
 
-# Basic concept and structure #
+
+# Basic concept and structure #			{#mainpage-concept}
 
 The state of the device is managed through variables, called \Device State
 Variables. For example a variable can be a state of a LED in the embedded
@@ -47,12 +50,14 @@ doc-clientProtocol) page for details.
 
 The client and  device side is aupdated and handled asynchronously.
 
-## DeviceAPI ##
+
+## DeviceAPI ##			{#mainpage-deviceAPI}
 
 You can manage and change information between the device and the proxy in two
 ways: variables (grouped by the hardware interfaces, and functions).
 
-#### Variables ####
+
+### Variables ###			{#mainpage-deviceAPI-variables}
 
 In most cases, the variable-based workflow is recommended.
 Whenever you want to monitor/control a particular state of the device (state of
@@ -75,7 +80,8 @@ and cast according to the specified variable type.
   * integer
   * double
 
-##### Value conversion #####
+  
+#### Value conversion ####			{#mainpage-deviceAPI-variables-conversion}
 
 When working with embedded devices, the values in the device are often raw,
 hardware-specific numbers, strings... The values need conversion before a
@@ -95,7 +101,9 @@ different. These different types for the device and the gui side can be defined
 in the [deviceAPI file](@ref doc-deviceAPIxml), along with the conversion
 scripts for both ways.
 
-#### Hardware Interfaces ####
+
+### Hardware Interfaces ###			{#mainpage-deviceAPI-hwInterfaces}
+
 For better usability and easy overview, the variables are grouped by *hardware
 interfaces* (referred sometimes as `hwI`). A hardware interface represents a
 closely-coupled set of features (variables and functions) on the device.
@@ -108,7 +116,8 @@ consisting the motor control variables such
 as the PWM duty ratio, the encoder reading TIMER value, the current measuring
 ADC, etc... And of course some related functions, such as emergencyStop().
 
-#### Functions ####
+
+### Functions ###			{#mainpage-deviceAPI-variables}
 
 Whenever you can, use a stateVariable to communicate with the device. If a
 feature / state cannot be solved with a variable, or is inconvenient or not
@@ -129,9 +138,9 @@ A function can accept a custom number of arguments. See [deviceCommand](@ref
 doc-deviceCommand) page for details.
 
 
-## Settings ##
+## Settings ##			{#mainpage-settings}
 
-### deviceAPI.xml ##
+### deviceAPI.xml ###			{#mainpage-settings-deviceAPIxml}
 
 You can define all the device-specific custom informations in this file. The
 hardware interfaces, the state variables, and the functions, with several
@@ -140,14 +149,20 @@ how to display a state variable on the GUI, or how often should autoUpdate
 update this variable, etc... See [deviceAPI doc page](@ref doc-deviceAPIxml) for
 details.
 
-### qcProxySettings.xml ##
+### qcProxy and qcGUI settings ###			{#mainpage-settings-progSettings}
 
-Currently, this file exists beside the qcProxy executable, and generated
-automatically with default values if not found.
+Proxy and gui settings are managed with QSettings, for more information, see Qt's documentation on it.
+However, the settings are explicitly written to file, even on windows, where the default QSettings backend is the registry.
+The path of the current settings file is printed on the command line upon program startup.
+Generated automatically with default values if not found.
 See related page for details.
 
-### qcGuiSettings.xml ##
 
-Currently, this file exists beside the qcGUI executable, and generated
-automatically with default values if not found.
-See related page for details.
+## Command line arguments ##			{#mainpage-cmdLineArgs}
+
+-v: be verbose
+
+-vv: be very verbose
+
+--passthrough: Enable passthrough mode. In this mode, proxy will relay all device commands to all clients, and send all client device commands to the device.
+This way, deviceStateVariables in the proxy are not used, proxy will act only as a translator. Also, the commands related and relying on stateVariables will not work in passthrough mode, for example subscribe, autoUpdate, and so on...

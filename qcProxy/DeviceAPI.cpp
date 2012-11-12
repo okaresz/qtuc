@@ -1,7 +1,7 @@
 #include "DeviceAPI.h"
 #include "DeviceCommand.h"
 #include "SerialDeviceConnector.h"
-#include "DummyFileDevice.h"
+#include "DummySocketDevice.h"
 #include "DeviceAPIFileHandler.h"
 
 using namespace QtuC;
@@ -11,7 +11,7 @@ DeviceAPI::DeviceAPI( QObject *parent ) :
 	mEmitAllCmd(false)
 {
 	mStateManager = new DeviceStateManager(this);
-	mDeviceLink = new DummyFileDevice(this);
+	mDeviceLink = new DummySocketDevice(this);
 	mDeviceAPI = new DeviceAPIFileHandler(this);
 	mDeviceInstance = 0;
 }
@@ -55,6 +55,17 @@ bool DeviceAPI::update( const QString &hwInterface, const QString &varName )
 		return false;
 	}
 	return true;
+}
+
+bool DeviceAPI::command(DeviceCommand *cmd)
+{
+	if( cmd->isValid() )
+		{ return mDeviceLink->sendCommand( cmd ); }
+	else
+	{
+		error( QtWarningMsg, "Invalid command", "command()" );
+		return false;
+	}
 }
 
 bool DeviceAPI::set( const QString &hwInterface, const QString &varName, const QVariant &newVal )
