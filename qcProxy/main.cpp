@@ -2,7 +2,10 @@
 #include "QcProxy.h"
 #include <QDebug>
 #include "ErrorHandlerBase.h"
-#include <signal.h>
+
+#ifdef Q_OS_WIN32
+    #include <signal.h>
+#endif
 
 using namespace QtuC;
 
@@ -13,8 +16,10 @@ void parseAppArg( const QString &, int & );
 
 /** Signal handling...
   *	For more info, see http://www.cplusplus.com/forum/unices/16430/, http://linux.die.net/man/2/sigaction*/
-struct sigaction sigHandlerConf;
-void onSigInt( int signum );
+#ifdef Q_OS_UNIX
+    struct sigaction sigHandlerConf;
+    void onSigInt( int signum );
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -56,12 +61,14 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	else
-	{
+    {
+    #ifdef Q_OS_UNIX
 		// add *nix signal handlers
 		sigHandlerConf.sa_handler = onSigInt;
 		sigemptyset(&sigHandlerConf.sa_mask);
 		sigHandlerConf.sa_flags = 0;
 		sigaction( SIGINT, &sigHandlerConf, 0 );
+    #endif
 
 		// Okay! Start the main thread's event loop.
 		return qcProxyApp.exec();
@@ -97,8 +104,10 @@ void parseAppArg( const QString &appArg, int &argIndex )
 	}
 }
 
+#ifdef Q_OS_UNIX
 void onSigInt(int signum)
 {
 	qDebug( "Cought SIGINT (%d), quit...", signum );
 	QCoreApplication::instance()->quit();
 }
+#endif

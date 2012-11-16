@@ -7,6 +7,7 @@ using namespace QtuC;
 QcGui::QcGui(QObject *parent) : ErrorHandlerBase(parent)
 {
 	// create settings
+    QSettings::setDefaultFormat( QSettings::IniFormat );
 	GuiSettingsManager::instance(this);
 
 	mProxyState = new ProxyStateManager(this);

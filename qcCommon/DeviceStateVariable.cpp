@@ -521,16 +521,19 @@ qint64 DeviceStateVariable::getAgeMs() const
 bool DeviceStateVariable::startAutoUpdate( int freqHz )
 {
 	/// @todo Implement
+    return false;
 }
 
 bool DeviceStateVariable::setAutoUpdateFrequency( int freqHz )
 {
 	/// @todo Implement
+    return false;
 }
 
 bool DeviceStateVariable::setAutoUpdate( bool state )
 {
 	/// @todo Implement
+    return false;
 }
 
 bool DeviceStateVariable::setConvertScript( bool fromRaw, const QString &scriptStr )
@@ -562,6 +565,7 @@ void DeviceStateVariable::stopAutoUpdate()
 bool DeviceStateVariable::getAutoUpdate() const
 {
 	/// @todo Implement
+    return false;
 }
 
 int DeviceStateVariable::getAutoUpdateFrequency() const

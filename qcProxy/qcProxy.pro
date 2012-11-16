@@ -43,22 +43,25 @@ HEADERS += \
     DeviceCommandBuilder.h \
     DummySocketDevice.h
 
+# Config for QtSerialPort.
+# On linux, ld must find the lib (no config), on win, use the one in the QtSerialPort dir
+unix:CONFIG(debug, debug|release): LIBS += -lSerialPortd
+else:unix:CONFIG(release, debug|release): LIBS += -lSerialPort
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../QtSerialPort/lib/win32 -lSerialPortd1
+else:win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../QtSerialPort/lib/win32 -lSerialPort1
 
-CONFIG(debug, debug|release):unix:!macx:!symbian: LIBS += -lSerialPortd
-CONFIG(release, debug|release):unix:!macx:!symbian: LIBS += -lSerialPort
 
-INCLUDEPATH += $$PWD/../QSerialDevice/include
-DEPENDPATH += $$PWD/../QSerialDevice/include
+INCLUDEPATH += $$PWD/../QtSerialPort/include
+DEPENDPATH += $$PWD/../QtSerialPort/include
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/ -lqcCommon
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/ -lqcCommond
-else:symbian: LIBS += -lqcCommon
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/release -lqcCommon
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/debug -lqcCommon
 else:unix: LIBS += -L$$OUT_PWD/../qcCommon/ -lqcCommon
 
 INCLUDEPATH += $$PWD/../qcCommon
 INCLUDEPATH += $$PWD/../qcCommon/clientCommands
 DEPENDPATH += $$PWD/../qcCommon
 
-win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/qcCommon.lib
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/qcCommond.lib
+win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/release/qcCommon.lib
+else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/debug/qcCommon.lib
 else:unix:!symbian: PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/libqcCommon.a

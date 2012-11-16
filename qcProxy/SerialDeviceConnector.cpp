@@ -90,12 +90,9 @@ void SerialDeviceConnector::closePort()
 
 bool SerialDeviceConnector::connectPort()
 {
-	//mSerialPort->setPort( ProxySettingsManager::instance()->value( "devicePort/portName" ).toString() );
-	mSerialPort->setPort( "/dev/ttyUSB01" );
-
+    mSerialPort->setPort( ProxySettingsManager::instance()->value( "devicePort/portName" ).toString() );
 	QString serialBaud = ProxySettingsManager::instance()->value( "devicePort/baudRate" ).toString();
-
-	if( mSerialPort->open( QIODevice::ReadWrite | QIODevice::Unbuffered ) )
+    if( mSerialPort->open( QIODevice::ReadWrite ) )
 	{
 		if( !mSerialPort->setRate( serialBaud.toInt() ) )
 		{

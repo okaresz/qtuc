@@ -75,6 +75,7 @@ bool DeviceAPIFileHandler::save(const QString &apiFilePath)
 		checkedPath = QDir::cleanPath( apiFileDir.append(apiFileName) );
 	}
 	/// @todo Implement
+    return false;
 }
 
 bool DeviceAPIFileHandler::reload()

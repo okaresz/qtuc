@@ -27,15 +27,14 @@ HEADERS  += \
 FORMS    += \
     QcGuiMainWindow.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/ -lqcCommon
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/ -lqcCommond
-else:symbian: LIBS += -lqcCommon
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/release/ -lqcCommon
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/debug/ -lqcCommon
 else:unix: LIBS += -L$$OUT_PWD/../qcCommon/ -lqcCommon
 
 INCLUDEPATH += $$PWD/../qcCommon
 INCLUDEPATH += $$PWD/../qcCommon/clientCommands
 DEPENDPATH += $$PWD/../qcCommon
 
-win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/qcCommon.lib
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/qcCommond.lib
+win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/release/qcCommon.lib
+else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/debug/qcCommon.lib
 else:unix:!symbian: PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/libqcCommon.a

@@ -14,6 +14,7 @@ QcProxy::QcProxy( QObject *parent ) :
 	mPassThrough(false)
 {
 	// Create the settings object, QcProxy as parent.
+    QSettings::setDefaultFormat( QSettings::IniFormat );
 	ProxySettingsManager::instance( this );
 
 	connect( QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(deleteLater()) );
