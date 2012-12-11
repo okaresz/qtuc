@@ -135,6 +135,22 @@ signals:
 	/// Emitted when the client got disconnected.
 	void clientDisconnected();
 
+	/** @name ConnectionState signals.
+	 *	@{*/
+
+	/** Emitted when the state of the connection is changed.
+	  *	@param newState The new connectionState.*/
+	void connectionStateChanged( connectionState_t newState );
+
+	void connectionStateConnected();	///< Emitted when the connection state becomes Connected.
+	void connectionStateHandShaking();	///< Emitted when the connection state becomes HandShaking.
+	void connectionStateReady();		///< Emitted when the connection state becomes Ready.
+	void connectionStateLost();			///< Emitted when the connection state becomes Lost.
+	void connectionStateDisconnected();	///< Emitted when the connection state becomes Disconnected.
+	void connectionStateError();		///< Emitted when the connection state becomes Error.
+
+	/// @}
+
 protected slots:
 
 	/** Handle new Client data.
@@ -171,6 +187,8 @@ protected:
 	  *	Check if it is open, readable and writable.
 	  *	@return True if socket is open, readable and writable, false if not.*/
 	bool checkSocket();
+
+	void setState( connectionState_t newState );
 
 	connectionState_t mState;	///< Connection state.
 

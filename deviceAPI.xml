@@ -14,6 +14,10 @@
 			<name>hw1</name>
 			<info>Test hw interface 1 for testDevice.</info>
 		</hardwareInterface>
+		<hardwareInterface>
+			<name>hw2</name>
+			<info>Test hw interface 2 for testDevice.</info>
+		</hardwareInterface>
     </hardwareInterfaceList>
 
     <stateVariableList>
@@ -26,6 +30,11 @@
 			<hwInterface>hw1</hwInterface>
 			<name>var2s</name>
 			<type>string</type>
+		</stateVariable>
+		<stateVariable>
+			<hwInterface>hw2</hwInterface>
+			<name>var3i</name>
+			<type>int</type>
 		</stateVariable>
     </stateVariableList>
 

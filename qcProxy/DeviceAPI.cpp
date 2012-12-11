@@ -11,7 +11,8 @@ DeviceAPI::DeviceAPI( QObject *parent ) :
 	mEmitAllCmd(false)
 {
 	mStateManager = new DeviceStateManager(this);
-    mDeviceLink = new SerialDeviceConnector(this);
+	//mDeviceLink = new SerialDeviceConnector(this);
+	mDeviceLink = new DummySocketDevice(this);
 	mDeviceAPI = new DeviceAPIFileHandler(this);
 	mDeviceInstance = 0;
 }

@@ -12,20 +12,22 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
     QcGui.cpp \
-    QcGuiMainWindow.cpp \
     ProxyStateManager.cpp \
     ProxyConnectionManager.cpp \
-    GuiSettingsManager.cpp
+    GuiSettingsManager.cpp \
+    QcGuiMainView.cpp \
+    StateVariablesView.cpp
 
 HEADERS  += \
     QcGui.h \
-    QcGuiMainWindow.h \
     ProxyStateManager.h \
     ProxyConnectionManager.h \
-    GuiSettingsManager.h
+    GuiSettingsManager.h \
+    QcGuiMainView.h \
+    StateVariablesView.h
 
 FORMS    += \
-    QcGuiMainWindow.ui
+    QcGuiMainView.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/release/ -lqcCommon
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/debug/ -lqcCommon

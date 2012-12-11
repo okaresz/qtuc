@@ -33,19 +33,19 @@ void ConnectionServer::handleNewConnection()
 	if( newClientSocket )
 	{
 		debug( debugLevelInfo, QString("New client connection, index: #%1").arg(mClients.size()), "handleNewConnection()" );
-		ClientConnectionManagerBase *newClient = new ClientConnectionManagerBase(newClientSocket, this);
+		ClientConnectionManagerBase *newClient = new ClientConnectionManagerBase(newClientSocket, true, this);
 		mClients.append(newClient);
-		connect( newClient, SIGNAL(clientDisconnected()), this, SLOT(handleDisconnect()) );
+		connect( newClient, SIGNAL(clientDisconnected()), this, SLOT(handleClientDisconnect()) );
 		emit newClientConnected(newClient);
 	}
 }
 
-void ConnectionServer::handleDisconnect()
+void ConnectionServer::handleClientDisconnect()
 {
 	// who dares!?...
 	int clientIndex = 0;
 	bool found = false;
-	for( int clientIndex=0; clientIndex<mClients.size(); ++clientIndex )
+	for(; clientIndex<mClients.size(); ++clientIndex )
 	{
 		if( mClients.at(clientIndex) == sender() )
 		{
@@ -55,11 +55,12 @@ void ConnectionServer::handleDisconnect()
 	}
 
 	if( !found )
-		{ error( QtWarningMsg, "Unknown client disconnected... who was it?...", "handleDisconnect()" ); }
+		{ error( QtWarningMsg, "Unknown client disconnected... who was it?...", "handleClientDisconnect()" ); }
 	else
 	{
-		/// @todo Do sg, with a disconnected client? Say delete it after a timeout?
-		debug( debugLevelInfo, QString("Client %2 (#%1) disconnected").arg(QString::number(clientIndex), mClients.at(clientIndex)->getID()), "handleDisconnect()" );
+		debug( debugLevelInfo, QString("Client %2 (#%1) disconnected").arg(QString::number(clientIndex), mClients.at(clientIndex)->getID()), "handleClientDisconnect()" );
+		mClients[clientIndex]->deleteLater();
+		mClients.removeAt(clientIndex);
 	}
 }
 

@@ -11,10 +11,11 @@ ClientCommandFactory *ClientConnectionManagerBase::mCommandFactory = 0;
 ClientConnectionManagerBase::ClientConnectionManagerBase( QTcpSocket *socket, bool isServerRole, QObject *parent ) :
 	ErrorHandlerBase(parent),
 	mState(connectionUnInitialized),
-	mServerRole(isServerRole)
+	mServerRole(isServerRole),
+	mHeartBeatCount(0),
+	mClientSocket(socket)
 {
 	++mInstanceCount;
-	mClientSocket = socket;
 	if( mClientSocket->isOpen() )
 	{
 		if( !mCommandFactory )
@@ -39,7 +40,7 @@ ClientConnectionManagerBase::ClientConnectionManagerBase( QTcpSocket *socket, bo
 		ClientPacket::setSelfId( mSelfInfo.value(QString("id")) );
 
 		// set some socket params, fine-tune connection...
-		mState = connectionConnected;
+		setState( connectionConnected );
 		mClientSocket->setSocketOption( QAbstractSocket::LowDelayOption, 1 );
 		//mClientSocket->setReadBufferSize(80);	//~one Command
 
@@ -59,7 +60,7 @@ ClientConnectionManagerBase::~ClientConnectionManagerBase()
 {
 	debug( debugLevelVerbose, "Disconnect client before closing...", "~ClientConnectionManagerBase()" );
 	if( mClientSocket )
-		mClientSocket->close();
+		{ mClientSocket->close(); }
 	if( --mInstanceCount == 0 )
 	{
 		delete mCommandFactory;
@@ -180,7 +181,7 @@ bool ClientConnectionManagerBase::sendPacket(ClientPacket *packet)
 
 bool ClientConnectionManagerBase::sendHandShake()
 {
-	mState = connectionHandShaking;
+	setState( connectionHandShaking );
 	ClientCommandHandshake *hs = new ClientCommandHandshake( mSelfInfo );
 	if( !sendCommand( hs ) )
 	{
@@ -196,37 +197,40 @@ bool ClientConnectionManagerBase::sendHandShake()
 
 void ClientConnectionManagerBase::receiveClientData()
 {
-	if( !checkSocket() )
+	while(1)
 	{
-		error( QtWarningMsg, "Client socket is not ready, checkSocket() failed", "receiveClientData()" );
-		return;
-	}
+		if( !checkSocket() )
+		{
+			error( QtWarningMsg, "Client socket is not ready, checkSocket() failed", "receiveClientData()" );
+			return;
+		}
 
-	//is it worth to read?
-	///  @todo It's not the responsibility ofClientConnectionManagerBase to know how big packet is needed... clean up this sizeof thing from here...
-	quint16 minPackeSize = sizeof(quint16)+1;
-	if( mClientSocket->peek(minPackeSize).size() < minPackeSize )	//2bytes of packetSize + 1 is the minimum size
-		{ return; }
+		//is it worth to read?
+		///  @todo It's not the responsibility ofClientConnectionManagerBase to know how big packet is needed... clean up this sizeof thing from here...
+		quint16 minPackeSize = sizeof(quint16)+1;
+		if( mClientSocket->peek(minPackeSize).size() < minPackeSize )	//2bytes of packetSize + 1 is the minimum size
+			{ return; }
 
-	// read packetSize
-	quint16 packetSize = ClientPacket::readPacketSize( mClientSocket->peek(sizeof(quint16)) );
-	// has the whole packet arrived?
-	if( mClientSocket->peek(packetSize+sizeof(quint16)).size() < packetSize+sizeof(quint16) )
-		{ return; }
+		// read packetSize
+		quint16 packetSize = ClientPacket::readPacketSize( mClientSocket->peek(sizeof(quint16)) );
+		// has the whole packet arrived?
+		if( mClientSocket->peek(packetSize+sizeof(quint16)).size() < packetSize+sizeof(quint16) )
+			{ return; }
 
-	ClientPacket *packet = ClientPacket::fromPacketData( mClientSocket->read( packetSize+sizeof(quint16) ) );
-	if( !packet )
-	{
-		error( QtWarningMsg, "Failed to create ClientPacket from data", "receiveClientData()" );
-		return;
-	}
+		ClientPacket *packet = ClientPacket::fromPacketData( mClientSocket->read( packetSize+sizeof(quint16) ) );
+		if( !packet )
+		{
+			error( QtWarningMsg, "Failed to create ClientPacket from data", "receiveClientData()" );
+			continue;
+		}
 
-	if( packet->isValid() )
-		{ emit packetReceived( packet ); }
-	else
-	{
-		error( QtWarningMsg, "Received packet is invalid", "receiveClientData()" );
-		return;
+		if( packet->isValid() )
+			{ emit packetReceived( packet ); }
+		else
+		{
+			error( QtWarningMsg, "Received packet is invalid", "receiveClientData()" );
+			continue;
+		}
 	}
 }
 
@@ -280,7 +284,7 @@ void ClientConnectionManagerBase::ackHandShake( ClientCommandHandshake *handshak
 		{
 			if( mState != connectionHandShaking )	//first hs received, reply with our info
 			{
-				mState = connectionHandShaking;
+				setState( connectionHandShaking );
 				mClientInfo = handshake->getInfo();
 				ClientCommandHandshake *replyHs = new ClientCommandHandshake(mSelfInfo, true);
 				sendCommand( replyHs );
@@ -290,7 +294,7 @@ void ClientConnectionManagerBase::ackHandShake( ClientCommandHandshake *handshak
 			{
 				if( handshake->isAck() && handshake->getAck() )
 				{
-					mState = connectionReady;
+					setState( connectionReady );
 					debug( debugLevelInfo, "Client handshake successful, client is ready.", "ackHandShake()" );
 				}
 				else
@@ -307,8 +311,8 @@ void ClientConnectionManagerBase::ackHandShake( ClientCommandHandshake *handshak
 				mClientInfo = handshake->getInfo();
 				ClientCommandHandshake *replyHs = new ClientCommandHandshake(true);
 				sendCommand( replyHs );
-				mState = connectionReady;
 				debug( debugLevelInfo, "Handshake successful, connected.", "ackHandShake()" );
+				setState( connectionReady );
 			}
 			//handleReceivedPacket() only pass valid commands
 		}
@@ -320,7 +324,7 @@ void ClientConnectionManagerBase::ackHandShake( ClientCommandHandshake *handshak
 
 void ClientConnectionManagerBase::handleDisconnected()
 {
-	mState = connectionDisconnected;
+	setState( connectionDisconnected );
 	emit clientDisconnected();
 }
 
@@ -330,5 +334,22 @@ bool ClientConnectionManagerBase::checkSocket()
 			mClientSocket->isOpen() &&
 			mClientSocket->isReadable() &&
 			mClientSocket->isWritable()
-			);
+			 );
+}
+
+void ClientConnectionManagerBase::setState(connectionState_t newState)
+{
+	mState = newState;
+	emit connectionStateChanged( newState );
+	switch( newState )
+	{
+		case connectionUndefined:
+		case connectionUnInitialized: break;
+		case connectionConnected: emit connectionStateConnected(); break;
+		case connectionHandShaking: emit connectionStateHandShaking(); break;
+		case connectionReady: emit connectionStateReady(); break;
+		case connectionLost: emit connectionStateLost(); break;
+		case connectionDisconnected: emit connectionStateDisconnected();  break;
+		case connectionError: emit connectionStateError();  break;
+	}
 }

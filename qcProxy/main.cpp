@@ -3,13 +3,14 @@
 #include <QDebug>
 #include "ErrorHandlerBase.h"
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_UNIX
     #include <signal.h>
 #endif
 
 using namespace QtuC;
 
-/// .... :S
+/// @todo .... :S
+/// @todo make the cmd line arguments globally accessible
 bool proxyPassThrough = false;
 
 void parseAppArg( const QString &, int & );
@@ -18,7 +19,7 @@ void parseAppArg( const QString &, int & );
   *	For more info, see http://www.cplusplus.com/forum/unices/16430/, http://linux.die.net/man/2/sigaction*/
 #ifdef Q_OS_UNIX
     struct sigaction sigHandlerConf;
-    void onSigInt( int signum );
+	void onSignal( int signum );
 #endif
 
 int main(int argc, char *argv[])
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
     {
     #ifdef Q_OS_UNIX
 		// add *nix signal handlers
-		sigHandlerConf.sa_handler = onSigInt;
+		sigHandlerConf.sa_handler = onSignal;
 		sigemptyset(&sigHandlerConf.sa_mask);
 		sigHandlerConf.sa_flags = 0;
 		sigaction( SIGINT, &sigHandlerConf, 0 );
@@ -105,9 +106,18 @@ void parseAppArg( const QString &appArg, int &argIndex )
 }
 
 #ifdef Q_OS_UNIX
-void onSigInt(int signum)
+void onSignal(int signum)
 {
-	qDebug( "Cought SIGINT (%d), quit...", signum );
-	QCoreApplication::instance()->quit();
+	switch( signum )
+	{
+		case SIGINT:
+			qDebug( "Cought SIGINT (%d), quit...", signum );
+			QCoreApplication::instance()->quit();
+			break;
+		case SIGTERM:
+			qDebug( "Cought SIGTERM (%d), quit...", signum );
+			QCoreApplication::instance()->quit();
+			break;
+	}
 }
 #endif

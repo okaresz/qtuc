@@ -4,11 +4,15 @@
 #include "ErrorHandlerBase.h"
 #include "ProxyStateManager.h"
 #include "ProxyConnectionManager.h"
+#include "DeviceAPIParser.h"
+#include "DeviceStateVariable.h"
 
-namespace QtuC
+using namespace QtuC;
+
+namespace qcGui
 {
 
-class QcGui : public ErrorHandlerBase
+class QcGui : public QtuC::ErrorHandlerBase
 {
 	Q_OBJECT
 public:
@@ -21,7 +25,48 @@ public:
 	  *	@return True on success, false otherwise.*/
 	void connectProxy();
 
+	/** Set device API.
+	  *	Parse passed API and build and initialize the GUI for it.
+	  *	This function can only be called when no API is currently set. To change to another API at once, use resetDeviceApi().
+	  *	@param apiString The API to set.
+	  *	@return True on success, false otherwise.*/
+	bool setDeviceApi( const QString &apiString );
+
+	/** Re-set device API.
+	  *	Clear previous configuration then set the new.
+	  *	This function tries to determine first, if the new API is valid, and only then make the reset,
+	  *	but there is still a possibility the new Api will not function properly. In that case the previous configuration will be lost.
+	  *	@param apiString The new API to set.
+	  *	@return True on success, false otherwise.*/
+	bool resetDeviceApi( const QString &apiString );
+
+	/** Clear the current device API.
+	 *	De-init the GUI and clear all states.*/
+	void clearDeviceApi();
+
+	/** Call device function.
+	  *	@param hwInterface Hardware interface of the function.
+	  *	@param name Name of the function.
+	  *	@param argList Argument list for the function.
+	  *	@return True if the given parameters are valid and the call can be sent to proxy. This does not mean that the function call itself was successful on the device.*/
+	bool callDeviceFunction( const QString &hwInterface, const QString &name, const QStringList &argList = QStringList() );
+
 signals:
+
+	/** Emitted if a new Device State Variable is created.
+	  *	@param newVar Pointer to the new variable.*/
+	void deviceVariableCreated( const QtuC::DeviceStateVariable *newVar );
+
+	/** Emitted if a new Device Function is created.
+	  *	@param hwInterface Hardware interface of the function.
+	*	@param name Nme of the function.*/
+	void deviceFunctionCreated( QString hwInterface, QString name );
+
+	/// Emitted when a new device API has been successfully set.
+	void deviceApiSet();
+
+	/// Emitted if the current device API is cleared.
+	void deviceApiCleared();
 	
 private slots:
 
@@ -35,13 +80,36 @@ private slots:
 	/// Proxy is connected, handle it.
 	void proxyConnected();
 
-	/// Proxy is connected, handle it.
+	/// Proxy has disconnected, handle it.
 	void proxyDisconnected();
+
+	/// Proxy connection is ready, handle it.
+	void proxyConnectionReady();
+
+	/** Create new device state variable.
+	  *	Creates a new variable in the stateManager and emit stateVariableCreated().
+	  *	@param varParams Parameters of the variable, as built in QtuC::DeviceAPIParser::parseNodeStateVariable().*/
+	void createDeviceVariable(QHash<QString,QString> varParams);
+
+	/** Create new device function.
+	  *	Creates a new device function and emit deviceFunctionCreated().
+	  *	Parameters as of QtuC::DeviceAPIParser::newDeviceFunction() signal.*/
+	void createDeviceFunction( QString hwInterface, QString name, QString args );
 
 private:
 
-	ProxyStateManager *mProxyState;
-	ProxyConnectionManager *mProxyLink;
+	/** Handle device API client command if received.
+	  *	@param apiCmd The received API command.
+	  *	@return True if received API is valid and has been succesfully loaded, false otherwise.*/
+	void handleDeviceApiCmd( ClientCommandDeviceApi *apiCmd );
+
+	/** Handle device cmd.
+	  *	@todo Temporary solution, for proxy passthrough mode.*/
+	bool handleDeviceCmd( ClientCommandDevice *deviceCmd );
+
+	QtuC::ProxyStateManager *mProxyState;
+	QtuC::ProxyConnectionManager *mProxyLink;
+	QtuC::DeviceAPIParser *mApiParser;
 };
 
 }	//QtuC::

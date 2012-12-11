@@ -47,7 +47,11 @@ public:
 	static void debug( debugLevel_t debugLevel, const char *msg, const char *functionName, const char *className, const errorDetails_t &details = QHash<const char*, QString>() );
 	
 signals:
-	void signalError( QtMsgType severity, QString msg, QString location ) const;
+	/** Emitted whenever an error occurs.
+	  *	@param severity Severity of the error.
+	  *	@param location Location of the error.
+	  * @param details Details. The type must be written fully resolved, because the signal/slot type comparison of Qt (requires full char-by-char match).*/
+	void signalError( QtMsgType severity, QString msg, QString location, const QtuC::ErrorHandlerBase::errorDetails_t details ) const;
 
 protected slots:
 	/** Error handler (slot).

@@ -24,10 +24,8 @@ void ErrorHandlerBase::customMessageHandler(QtMsgType msgType, const char *msg)
 void ErrorHandlerBase::error( QtMsgType severity, const QString &msg, char const *location, const errorDetails_t &details ) const
 {
 	QString className = this->metaObject()->className();
-
-	emit signalError(severity, QString(msg), location);
-
 	printError( severity, msg, location, className.toStdString().c_str(), details );
+	emit signalError(severity, QString(msg), QString(className+"::"+location), details );
 }
 
 void ErrorHandlerBase::error(QtMsgType severity, char const *msg, char const *location, const errorDetails_t &details) const

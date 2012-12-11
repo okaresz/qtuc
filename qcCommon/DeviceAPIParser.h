@@ -23,9 +23,8 @@ public:
 
 	/** Parse passed string or try to load from file
 	  *	@param deviceAPIString If passed, parse this string. This must be the full device API definition string, as in the deviceAPI.xml. The XML DTD is optional.
-	  *	If omitted, the parser tries to locate the API file (using the API file path from settings).
 	  *	@return True on success, false otherwise.*/
-	bool parseAPI ( const QString& deviceAPIString = QString() );
+	bool parseAPI ( const QString& deviceAPIString );
 
 	/** Get the hash of current API.
 	  *	@return Hash of the current API as a QByteArray. If API is invalid, returns an empty QByteArray.*/
@@ -64,7 +63,7 @@ signals:
 	/** Emitted if a new device function is parsed.
 	  *	@param hwInterface Hardware interface of the function.
 	  *	@param name name of the function.
-	  * @param args Argument string of th function.*/
+	  * @param args Argument string of the function.*/
 	void newDeviceFunction( QString hwInterface, QString name, QString args );
 
 private:

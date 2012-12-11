@@ -3,8 +3,11 @@
 #include <QCoreApplication>
 
 using namespace QtuC;
+using namespace qcGui;
 
-QcGui::QcGui(QObject *parent) : ErrorHandlerBase(parent)
+QcGui::QcGui(QObject *parent) : ErrorHandlerBase(parent),
+	mProxyLink(0),
+	mApiParser(0)
 {
 	// create settings
     QSettings::setDefaultFormat( QSettings::IniFormat );
@@ -20,6 +23,10 @@ QcGui::~QcGui()
 
 void QcGui::connectProxy()
 {
+	// If mProxyLink is not null, chances are that it's already connected!
+	if( mProxyLink )
+		{ return; }
+
 	// give ClientConnectionManagerBase the self-info
 	QHash<QString,QString> selfInfo;
 	selfInfo.insert( QString("id"), GuiSettingsManager::instance()->value( "selfInfo/id" ).toString() );
@@ -33,7 +40,72 @@ void QcGui::connectProxy()
 
 	connect( proxySocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(proxyConnectError()) );
 	connect( proxySocket, SIGNAL(connected()), this, SLOT(proxyConnected()) );
+	connect( proxySocket, SIGNAL(disconnected()), this, SLOT(proxyDisconnected()) );
 	proxySocket->connectToHost( GuiSettingsManager::instance()->value("proxyAddress/host").toString(), GuiSettingsManager::instance()->value("proxyAddress/port").toInt() );
+}
+
+bool QcGui::setDeviceApi(const QString &apiString)
+{
+	if( !apiString.isEmpty() )
+	{
+		// Connect nothing on first pass, only if API is successfully parsed
+		if( !mApiParser->parseAPI(apiString) )
+		{
+			error( QtCriticalMsg, "Failed to parse deviceAPI string", "setDeviceApi()" );
+			return false;
+		}
+		else
+		{
+			//connect( mDeviceAPI, SIGNAL(newDeviceInfo(QString,QString)), mDeviceInstance, SLOT(setInfo(QString,QString)) );
+			//connect( mDeviceAPI, SIGNAL(newHardwareInterface(QString,QString)), mDeviceInstance, SLOT(addHardwareInterface(QString,QString)) );
+			connect( mApiParser, SIGNAL(newStateVariable(QHash<QString,QString>)), this, SLOT(createDeviceVariable(QHash<QString,QString>)) );
+			connect( mApiParser, SIGNAL(newDeviceFunction(QString,QString,QString)), this, SLOT(createDeviceFunction(QString,QString,QString)) );
+			if( !mApiParser->parseAPI(apiString) )
+			{
+				mApiParser->disconnect();
+				error( QtCriticalMsg, "Failed to re-parse deviceAPI string", "setDeviceApi()" );
+				return false;
+			}
+		}
+	}
+	else
+	{
+		error( QtCriticalMsg, "API string is empty", "setDeviceApi()" );
+		return false;
+	}
+
+	emit deviceApiSet();
+	return true;
+}
+
+bool QcGui::resetDeviceApi(const QString &apiString)
+{
+	clearDeviceApi();
+	mApiParser = new DeviceAPIParser(this);
+	return setDeviceApi(apiString);
+}
+
+void QcGui::clearDeviceApi()
+{
+	// first signal that this API will be destroyed
+	emit deviceApiCleared();
+	mApiParser->disconnect();
+	delete mApiParser;
+	mApiParser = 0;
+}
+
+bool QcGui::callDeviceFunction(const QString &hwInterface, const QString &name, const QStringList &argList)
+{
+	ClientCommandDevice *cmd = new ClientCommandDevice(deviceCmdCall);
+	cmd->setInterface(hwInterface);
+	cmd->setFunction(name);
+	cmd->setArgList(argList);
+	if( !mProxyLink->sendCommand( cmd ) )
+	{
+		error( QtWarningMsg, "Failed to call function", "callDeviceFunction()" );
+		return false;
+	}
+	return true;
 }
 
 void QcGui::proxyConnectError()
@@ -51,9 +123,11 @@ void QcGui::proxyConnected()
 	// disconnect socket from me, ProxyConnectionManager is in control now
 	disconnect( sender(), 0, this, 0 );
 
-	mProxyLink->sendHandShake();
-
+	connect( mProxyLink, SIGNAL(connectionStateReady()), this, SLOT(proxyConnectionReady()) );
 	connect( mProxyLink, SIGNAL(commandReceived(ClientCommandBase*)), this, SLOT(handleCommand(ClientCommandBase*)) );
+
+	// initialize handshake process
+	mProxyLink->sendHandShake();
 }
 
 void QcGui::proxyDisconnected()
@@ -62,19 +136,81 @@ void QcGui::proxyDisconnected()
 	debug( debugLevelInfo, "Proxy disconnected", "proxyDisconnected()" );
 }
 
+void QcGui::proxyConnectionReady()
+{
+	debug( debugLevelVerbose, "Request device API...", "proxyConnectionReady()" );
+	mProxyLink->sendCommand( new ClientCommandReqDeviceApi() );
+}
+
+void QcGui::createDeviceVariable(QHash<QString, QString> varParams)
+{
+	if( mProxyState->registerStateVariable(varParams) )
+	{
+		emit deviceVariableCreated( mProxyState->getVar( varParams.value("hwInterface"), varParams.value("name") ) );
+	}
+	else
+	{ error( QtWarningMsg, QString("Unable to register new stateVariable %1:%2").arg( varParams.value("hwInterface"), varParams.value("name") ), "createDeviceVariable()" ); }
+}
+
+void QcGui::createDeviceFunction(QString hwInterface, QString name, QString args)
+{
+	emit deviceFunctionCreated(hwInterface, name);
+}
+
+void QcGui::handleDeviceApiCmd(ClientCommandDeviceApi *apiCmd)
+{
+	if( !apiCmd->isDataValid() )
+	{
+		error( QtWarningMsg, "The received deviceAPI is corrupted", "handleCommand()" );
+	}
+	else
+	{
+		QString decodedApiString ( QString::fromUtf8( QByteArray::fromBase64(apiCmd->getEncodedApi()).data() ) );
+		if( !mApiParser )
+		{
+			mApiParser = new DeviceAPIParser(this);
+			if( !setDeviceApi(decodedApiString) )
+				{ error( QtWarningMsg, "Failed to set received deviceAPI", "handleCommand()" ); }
+		}
+		else
+		{
+			if( !resetDeviceApi(decodedApiString) )
+				{ error( QtWarningMsg, "Failed to set received deviceAPI", "handleCommand()" ); }
+		}
+	}
+}
+
+bool QcGui::handleDeviceCmd(ClientCommandDevice *deviceCmd)
+{
+	if( deviceCmd->getType() == deviceCmdSet )
+	{
+		DeviceStateVariable *var = mProxyState->getVar( deviceCmd->getHwInterface(), deviceCmd->getVariable() );
+		if( var )
+			{ var->setFromDevice( deviceCmd->getArg() ); }
+		else
+		{
+			error( QtWarningMsg, QString("Failed to set variable from device, no such variable (hwI: %1, name: %2)").arg(deviceCmd->getHwInterface(),deviceCmd->getVariable()), "handleDeviceCmd()" );
+			return false;
+		}
+		return true;
+	}
+	else return false;
+}
+
 void QcGui::handleCommand(ClientCommandBase *cmd)
 {
 	if( cmd->getClass() == ClientCommandBase::clientCommandDevice )
 	{
-		ClientCommandDevice *ccd = (ClientCommandDevice*)cmd;
-		debug( debugLevelInfo, QString("Device command received: %1 %2 %3 %4").arg(ccd->getName(), ccd->getHwInterface(), ccd->getVariable(), ccd->getArg() ), "handleCommand()" );
+		ClientCommandDevice *deviceCmd = (ClientCommandDevice*)cmd;
+		//assume proxy is in passthrough mode
+		handleDeviceCmd( deviceCmd );
+		debug( debugLevelInfo, QString("Device command received: %1 %2 %3 %4").arg(deviceCmd->getName(), deviceCmd->getHwInterface(), deviceCmd->getVariable(), deviceCmd->getArg() ), "handleCommand()" );
 	}
 	else	//control
 	{
 		if( cmd->getName() == "deviceAPI" )
 		{
-			ClientCommandDeviceApi *apiCmd = (ClientCommandDeviceApi*)cmd;
-			debug( debugLevelInfo, QString("API received: %1 | %2").arg(QString(apiCmd->getHash()),QString(apiCmd->getEncodedApi())), "handleCommand()" );
+			handleDeviceApiCmd( (ClientCommandDeviceApi*)cmd );
 		}
 		else
 			{ debug( debugLevelInfo, QString("Command received: %1").arg(cmd->getName()), "handleCommand()" ); }

@@ -9,8 +9,16 @@ ClientCommandDeviceApi::ClientCommandDeviceApi( const QString &deviceApiString )
 	mClass = clientCommandControl;
 	mIsPermanent = false;	///< @todo make settable
 
-	mApiB64 = deviceApiString.toUtf8().toBase64();
-	mApiHash = QCryptographicHash::hash( mApiB64, QCryptographicHash::Md5 );
+	if( !deviceApiString.isEmpty() )
+	{
+		mApiB64 = deviceApiString.toUtf8().toBase64();
+		mApiHash = QCryptographicHash::hash( mApiB64, QCryptographicHash::Md5 ).toHex();
+	}
+}
+
+bool ClientCommandDeviceApi::isDataValid() const
+{
+	return ( QCryptographicHash::hash( mApiB64, QCryptographicHash::Md5 ).toHex() == mApiHash );
 }
 
 bool ClientCommandDeviceApi::applyDomElement(const QDomElement &cmdElement)
@@ -45,8 +53,8 @@ QDomElement ClientCommandDeviceApi::getDomElement() const
 
 	QString permanentStr = mIsPermanent? "true" : "false";
 	cmdElement.setAttribute( "permanent", permanentStr );
-	cmdElement.setAttribute( "hash", QString(mApiHash) );
-	cmdElement.appendChild( dom.createCDATASection( mApiB64 ) );
+	cmdElement.setAttribute( "hash", QString::fromUtf8(mApiHash.data()) );
+	cmdElement.appendChild( dom.createCDATASection( QString::fromUtf8(mApiB64.data()) ) );
 	return cmdElement;
 }
 

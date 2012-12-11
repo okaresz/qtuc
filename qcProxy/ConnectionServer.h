@@ -57,7 +57,7 @@ private slots:
 	void handleNewConnection();
 
 	/** Called when a client has disconnected.*/
-	void handleDisconnect();
+	void handleClientDisconnect();
 
 private:
 	QTcpServer* mTcpServer;	///< Holds the QTcpServer object

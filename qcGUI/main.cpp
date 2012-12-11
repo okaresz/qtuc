@@ -1,9 +1,10 @@
 #include <QtGui/QApplication>
-#include "QcGuiMainWindow.h"
+#include "QcGuiMainView.h"
 #include "ErrorHandlerBase.h"
 #include "QcGui.h"
 
 using namespace QtuC;
+using namespace qcGui;
 
 void parseAppArg( const QString &, int & );
 
@@ -23,9 +24,6 @@ int main(int argc, char *argv[])
 	// Install a custom mesage handler
 	qInstallMsgHandler( ErrorHandlerBase::customMessageHandler );
 
-	QcGuiMainWindow mainWindow;
-	mainWindow.setWindowTitle( qcGuiApp.applicationName() );
-
 	// Parse arguments
 	QStringList appArgs = qcGuiApp.arguments();
 	for( int i=0; i<appArgs.size(); )
@@ -39,20 +37,23 @@ int main(int argc, char *argv[])
 		parseAppArg( appArgs.at(i), i );
 	}
 
-	// ...and let the show begin!
-	QcGui *gui = new QcGui();
-	if( !gui )
+	// create gui model
+	QcGui *qcGuiModel = new QcGui();
+	if( !qcGuiModel )
 	{
 		//  oops..
 		qCritical( "Fatal error, exit..." );
-		delete gui;
+		delete qcGuiModel;
 		return 1;
 	}
 	else
 	{
-		gui->connect( &qcGuiApp, SIGNAL(aboutToQuit()), gui, SLOT(deleteLater()) );
-		mainWindow.show();
-		gui->connectProxy();
+		qcGuiModel->connect( &qcGuiApp, SIGNAL(aboutToQuit()), qcGuiModel, SLOT(deleteLater()) );
+
+
+		QcGuiMainView mainView(qcGuiModel);
+		mainView.setWindowTitle( qcGuiApp.applicationName() );
+		mainView.show();
 
 		// Okay! Start the main thread's event loop.
 		return qcGuiApp.exec();

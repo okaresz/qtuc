@@ -49,7 +49,7 @@ void SerialDeviceConnector::receivePart()
 	bool fullCmd = false;
 	while( mSerialPort->getChar(&c) )
 	{
-		if( c && c != '\n' )
+		if( c && c != '\n' && c != '\r' )
 		{
 			block.append(c);
 		}
@@ -60,9 +60,7 @@ void SerialDeviceConnector::receivePart()
 		}
 	}
 
-	if( block.isEmpty() )
-		{ fullCmd = false; }
-	else
+	if( !block.isEmpty() )
 		{ mCmdRxBufferShadow.append(block); }
 
 	if( fullCmd )

@@ -13,8 +13,11 @@ QcProxy::QcProxy( QObject *parent ) :
 	mConnectionServer( 0 ),
 	mPassThrough(false)
 {
+	// On windows default format is registry, but we want file.
+	#ifdef Q_OS_WIN32
+		QSettings::setDefaultFormat( QSettings::IniFormat );
+	#endif
 	// Create the settings object, QcProxy as parent.
-    QSettings::setDefaultFormat( QSettings::IniFormat );
 	ProxySettingsManager::instance( this );
 
 	connect( QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(deleteLater()) );
@@ -64,6 +67,7 @@ bool QcProxy::route(ClientCommandBase *clientCommand)
 	{
 		if( clientCommand->getName() == "reqDeviceAPI" )
 		{	/// @todo Permission to send API?
+			debug( debugLevelVeryVerbose, "Got API request, send API...", "route(ClientCommandBase*)" );
 			client->sendCommand( new ClientCommandDeviceApi( mDevice->getApiParser()->getString() ) );
 		}
 		/// @todo implement
@@ -110,5 +114,4 @@ bool QcProxy::handleDeviceMessage(deviceMessageType_t msgType, QString msg)
 void QcProxy::handleNewClient( ClientConnectionManagerBase *newClient )
 {
 	connect( newClient, SIGNAL(commandReceived(ClientCommandBase*)), this, SLOT(route(ClientCommandBase*)) );
-	mConnectionServer->getClient()->sendCommand( new ClientCommandDeviceApi( mDevice->getApiParser()->getString() ) );
 }

@@ -11,13 +11,18 @@ namespace QtuC
 class ClientCommandDeviceApi : public ClientCommandBase
 {
 public:
-	ClientCommandDeviceApi( const QString &deviceApiString = "" );
+	ClientCommandDeviceApi( const QString &deviceApiString = QString() );
 
 	const QByteArray getHash() const
 		{ return mApiHash; }
 
 	const QByteArray getEncodedApi() const
 		{ return mApiB64; }
+
+	/** Get if the API data is valid.
+	  *	Checks the API hash against the base64 encoded API data.
+	  *	@return True if the API data matches the hash, so the data is valid, return false if not.*/
+	bool isDataValid() const;
 
 	// Inherited methods
 
