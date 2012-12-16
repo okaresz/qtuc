@@ -174,13 +174,15 @@ If you would like to change the interval of a subscription, you must first unsub
 
 As a result of the subscribe request, the proxy will send a subscription feed periodically, at the requested intervals. This feed is a ClientPacket, including a ClientCommandDevice *set* command for each variable included in the subscription.
 
-**Important!** A deviceVariable is always sent with the most specific subscription, including that variable (independent of the frequency).
+**Important!** A deviceVariable is always sent with the most specific subscription, including that variable (independent of the interval).
 Subscription "A" is more specific than subscription "B" if "A" corresponds to a smaller, more specific set of variables.
 For example a subscription for a hardware interface is more specific than a subscription for all the variables (in all interfaces).
 This way, the most specific subscription is, of course, a subscription to a single variable.
 
 *Example*: If there is a subscription of 1000ms interval for the hardwareInterface *"drive"*, and another with 100ms for *motorSpeed* in the *drive* interface, then proxy will send a subscription feed package with the *motorSpeed* variable every 100ms,
 and a package with all the variables (as device commands) in the *drive* interface **except** *motorSpeed*, every second.
+
+**An uninitialized deviceVariable is not updated**. So if a deviceVariable has never been set from the device, (it's Null), it won't be included in the subscription update feed.
 
 If the deviceAPI.xm contains a valid user-side autoUpdate node for a variable, it is up to the client whether it uses this information to automatically send a subscription to the proxy for that variable.
 

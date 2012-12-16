@@ -1,5 +1,5 @@
-Handle uninitialized statevars (uninit value type?!)
-	uninited var is valid (to be able to create for ex. the get commands)
+Null-value stateVar is valid, but provide isNull() to check.
+Implement auto-subscribe in qcGui, based on API data.
 	
 Figure out some sane Packet and command deletion plan...
 	all packets and commands are deleted by sendPacket and send* functions

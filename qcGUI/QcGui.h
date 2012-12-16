@@ -12,6 +12,8 @@ using namespace QtuC;
 namespace qcGui
 {
 
+/** GUI client for QtuC, main class.
+  *	QCGui Manages the connection to proxy, and serves as an underlying data model for the GUI.*/
 class QcGui : public QtuC::ErrorHandlerBase
 {
 	Q_OBJECT

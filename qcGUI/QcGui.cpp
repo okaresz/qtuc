@@ -148,10 +148,35 @@ void QcGui::createDeviceVariable(QHash<QString, QString> varParams)
 	varParams.remove("autoUpdate-device");
 	if( mProxyState->registerStateVariable(varParams) )
 	{
-		emit deviceVariableCreated( mProxyState->getVar( varParams.value("hwInterface"), varParams.value("name") ) );
+		DeviceStateVariable *stateVar = mProxyState->getVar( varParams.value("hwInterface"), varParams.value("name") );
+		if(  stateVar == 0 )
+		{
+			error( QtWarningMsg, "StateVar is null", "createDeviceVariable()");
+			return;
+		}
+
+		emit deviceVariableCreated( stateVar );
+
+		// subscribe if autoUpdate-user is present in the API
+		if( varParams.contains("autoUpdate-user") )
+		{
+			bool ok;
+			quint32 interval;
+			interval = (quint32)varParams.value("autoUpdate-user").toInt(&ok);
+			if( ok )
+				{ mProxyLink->sendCommand( new ClientCommandSubscribe( interval, stateVar->getHwInterface(), stateVar->getName() ) ); }
+			else
+			{
+				errorDetails_t errDet;
+				errDet.insert( "hwInterface", stateVar->getHwInterface() );
+				errDet.insert( "varName", stateVar->getName() );
+				errDet.insert( "autoUpdateStr", varParams.value("autoUpdate-user") );
+				error( QtWarningMsg, "Invalid value for user-side autoUpdate in API", "createDeviceVariable()" );
+			}
+		}
 	}
 	else
-	{ error( QtWarningMsg, QString("Unable to register new stateVariable %1:%2").arg( varParams.value("hwInterface"), varParams.value("name") ), "createDeviceVariable()" ); }
+		{ error( QtWarningMsg, QString("Unable to register new stateVariable %1:%2").arg( varParams.value("hwInterface"), varParams.value("name") ), "createDeviceVariable()" ); }
 }
 
 void QcGui::createDeviceFunction(QString hwInterface, QString name, QString args)
@@ -204,9 +229,8 @@ void QcGui::handleCommand(ClientCommandBase *cmd)
 	if( cmd->getClass() == ClientCommandBase::clientCommandDevice )
 	{
 		ClientCommandDevice *deviceCmd = (ClientCommandDevice*)cmd;
-		//assume proxy is in passthrough mode
 		handleDeviceCmd( deviceCmd );
-		debug( debugLevelInfo, QString("Device command received: %1 %2 %3 %4").arg(deviceCmd->getName(), deviceCmd->getHwInterface(), deviceCmd->getVariable(), deviceCmd->getArg() ), "handleCommand()" );
+		//debug( debugLevelInfo, QString("Device command received: %1 %2 %3 %4").arg(deviceCmd->getName(), deviceCmd->getHwInterface(), deviceCmd->getVariable(), deviceCmd->getArg() ), "handleCommand()" );
 	}
 	else	//control
 	{
@@ -215,7 +239,7 @@ void QcGui::handleCommand(ClientCommandBase *cmd)
 			handleDeviceApiCmd( (ClientCommandDeviceApi*)cmd );
 		}
 		else
-			{ debug( debugLevelInfo, QString("Command received: %1").arg(cmd->getName()), "handleCommand()" ); }
+			{ debug( debugLevelInfo, QString("Unhandled command: %1").arg(cmd->getName()), "handleCommand()" ); }
 	}
 	cmd->deleteLater();
 }

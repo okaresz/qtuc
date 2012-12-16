@@ -52,6 +52,7 @@ private slots:
 	void handleNewClient( ClientConnectionManagerBase *newClient );
 
 	/** Handle subscription feed request and send the feed packet.
+	  *	Called on every ClientSubscription::subscriptionTick() of every subscription.
 	  *	@param client The subscribed client.
 	  *	@param hwInterface The subscribed hardware interface.
 	  *	@param variable The subscribed variable.*/

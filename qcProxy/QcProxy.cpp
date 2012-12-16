@@ -139,9 +139,15 @@ void QcProxy::sendSubscriptionFeed( ClientSubscription *subscription )
 
 		for( int i=0; i<varList.size(); ++i )
 		{
+			// Don't send uninitialized and invalid variables
+			if( !(!varList.at(i)->isNull() && varList.at(i)->isValid()) )
+				{ continue; }
 			if( !mClientSubscriptionManager->moreSpecificSubscriptionExists( varList.at(i), subscription ) )
 				{ clientCmdList.append( new ClientCommandDevice( deviceCmdSet, varList.at(i) ) ); }
 		}
+
+		if( clientCmdList.isEmpty() )
+			{ return; }
 
 		if( !subscription->getClient()->sendCommands( clientCmdList ) )
 		{
@@ -153,7 +159,13 @@ void QcProxy::sendSubscriptionFeed( ClientSubscription *subscription )
 	}
 	else
 	{
-		if( !subscription->getClient()->sendCommand( new ClientCommandDevice( deviceCmdSet, mDevice->getVar( subscription->getHwInterface(), subscription->getVariable() ) ) ) )
+		DeviceStateVariable *stateVar = mDevice->getVar( subscription->getHwInterface(), subscription->getVariable() );
+
+		// Don't send uninitialized and invalid variables
+		if( !(!stateVar->isNull() && stateVar->isValid()) )
+			{ return; }
+
+		if( !subscription->getClient()->sendCommand( new ClientCommandDevice( deviceCmdSet, stateVar ) ) )
 		{
 			errorDetails_t errDet;
 			errDet.insert( "subscriptionVar", subscription->getVariable() );

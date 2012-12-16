@@ -74,6 +74,12 @@ public:
 	QVariant::Type getType() const;	///< Get the <b>user-side</b> type of variable.
 	accessMode_t getAccessMode() const;	///< Get the I/O access mode of the variable.
 
+	/** Get if the variable is null.
+	  *	The variable is null if it's raw value has never bee initialized, so QVariant.isNull() returns true.
+	  *	@return True if the variable is null, false otherwise.*/
+	bool isNull() const
+		{ return mRawValue.isNull(); }
+
 	/** Get convert script.
 	  *	@param fromRaw Set to true, to get the device-side -> user-side convert script, or false to get the other direction.
 	  *	@return The convert script as a QSstring.*/

@@ -88,6 +88,10 @@ DeviceStateVariable::DeviceStateVariable( const QString& varHwInterface, const Q
 		{ mRawType = stringToType(varRawType); }
 	mConvertEngine.globalObject().setProperty( mName, mConvertEngine.newVariant(mRawValue) );
 
+	// Set the type of the value QVariant containers
+	mRawValue = QVariant( mRawType );
+	mValue = QVariant( mType );
+
 	if( !convertScriptFromRaw.isEmpty() )
 		{ setConvertScript( true, convertScriptFromRaw ); }	//failure is not critical, let the variable be created...
 	if( !convertScriptToRaw.isEmpty() )
@@ -103,9 +107,9 @@ bool DeviceStateVariable::isValid() const
 	valid = valid && ( !mHwInterface.isEmpty() );
 	valid = valid && ( mAccessMode != undefinedAccess );
 	valid = valid && ( mRawValue.isValid() );
-	valid = valid && ( !mRawValue.isNull() );
+	//valid = valid && ( !mRawValue.isNull() );
 	valid = valid && ( mValue.isValid() );
-	valid = valid && ( !mValue.isNull() );
+	//valid = valid && ( !mValue.isNull() );
 	return valid;
 }
 

@@ -14,6 +14,7 @@ namespace Ui
 
 namespace qcGui {
 
+/** Handle the view of th device state variables.*/
 class QcGuiMainView : public QMainWindow
 {
 	Q_OBJECT
