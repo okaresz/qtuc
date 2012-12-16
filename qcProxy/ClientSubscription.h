@@ -18,11 +18,11 @@ class ClientSubscription : public ErrorHandlerBase
 public:
 
 	/** Create a subscription.
-	  *	@param freq Frequency of the subscription feed.
+	  *	@param interval Interval of the subscription feed in milliseconds. Must be more than minSubscriptionInterval.
 	  *	@param client The subscribed client.
 	  *	@param hwInterface The subscribed hardware interface.
 	  *	@param variable The subscribed variable.*/
-	explicit ClientSubscription( ClientConnectionManagerBase *client, unsigned int freq, const QString &hwInterface, const QString &variable, QObject *parent );
+	explicit ClientSubscription( ClientConnectionManagerBase *client, quint32 interval, const QString &hwInterface, const QString &variable, QObject *parent );
 
 	~ClientSubscription();
 
@@ -65,10 +65,10 @@ public:
 	const QString getHwInterface() const
 		{ return mHwInterface; }
 
-	/** Get the frequency of the subscription.
-	  *	@return The frequency of the subscription.*/
-	unsigned int getFrequency() const
-		{ return mFrequency; }
+	/** Get the interval of the subscription.
+	  *	@return The interval of the subscription in milliseconds.*/
+	quint32 getInterval() const
+		{ return mInterval; }
 
 	/** Get the client who requested this subscription.
 	  *	@return The client who requested this subscription.*/
@@ -80,7 +80,7 @@ public:
 	bool isValid();
 
 	/// Maximum frequency of a client subscription.
-	static unsigned int maxSubscriptionFrequency;
+	static quint32 minSubscriptionInterval;
 
 public slots:
 
@@ -98,10 +98,10 @@ private:
 	void timerEvent( QTimerEvent *timerEvent );
 
 	ClientConnectionManagerBase *mClient;	///< The client that requested this subscription.
-	QString mVariable;		///< Subscription variable.
-	QString mHwInterface;	///< Subscription hardware interface.
-	unsigned int mFrequency;			///< Frequency of the subscripiton.
-	int mTimerId;
+	QString mVariable;			///< Subscription variable.
+	QString mHwInterface;		///< Subscription hardware interface.
+	quint32 mInterval;	///< Interval of the subscripiton, in milliseconds, 32bit unsigned integer.
+	int mTimerId;	///< Internal id of the QObject timer in use.
 };
 
 }	//QtuC::

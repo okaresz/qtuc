@@ -92,9 +92,9 @@ public:
 	  * @returns True if auto-update is active, false if not.*/
 	bool isAutoUpdateActive() const;
 
-	/** Get the frequency of auto-update.
-	  * @returns The frequency of auto-update, even if auto-update is inactive.*/
-	int getAutoUpdateFrequency() const;
+	/** Get the interval of auto-update.
+	  * @returns The interval of auto-update in milliseconds, even if auto-update is inactive.*/
+	int getAutoUpdateInterval() const;
 
 	/** Get the raw value as a QString, ready to send to the device.
 	  *	Do the device-specific formatting here...
@@ -106,29 +106,20 @@ public slots:
 	/** Start auto-update.
 	  * Start the auto update cycle for this variable.
 	  * The parameters for the auto-update can be set in the deviceAPI file. If there's no information for the update in deviceAPI,
-	  * freqHz parameter is omitted, and this is the first call of startAutoUpdate() (so there's no previous frequency info), this function does nothing, and returns false.
-	  * @param freqHz The auto-update frequency. See setAutoUpdateFrequency(). This param overrides any possible deviceAPI data.
+	  * intervalMs parameter is omitted, and this is the first call of startAutoUpdate() (so there's no previous interval info), this function does nothing, and returns false.
+	  * @param intervalMs The auto-update interval. See setAutoUpdateInterval(). This param overrides any possible deviceAPI data.
 	  * @returns True if the updater starts, false otherwise.*/
-	bool startAutoUpdate( int freqHz=0 );
+	bool startAutoUpdate( quint32 intervalMs = 0 );
 
 	/** Stop auto-update.
 	  * If the auto-updater is inactive, this function does nothing.*/
 	void stopAutoUpdate();
 
-	/** Set the auto-update frequency.
-	 * This function can be called even if the auto-update is active. In that case, the frequency is updated immediately.
-	 * @param freqHz Must be between min-max values.
-	 * @todo min-max??
-	 * @returns True if the frequency is successfully changed, false otherwise.*/
-	bool setAutoUpdateFrequency( int freqHz );
-
-	/* Start or stop auto-update.
-	  *	This function can only be used, if there is a valid update frequency data available.
-	  * Either the startAutoUpdate() has been called once with the freq param, or the deviceAPI file contains a frequency info, or the setAutoUpdateFrequency() has been called.
-	  * @param state Start auto-update if true, stop if false.
-	  * @returns True if auto-update is started successfully, false otherwise.*/
-	// This is unnecessary, there's startAutoUpdate/stopAutoUpdate
-	//bool setAutoUpdate( bool state );
+	/** Set the auto-update interval.
+	 * This function can be called even if the auto-update is active. In that case, the interval is updated immediately.
+	 * @param interval Interval in milliseconds, unsigned 32bit integer. Must be between min-max values (see minAutoUpdateInterval).
+	 * @returns True if the interval is successfully changed, false otherwise.*/
+	bool setAutoUpdateInterval( quint32 intervalMs );
 
 	/** Set a value conversion script.
 	  *	The script is checked for syntax errors.
@@ -265,9 +256,9 @@ private:
 	QString mConvertFromRawScript;	///< fromRaw script string. Used to convert the value from device to user side.
 	qint64 mLastUpdate;			///< UNIX millisec timestamp of the last update. (from device).
 	//bool mAutoUpdateActive;			///< State of autoUpdate.
-	int mAutoUpdateFrequency;	///< Auto update frequency [Hz].
+	quint32 mAutoUpdateInterval;	///< Auto update interval, milliseconds, 32bit unsigned integer.
 	QTimer* mAutoUpdateTimer;	///< Timer object for auto update.
-	static int maxAutoUpdateFrequency;	///< Maximum frequency of auto-update timer. Should be 1000, since the resolution of QTimer is millisec.
+	static quint32 minAutoUpdateInterval;	///< Minimum allowed interval of auto-update timer.
 	accessMode_t mAccessMode;	///< AccessMode of the variable.
 
 	void emitValueChanged();	///< Emit valueChanged signals for all types.

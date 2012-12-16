@@ -124,8 +124,8 @@ There's a lot more options however to fine-tune the behavior of the variable. Th
 			<toUser><![CDATA[Qt script]]></toUser>
 			<toDevice><![CDATA[Qt script]]></toDevice>
 		</conversion>
-		<autoUpdate side="device">update_frequency_Hz</autoUpdate>
-		<autoUpdate side="user">update_frequency_Hz</autoUpdate>
+		<autoUpdate side="device">update_interval_ms</autoUpdate>
+		<autoUpdate side="user">update_interval_ms</autoUpdate>
 		<guiHint>
 			...
 		</guiHint>
@@ -151,12 +151,15 @@ You must define both sides (or none at all, omitting the whole conversion node).
 Please note that the value returned by the script will be cast to the type of the target side.
 
 **autoUpdate** (optional): If this node is present, the variable will be updated periodically on the given side.
-The value must be given as an integer, in Hz (updates per second).<br>
-*side*: This attribute is compulsory, if omitted, the autoupdate definition will be dropped. Value is `device` or `user`. With this you can define different update frequencies on the two sides.
-  * `device`: the variable will be pulled from the device periodically with the defined frequency. This means that the proxy will send a get command for the variable to the device periodically, to which the device must respond with the corresponding set command with the current value.<br>
-  * `user`: The variable will be updated automatically on qcGUI with the given frequency.
+The value must be given as an integer, in milliseconds (time between updates).<br>
+*side*: This attribute is compulsory, if omitted, the autoupdate definition will be dropped. Value is `device` or `user`. With this you can define different update intervals on the two sides.
+  * `device`: the variable will be pulled from the device periodically with the defined interval. This means that the proxy will send a get command for the variable to the device periodically, to which the device must respond with the corresponding set command with the current value.<br>
+  * `user`: This node is ignored by qcProxy, it must be handled by the clients, so every client can chose if it ignores, or handles the user-side autoUpdate. To activate the update, the client must create a [subscribe](#doc-clientProtocol-packets-subscribe) Client Command based on the information in the deviceAPI, and send it to the proxy.
 
-**guiHint**: Under active development,
+For the autoUpdates, the timer system of Qt is used (QTimer and QObject::startTimer()). According to the Qt documentation, most platforms support millisecond resolution, down to 1ms, but that's not guaranteed.
+In general, a minimum of 20ms is a reasonable limit. Internally, the minimum interval is limited to 10ms in the device-side, and 20ms on the user-side, but if you want, it can be changed in the code. (See DeviceStateVariable::minAutoUpdateInterval and ClientSubscription::minSubscriptionInterval).
+
+**guiHint**: To be implemented,
 
 Example:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -177,8 +180,8 @@ Example:
 			<toUser><![CDATA[encVal / 100 * 360]]></toUser>
 			<toDevice><![CDATA[encVal / 360 * 100]]></toDevice>
 		</conversion>
-		<autoUpdate side="device">50</autoUpdate>
-		<autoUpdate side="user">5</autoUpdate>
+		<autoUpdate side="device">100</autoUpdate>
+		<autoUpdate side="user">400</autoUpdate>
 	</stateVariable>
 </stateVariableList>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

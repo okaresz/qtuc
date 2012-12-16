@@ -7,9 +7,16 @@ ClientSubscriptionManager::ClientSubscriptionManager(QObject *parent) :
 {
 }
 
-bool ClientSubscriptionManager::subscribe(ClientConnectionManagerBase *client, unsigned int frequency, const QString &hwInterface, const QString &variable)
+bool ClientSubscriptionManager::subscribe(ClientConnectionManagerBase *client, quint32 interval, const QString &hwInterface, const QString &variable)
 {
-	ClientSubscription *subscription = new ClientSubscription( client, frequency, hwInterface, variable, this );
+	ClientSubscription *subscription = new ClientSubscription( client, interval, hwInterface, variable, this );
+
+	if( !subscription->isValid() )
+	{
+		error( QtWarningMsg, "Created subscription is invalid, ignored", "subscribe()" );
+		subscription->deleteLater();
+		return false;
+	}
 
 	bool found = false;
 	for( int i=0; i<mSubscriptions.size(); ++i )

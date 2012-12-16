@@ -77,7 +77,7 @@ bool QcProxy::route(ClientCommandBase *clientCommand)
 		else if( clientCommand->getName() == "subscribe" )
 		{
 			ClientCommandSubscribe *subscribeCmd = (ClientCommandSubscribe*)clientCommand;
-			mClientSubscriptionManager->subscribe( client, subscribeCmd->getFrequency(), subscribeCmd->getHwInterface(), subscribeCmd->getVariable() );
+			mClientSubscriptionManager->subscribe( client, subscribeCmd->getInterval(), subscribeCmd->getHwInterface(), subscribeCmd->getVariable() );
 		}
 		else if( clientCommand->getName() == "unSubscribe" )
 		{

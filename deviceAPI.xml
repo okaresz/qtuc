@@ -30,8 +30,8 @@
 			<hwInterface>hw1</hwInterface>
 			<name>var2s</name>
 			<type>string</type>
-			<autoUpdate side="device">1</autoUpdate>
-			<autoUpdate side="user">2</autoUpdate>
+			<autoUpdate side="device">500</autoUpdate>
+			<autoUpdate side="user">1000</autoUpdate>
 		</stateVariable>
 		<stateVariable>
 			<hwInterface>hw2</hwInterface>

@@ -3,27 +3,27 @@
 
 using namespace QtuC;
 
-unsigned int ClientSubscription::maxSubscriptionFrequency = 1000;
+quint32 ClientSubscription::minSubscriptionInterval = 20;
 
-ClientSubscription::ClientSubscription(ClientConnectionManagerBase *client, unsigned int freq, const QString &hwInterface, const QString &variable, QObject *parent) :
+ClientSubscription::ClientSubscription(ClientConnectionManagerBase *client, quint32 interval, const QString &hwInterface, const QString &variable, QObject *parent) :
 	ErrorHandlerBase(parent),
 	mClient(client),
 	mVariable(variable),
 	mHwInterface(hwInterface),
-	mFrequency(freq),
+	mInterval(interval),
 	mTimerId(0)
 {
 
 	errorDetails_t errDet;
 	errDet.insert( "variable", mVariable );
 	errDet.insert( "hwInterface", mHwInterface );
-	errDet.insert( "freq", QString::number(mFrequency) );
+	errDet.insert( "interval", QString::number(mInterval) );
 
-	if( mFrequency == 0 )
-		{ error( QtWarningMsg, "Requested subscription frequency zero, doing nothing", "ClientSubscription()", errDet ); }
+	if( mInterval == 0 )
+		{ error( QtWarningMsg, "Requested subscription interval is zero, doing nothing", "ClientSubscription()", errDet ); }
 
-	if( mFrequency > maxSubscriptionFrequency )
-		{ error( QtWarningMsg, QString("Requested subscription frequency is more than the maximum of %1 Hz").arg(QString::number(maxSubscriptionFrequency)), "ClientSubscription()", errDet ); }
+	if( mInterval < minSubscriptionInterval )
+		{ error( QtWarningMsg, QString("Requested subscription interval is less than the minimum of %1ms").arg(QString::number(minSubscriptionInterval)), "ClientSubscription()", errDet ); }
 
 	if( mHwInterface.isEmpty() && !mVariable.isEmpty() )
 		{ error( QtWarningMsg, "Cannot specify subscription variable when hardware interface is empty", "ClientSubscription()", errDet ); }
@@ -50,7 +50,7 @@ bool ClientSubscription::start()
 		return false;
 	}
 
-	mTimerId = startTimer( (int)(1000.0/mFrequency+0.5) );
+	mTimerId = startTimer( mInterval );
 	return ( mTimerId != 0 );
 }
 
@@ -93,8 +93,7 @@ bool ClientSubscription::includes(const DeviceStateVariable *variable) const
 bool ClientSubscription::isValid()
 {
 	bool valid = true;
-	valid = valid && mFrequency > 0;
-	valid = valid && mFrequency < maxSubscriptionFrequency;
+	valid = valid && mInterval > minSubscriptionInterval;
 	valid = valid && !( mHwInterface.isEmpty() && !mVariable.isEmpty() );
 	return valid;
 }

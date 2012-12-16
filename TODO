@@ -1,5 +1,6 @@
-FIX AUTOUPDATE FREQUENCY TO DOUBLE OR SWITCH TO INTERVAL
-
+Handle uninitialized statevars (uninit value type?!)
+	uninited var is valid (to be able to create for ex. the get commands)
+	
 Figure out some sane Packet and command deletion plan...
 	all packets and commands are deleted by sendPacket and send* functions
 	incoming packets and commands are deleted after use: packets are when commands are detached from them, commands are at higher level...

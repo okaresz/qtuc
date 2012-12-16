@@ -16,10 +16,10 @@ public:
 	ClientCommandSubscribe();
 
 	/** Create a subscribe command with passed information.
-	  *	@param freq Update frequency, Hz. Compulsory.
+	  *	@param interval Update interval, ms. Compulsory.
 	  *	@param hwInterface Hardware interface. If omitted, all variable in all interfaces will be fed to the client.
 	  *	@param varName Name of the variable to subscribe. If omitted, the client will subscribe to all the variables in the hardware interface.*/
-	ClientCommandSubscribe( int freq, const QString &hwInterface = QString(), const QString &varName = QString() );
+	ClientCommandSubscribe( quint32 interval, const QString &hwInterface = QString(), const QString &varName = QString() );
 
 
 	/// @name Inherited methods from ClientCommandBase.
@@ -48,13 +48,13 @@ public:
 	const QString getHwInterface() const
 		{ return mHwInterface; }
 
-	/** Get the frequency of the subscription.
+	/** Get the interval of the subscription.
 	  *	@return The frequency of the subscription.*/
-	unsigned int getFrequency() const
-		{ return mFrequency; }
+	unsigned int getInterval() const
+		{ return mInterval; }
 
 private:
-	unsigned int mFrequency;
+	quint32 mInterval;
 	QString mHwInterface;
 	QString mVariable;
 

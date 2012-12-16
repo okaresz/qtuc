@@ -69,13 +69,13 @@ bool StateManagerBase::registerStateVariable(QHash<QString,QString> params)
 		if( params.contains("autoUpdate-device") )
 		{
 			bool ok;
-			int autoUpdateFreq = params.value( "autoUpdate-device").toInt(&ok);
+			int autoUpdateInterval = params.value( "autoUpdate-device").toInt(&ok);
 			if( ok )
 			{
-				if( autoUpdateFreq > 0 )
+				if( autoUpdateInterval > 0 )
 				{
-					if( !newStateVar->startAutoUpdate( autoUpdateFreq ) ) ///< @todo: only start auto updates globally, if device is connected and they can be processed?
-					{ error( QtWarningMsg, QString("Unable to start auto update for variable %1 in hwInterface %2").arg(params.value("name"),params.value("hwInterface")), "registerStateVariable()" ); }
+					if( !newStateVar->startAutoUpdate( autoUpdateInterval ) ) ///< @todo: only start auto updates globally, if device is connected and they can be processed?
+						{ error( QtWarningMsg, QString("Unable to start auto update for variable %1 in hwInterface %2").arg(params.value("name"),params.value("hwInterface")), "registerStateVariable(QHash<QString,QString>)" ); }
 
 				}
 			}
@@ -84,8 +84,8 @@ bool StateManagerBase::registerStateVariable(QHash<QString,QString> params)
 				errorDetails_t errDet;
 				errDet.insert( "hwi", params.value("hwInterface") );
 				errDet.insert( "name", params.value("name") );
-				errDet.insert( "autoUpdateFreqVal", params.value( "autoUpdate-device") );
-				error( QtWarningMsg, "Invalid value for auto update freqency", "registerStateVariable()", errDet );
+				errDet.insert( "autoUpdateIntervalStr", params.value( "autoUpdate-device") );
+				error( QtWarningMsg, "Invalid value for auto update interval", "registerStateVariable(QHash<QString,QString>)", errDet );
 			}
 		}
 

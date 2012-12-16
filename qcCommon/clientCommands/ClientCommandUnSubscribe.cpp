@@ -16,8 +16,8 @@ bool ClientCommandUnSubscribe::applyDomElement(const QDomElement &cmdElement)
 	if( !checkTagName(cmdElement) )
 		{ return false; }
 
-	mVariable = cmdElement.attribute("var");
-	mHwInterface = cmdElement.attribute("hwi");
+	mVariable = cmdElement.attribute("variable");
+	mHwInterface = cmdElement.attribute("hwInteface");
 
 	return true;
 }
@@ -40,8 +40,8 @@ QDomElement ClientCommandUnSubscribe::getDomElement() const
 	QDomDocument dom;
 	QDomElement cmdElement = dom.createElement(mName);
 
-	cmdElement.setAttribute( "hwi", mHwInterface );
-	cmdElement.setAttribute( "var", mName );
+	cmdElement.setAttribute( "hwInteface", mHwInterface );
+	cmdElement.setAttribute( "variable", mName );
 
 	return cmdElement;
 }

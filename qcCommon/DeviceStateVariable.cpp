@@ -3,7 +3,7 @@
 
 using namespace QtuC;
 
-int DeviceStateVariable::maxAutoUpdateFrequency = 1000;
+quint32 DeviceStateVariable::minAutoUpdateInterval = 10;
 
 DeviceStateVariable::DeviceStateVariable(const DeviceStateVariable &otherVar) : ErrorHandlerBase(0)
 {
@@ -17,7 +17,7 @@ DeviceStateVariable::DeviceStateVariable(const DeviceStateVariable &otherVar) : 
 	mConvertToRawScript = otherVar.getConvertScript(false);
 	mConvertFromRawScript = otherVar.getConvertScript(true);
 	mLastUpdate = otherVar.getLastUpdateTime();
-	mAutoUpdateFrequency = otherVar.getAutoUpdateFrequency();
+	mAutoUpdateInterval = otherVar.getAutoUpdateInterval();
 
 	if( otherVar.isAutoUpdateActive() )
 	{
@@ -75,7 +75,7 @@ DeviceStateVariable* DeviceStateVariable::init( const QString &varHwInterface, c
 DeviceStateVariable::DeviceStateVariable( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& varRawType, accessMode_t accessMode, const QString convertScriptFromRaw, const QString convertScriptToRaw )
 	: ErrorHandlerBase(0),
 	  mLastUpdate(0),
-	  mAutoUpdateFrequency(0),
+	  mAutoUpdateInterval(0),
 	  mAutoUpdateTimer(0)
 {
 	mName = varName;
@@ -568,7 +568,7 @@ qint64 DeviceStateVariable::getAgeMs() const
 	return QDateTime::currentMSecsSinceEpoch() - mLastUpdate;
 }
 
-bool DeviceStateVariable::startAutoUpdate( int freqHz )
+bool DeviceStateVariable::startAutoUpdate( quint32 intervalMs )
 {
 	if( !(mAccessMode & readAccess) )
 	{
@@ -579,54 +579,49 @@ bool DeviceStateVariable::startAutoUpdate( int freqHz )
 	if( !mAutoUpdateTimer )
 		{ mAutoUpdateTimer = new QTimer(this); }
 
-	if( freqHz == 0 && mAutoUpdateFrequency )
-		{ freqHz = mAutoUpdateFrequency; }
+	if( intervalMs == 0 && mAutoUpdateInterval )
+		{ intervalMs = mAutoUpdateInterval; }
 
-	if( !setAutoUpdateFrequency( freqHz ) )
+	if( intervalMs == 0 )
 	{
-		error( QtWarningMsg, "Unable to set auto-update frequency", "startAutoUpdate()" );
+		error( QtWarningMsg, QString("Cannot start auto-update, interval is undefined (var: %1:%2").arg(mHwInterface,mName), "startAutoUpdate()" );
+		return false;
+	}
+
+	if( !setAutoUpdateInterval( intervalMs ) )
+	{
+		error( QtWarningMsg, "Unable to set auto-update interval", "startAutoUpdate()" );
 		return false;
 	}
 
 	connect( mAutoUpdateTimer, SIGNAL(timeout()), this, SIGNAL(updateMe()) );
 	mAutoUpdateTimer->start();
 
-	debug( debugLevelVerbose, QString("Auto-update started with %3Hz for variable %1 in hwInterfíce %2").arg(mName, mHwInterface, QString::number(mAutoUpdateFrequency)), "startAutoUpdate()" );
+	debug( debugLevelVerbose, QString("Auto-update started at a %3ms interval for variable %2:%1").arg(mName, mHwInterface, QString::number(mAutoUpdateInterval)), "startAutoUpdate()" );
 
 	return true;
 }
 
-bool DeviceStateVariable::setAutoUpdateFrequency( int freqHz )
+bool DeviceStateVariable::setAutoUpdateInterval( quint32 intervalMs )
 {
-	if( freqHz == 0 )
+	if( intervalMs == 0 )
 	{
-		error( QtWarningMsg, "Requested auto-update frequency zero, doing nothing", "setAutoUpdateFrequency()" );
+		error( QtWarningMsg, "Requested auto-update interval is zero, doing nothing", "setAutoUpdateInterval()" );
 		return false;
 	}
 
-	if( freqHz > maxAutoUpdateFrequency )
+	if( intervalMs < minAutoUpdateInterval )
 	{
-		error( QtWarningMsg, QString("Requested auto-update frequency is more than the maximum of %1 Hz").arg(QString::number(maxAutoUpdateFrequency)), "setAutoUpdateFrequency()" );
+		error( QtWarningMsg, QString("Requested auto-update interval is less than the minimum of %1ms").arg(QString::number(minAutoUpdateInterval)), "setAutoUpdateInterval()" );
 		return false;
 	}
 
-	mAutoUpdateFrequency = freqHz;
+	mAutoUpdateInterval = intervalMs;
 	if( mAutoUpdateTimer )
-	{
-		int f = (int)(1000.0/freqHz+0.5);
-		mAutoUpdateTimer->setInterval( f );
-	}
+		{ mAutoUpdateTimer->setInterval( intervalMs ); }
 
 	return true;
 }
-
-/*
-bool DeviceStateVariable::setAutoUpdate( bool state )
-{
-	/// @todo Implement
-    return false;
-}
-*/
 
 bool DeviceStateVariable::setConvertScript( bool fromRaw, const QString &scriptStr )
 {
@@ -659,9 +654,9 @@ bool DeviceStateVariable::isAutoUpdateActive() const
 	return mAutoUpdateTimer->isActive();
 }
 
-int DeviceStateVariable::getAutoUpdateFrequency() const
+int DeviceStateVariable::getAutoUpdateInterval() const
 {
-	return mAutoUpdateFrequency;
+	return mAutoUpdateInterval;
 }
 
 const QString DeviceStateVariable::getDeviceReadyString() const

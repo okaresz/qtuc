@@ -151,13 +151,14 @@ The base64 encoding is done with QByteArray::toBase64(), so according to the Qt 
 
 #### Subscribe ####		{#doc-clientProtocol-packets-subscribe}
 
-The client can subscribe to a variable autoUpdate. After the subscription, the proxy will send the requested variable through a set command in a device packet with the defined frequency.
+The client can subscribe to a variable autoUpdate. After the subscription, the proxy will send the requested variable with a set command in a device packet at the defined intervals.
+The interval is a 32bit integer, interpreted as milliseconds.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <packet class="control" id="clientID#23">
-	<subscribe freq="5" hwi="led" var="dY">
-	<subscribe freq="5" hwi="drive"/>
-	<subscribe freq="5"/>
+	<subscribe interval="5" hwInterface="led" variable="dY">
+	<subscribe interval="5" hwInterface="drive"/>
+	<subscribe interval="5"/>
 <packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -165,21 +166,23 @@ In this example, all three possible variations are demonstrated (not considering
 
   * **hwi**: A valid hardware interface name. Cannot be omitted, unless both `hwi` and `var` is omitted. In that case, ALL variable will be subscribed (last case).
   * **var**: A valid variable name in the given hardware interface. If omitted, all variable in the hardware integerface will be subscribed.
-  * **freq**: Frequency of the updates in Hz (x per second).
+  * **interval**: 32bit integer, interpreted as milliseconds, the time between two updates.
 
-You cannot subscribe for the same set of variables. Two subscriptions are considered the same if both the hardwre interface and the variable is the same. Frequency may be different.
+You cannot subscribe for the same set of variables twice. Two subscriptions are considered the same if both the hardwre interface and the variable is the same. Interval may be different.
 
-If you would like to change the frequency of a subscription, you must first unsubscribe the previous, then subscribe again with the new frequency.
+If you would like to change the interval of a subscription, you must first unsubscribe the previous, then subscribe again with the new interval.
 
-As a result of the subscribe request, the proxy will send a subscription feed periodically, with the requested frequency. This feed is a ClientPacket, including a ClientCOmmand device *set* command for each variable included in the subscription.
+As a result of the subscribe request, the proxy will send a subscription feed periodically, at the requested intervals. This feed is a ClientPacket, including a ClientCommandDevice *set* command for each variable included in the subscription.
 
 **Important!** A deviceVariable is always sent with the most specific subscription, including that variable (independent of the frequency).
 Subscription "A" is more specific than subscription "B" if "A" corresponds to a smaller, more specific set of variables.
 For example a subscription for a hardware interface is more specific than a subscription for all the variables (in all interfaces).
 This way, the most specific subscription is, of course, a subscription to a single variable.
 
-*Example*: If there is a subscription of 1Hz for the hardwareInterface *"drive"*, and another of 10Hz for *motorSpeed* in the *drive* interface, then proxy will send a subscription feed package with the *motorSpeed* variable every 100ms,
+*Example*: If there is a subscription of 1000ms interval for the hardwareInterface *"drive"*, and another with 100ms for *motorSpeed* in the *drive* interface, then proxy will send a subscription feed package with the *motorSpeed* variable every 100ms,
 and a package with all the variables (as device commands) in the *drive* interface **except** *motorSpeed*, every second.
+
+If the deviceAPI.xm contains a valid user-side autoUpdate node for a variable, it is up to the client whether it uses this information to automatically send a subscription to the proxy for that variable.
 
 
 #### unSubscribe ####		{#doc-clientProtocol-packets-unSubscribe}
@@ -188,15 +191,15 @@ In a similar fashion to subscribe, you can unsubscribe. After this command, prox
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <packet class="control" id="clientID#73838">
-	<unSubscribe hwi="led" var="dY">
-	<unSubscribe hwi="drive"/>
+	<unSubscribe hwInterface="led" variable="dY">
+	<unSubscribe hwInterface="drive"/>
 	<unSubscribe/>
 <packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If an unsubscribe command is sent for a variable that isn't subscribed, the command is silently ignored.
 
-A subscription can only be cancelled by an unsubscribe command with the same parameters. However, by setting the variable or the interface to "*" (asterisk), a bulk cancel can be requested.
+A subscription can only be cancelled by an unsubscribe command with the **exact same parameters** (excluding interval). However, by setting the variable or the interface to "*" (asterisk), a bulk cancel can be requested.
 
 If *hwi* and *var* both equal "*", all subscriptions are cancelled.
 If *hwi* is a valid hardware interface name, and *var* is "*", then all subscriptions for the interface or a variable in the interface is cancelled.

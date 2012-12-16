@@ -32,10 +32,10 @@ public slots:
 	/** Subscribe client to the requested set of variables.
 	 *	See [subscribe command](#doc-clientProtocol-packets-subscribe) for more info.
 	 *	@param client The client to subscribe.
-	 *	@param frequency Frequency of the subscription.
+	 *	@param interval Interval of the subscription in milliseconds. Must be larger than ClientSubscription::minSubscriptionInterval.
 	 *	@param hwInterface Hardware interface.
 	 *	@param variable Variable name.*/
-	bool subscribe( ClientConnectionManagerBase *client, unsigned int frequency, const QString &hwInterface, const QString &variable );
+	bool subscribe( ClientConnectionManagerBase *client, quint32 interval, const QString &hwInterface, const QString &variable );
 
 	/** Unsubscribe client from the requested set of variables.
 	 *	See [unSubscribe command](#doc-clientProtocol-packets-unSubscribe) for more info.

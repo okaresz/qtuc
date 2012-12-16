@@ -144,7 +144,7 @@ void QcGui::proxyConnectionReady()
 
 void QcGui::createDeviceVariable(QHash<QString, QString> varParams)
 {
-	// Remove autoUpdate-device, so no timers will be created unnecessarily.
+	// Remove autoUpdate-device, so no timers in the stateVars will be created unnecessarily.
 	varParams.remove("autoUpdate-device");
 	if( mProxyState->registerStateVariable(varParams) )
 	{
@@ -213,7 +213,6 @@ void QcGui::handleCommand(ClientCommandBase *cmd)
 		if( cmd->getName() == "deviceAPI" )
 		{
 			handleDeviceApiCmd( (ClientCommandDeviceApi*)cmd );
-			//mProxyLink->sendCommand( new ClientCommandSubscribe( 2, "hw1", "var1i" ) );
 		}
 		else
 			{ debug( debugLevelInfo, QString("Command received: %1").arg(cmd->getName()), "handleCommand()" ); }
