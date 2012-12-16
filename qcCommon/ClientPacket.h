@@ -74,7 +74,7 @@ public:
 	  *	Can be used to determine whether the whole packet has arrived yet.
 	  *	@param rawData The raw data. Must be at least 4 byte long to read the packet size.
 	  *	@return The packet size, converted to host endianness. If passed data was shorter than 4 bytes, return 0.*/
-	static qint16 readPacketSize( const QByteArray &rawData );
+	static quint16 readPacketSize( const QByteArray &rawData );
 
 	static void setCommandFactoryPtr( ClientCommandFactory *factoryPtr )
 		{ mCommandFactoryPtr = factoryPtr; }

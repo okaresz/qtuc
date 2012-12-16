@@ -10,7 +10,7 @@ ClientCommandBase::ClientCommandBase( QObject *parent ) :
 ClientCommandBase::~ClientCommandBase()
 {
 	/// @todo implement?
-	debug( debugLevelVeryVerbose, "Destroyed", "~ClientCommandBase()" );
+	//debug( debugLevelVeryVerbose, "Destroyed", "~ClientCommandBase()" );
 }
 
 ClientCommandBase *ClientCommandBase::cloneWithDomElement(const QDomElement &cmdElement)

@@ -10,6 +10,8 @@ ClientCommandFactory::ClientCommandFactory( QObject *parent ) : ErrorHandlerBase
 	registerCommand( new ClientCommandHandshake() );
 	registerCommand( new ClientCommandDeviceApi() );
 	registerCommand( new ClientCommandReqDeviceApi() );
+	registerCommand( new ClientCommandSubscribe() );
+	registerCommand( new ClientCommandUnSubscribe() );
 
 	// Hah! How tricky I am! The deviceCommands with one class.
 	registerCommand( new ClientCommandDevice(deviceCmdGet) );
@@ -22,7 +24,10 @@ ClientCommandFactory::~ClientCommandFactory()
 	for( int i=0; i<mCommandPrototypes.size(); ++i )
 	{
 		if( mCommandPrototypes.at(i) )
-			{ delete mCommandPrototypes.value(i); }
+		{
+			delete mCommandPrototypes.value(i);
+			mCommandPrototypes.removeAt(i);
+		}
 	}
 }
 

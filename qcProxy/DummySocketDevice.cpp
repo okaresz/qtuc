@@ -38,6 +38,22 @@ void DummySocketDevice::handleDeviceData()
 		return;
 	}
 
+	// grab keys
+	QByteArray keyBuffer;
+	keyBuffer = mDeviceSocket->peek(4);
+	if( !keyBuffer.isEmpty() )
+	{
+		if( keyBuffer.size() == 3 )
+		{
+			int k = keyBuffer.toInt();
+			if( k == Qt::Key_Up )
+			{
+				debug( debugLevelVeryVerbose, "UP!", "handleDeviceData()" );
+				mDeviceSocket->read(4);
+			}
+		}
+	}
+
 	QByteArray block;
 	char c=0;
 	bool fullCmd = false;
@@ -89,6 +105,8 @@ void DummySocketDevice::handleDeviceClientConnected()
 	mDeviceSocket = mDeviceServer->nextPendingConnection();
 	connect( mDeviceSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError(QAbstractSocket::SocketError)) );
 	connect( mDeviceSocket, SIGNAL(readyRead()), this, SLOT(handleDeviceData()) );
+	//QByteArray setClientToCharMode( "\377\375\042\377\373\001" );
+	//mDeviceSocket->write( setClientToCharMode );
 	debug( debugLevelInfo, "Dummy device socket connected", "handleDeviceClientConnected()" );
 }
 

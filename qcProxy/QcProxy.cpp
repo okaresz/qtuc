@@ -11,6 +11,7 @@ QcProxy::QcProxy( QObject *parent ) :
 	ErrorHandlerBase( parent ),
 	mDevice( 0 ),
 	mConnectionServer( 0 ),
+	mClientSubscriptionManager(0),
 	mPassThrough(false)
 {
 	// On windows default format is registry, but we want file.
@@ -24,6 +25,9 @@ QcProxy::QcProxy( QObject *parent ) :
 
 	mDevice = new DeviceAPI( this );
 	mConnectionServer = new ConnectionServer( this );
+	mClientSubscriptionManager = new ClientSubscriptionManager(this);
+
+	connect( mClientSubscriptionManager, SIGNAL(subscriptionFeedRequest(ClientSubscription*)), this, SLOT(sendSubscriptionFeed(ClientSubscription*)) );
 }
 
 QcProxy::~QcProxy()
@@ -70,6 +74,16 @@ bool QcProxy::route(ClientCommandBase *clientCommand)
 			debug( debugLevelVeryVerbose, "Got API request, send API...", "route(ClientCommandBase*)" );
 			client->sendCommand( new ClientCommandDeviceApi( mDevice->getApiParser()->getString() ) );
 		}
+		else if( clientCommand->getName() == "subscribe" )
+		{
+			ClientCommandSubscribe *subscribeCmd = (ClientCommandSubscribe*)clientCommand;
+			mClientSubscriptionManager->subscribe( client, subscribeCmd->getFrequency(), subscribeCmd->getHwInterface(), subscribeCmd->getVariable() );
+		}
+		else if( clientCommand->getName() == "unSubscribe" )
+		{
+			ClientCommandUnSubscribe *unSubscribeCmd = (ClientCommandUnSubscribe*)clientCommand;
+			mClientSubscriptionManager->unSubscribe( client, unSubscribeCmd->getHwInterface(), unSubscribeCmd->getVariable() );
+		}
 		/// @todo implement
 	}
 	else if( clientCommand->getClass() == ClientCommandBase::clientCommandDevice )
@@ -114,4 +128,37 @@ bool QcProxy::handleDeviceMessage(deviceMessageType_t msgType, QString msg)
 void QcProxy::handleNewClient( ClientConnectionManagerBase *newClient )
 {
 	connect( newClient, SIGNAL(commandReceived(ClientCommandBase*)), this, SLOT(route(ClientCommandBase*)) );
+}
+
+void QcProxy::sendSubscriptionFeed( ClientSubscription *subscription )
+{
+	if( subscription->getVariable().isEmpty() )
+	{
+		QList<DeviceStateVariable*> varList = mDevice->getVarList( subscription->getHwInterface() );
+		QList<ClientCommandBase*> clientCmdList;
+
+		for( int i=0; i<varList.size(); ++i )
+		{
+			if( !mClientSubscriptionManager->moreSpecificSubscriptionExists( varList.at(i), subscription ) )
+				{ clientCmdList.append( new ClientCommandDevice( deviceCmdSet, varList.at(i) ) ); }
+		}
+
+		if( !subscription->getClient()->sendCommands( clientCmdList ) )
+		{
+			errorDetails_t errDet;
+			errDet.insert( "subscriptionVar", subscription->getVariable() );
+			errDet.insert( "subscriptionInterface", subscription->getHwInterface() );
+			error( QtWarningMsg, QString("An error occured while sending subscription update to client: %1").arg(subscription->getClient()->getID()), "sendSubscriptionFeed()", errDet );
+		}
+	}
+	else
+	{
+		if( !subscription->getClient()->sendCommand( new ClientCommandDevice( deviceCmdSet, mDevice->getVar( subscription->getHwInterface(), subscription->getVariable() ) ) ) )
+		{
+			errorDetails_t errDet;
+			errDet.insert( "subscriptionVar", subscription->getVariable() );
+			errDet.insert( "subscriptionInterface", subscription->getHwInterface() );
+			error( QtWarningMsg, QString("An error occured while sending subscription feed to client: %1").arg(subscription->getClient()->getID()), "sendSubscriptionFeed()", errDet );
+		}
+	}
 }

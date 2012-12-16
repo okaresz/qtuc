@@ -119,6 +119,7 @@ There's a lot more options however to fine-tune the behavior of the variable. Th
 			<device>varType_on_device</device>
 			<user>varType_on_user_side</user>
 		</type>
+		<access mode="r|w|rw"/>
 		<conversion>
 			<toUser><![CDATA[Qt script]]></toUser>
 			<toDevice><![CDATA[Qt script]]></toDevice>
@@ -133,6 +134,13 @@ There's a lot more options however to fine-tune the behavior of the variable. Th
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **type**: If you want to define different types on the device and user side, you must define both of them with the `<device>` and `<user>` nodes. <br>
+
+**access**: Controls different aspects of how to access the variable.
+  * *mode*: I/O mode of the variable from the user's point of view. Default is `r`.
+    * `r`: The variable can only be read from the device.
+    * `w`: Write-only variable (no get commands can be sent to the device for this variable. However the proxy will keep track of the values set to this variable, so a client may read the value from the proxy (which may not be the same value as on the device).
+    * `rw`: Read/write variable. Be careful when using this bi-directional mode! The proxy will handle both reads and writes to the device, but client and device-side implementation can be problematic.
+  **Important!** If you would like to *write* a variable, you must explicitly specify the *mode* attribute. If you omit the whole *acces* node or just *mode* attribute, the default mode (read-only) will be set.
 
 **conversion** (optional): Here can you define the conversion scripts between the sides. The script must be in a CDATA node. The script is parsed with [Qt's scripting API](http://qt-project.org/doc/qt-4.8/scripting.html).
 Qt Script is based on the ECMAScript scripting language, as defined in standard ECMA-262. For more information, see the [Qt documentation](http://qt-project.org/doc/qt-4.8/scripting.html), or Qt's [ECMAScript reference](http://qt-project.org/doc/qt-4.8/ecmascript.html).<br>

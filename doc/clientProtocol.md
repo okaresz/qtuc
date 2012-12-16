@@ -167,6 +167,20 @@ In this example, all three possible variations are demonstrated (not considering
   * **var**: A valid variable name in the given hardware interface. If omitted, all variable in the hardware integerface will be subscribed.
   * **freq**: Frequency of the updates in Hz (x per second).
 
+You cannot subscribe for the same set of variables. Two subscriptions are considered the same if both the hardwre interface and the variable is the same. Frequency may be different.
+
+If you would like to change the frequency of a subscription, you must first unsubscribe the previous, then subscribe again with the new frequency.
+
+As a result of the subscribe request, the proxy will send a subscription feed periodically, with the requested frequency. This feed is a ClientPacket, including a ClientCOmmand device *set* command for each variable included in the subscription.
+
+**Important!** A deviceVariable is always sent with the most specific subscription, including that variable (independent of the frequency).
+Subscription "A" is more specific than subscription "B" if "A" corresponds to a smaller, more specific set of variables.
+For example a subscription for a hardware interface is more specific than a subscription for all the variables (in all interfaces).
+This way, the most specific subscription is, of course, a subscription to a single variable.
+
+*Example*: If there is a subscription of 1Hz for the hardwareInterface *"drive"*, and another of 10Hz for *motorSpeed* in the *drive* interface, then proxy will send a subscription feed package with the *motorSpeed* variable every 100ms,
+and a package with all the variables (as device commands) in the *drive* interface **except** *motorSpeed*, every second.
+
 
 #### unSubscribe ####		{#doc-clientProtocol-packets-unSubscribe}
 
@@ -180,7 +194,12 @@ In a similar fashion to subscribe, you can unsubscribe. After this command, prox
 <packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If an unsubscribe command is sent for a variable that isn't subscribed, the command is silently ignored. This is the case for subscribe commands as well.
+If an unsubscribe command is sent for a variable that isn't subscribed, the command is silently ignored.
+
+A subscription can only be cancelled by an unsubscribe command with the same parameters. However, by setting the variable or the interface to "*" (asterisk), a bulk cancel can be requested.
+
+If *hwi* and *var* both equal "*", all subscriptions are cancelled.
+If *hwi* is a valid hardware interface name, and *var* is "*", then all subscriptions for the interface or a variable in the interface is cancelled.
 
 
 #### Message ####		{#doc-clientProtocol-packets-message}

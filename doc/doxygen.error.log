@@ -8,8 +8,8 @@
 
 /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientCommandFactory.h:40: warning: Illegal </br> tag found
 
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/clientCommands/ClientCommandDeviceApi.h:24: warning: argument 'fromElement' of command @param is not found in the argument list of QtuC::ClientCommandDeviceApi::applyDomElement(const QDomElement &cmdElement) inherited from member applyDomElement at line 36 in file /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientCommandBase.h
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/clientCommands/ClientCommandDeviceApi.h:24: warning: The following parameters of QtuC::ClientCommandDeviceApi::applyDomElement(const QDomElement &cmdElement) are not documented:
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/clientCommands/ClientCommandDeviceApi.h:29: warning: argument 'fromElement' of command @param is not found in the argument list of QtuC::ClientCommandDeviceApi::applyDomElement(const QDomElement &cmdElement) inherited from member applyDomElement at line 36 in file /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientCommandBase.h
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/clientCommands/ClientCommandDeviceApi.h:29: warning: The following parameters of QtuC::ClientCommandDeviceApi::applyDomElement(const QDomElement &cmdElement) are not documented:
   parameter 'cmdElement'
 /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/clientCommands/ClientCommandHandshake.h:36: warning: argument 'fromElement' of command @param is not found in the argument list of QtuC::ClientCommandHandshake::applyDomElement(const QDomElement &cmdElement) inherited from member applyDomElement at line 36 in file /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientCommandBase.h
 /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/clientCommands/ClientCommandHandshake.h:36: warning: The following parameters of QtuC::ClientCommandHandshake::applyDomElement(const QDomElement &cmdElement) are not documented:
@@ -18,15 +18,24 @@
 /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/clientCommands/ClientCommandHeartBeat.h:21: warning: argument 'fromElement' of command @param is not found in the argument list of QtuC::ClientCommandHeartBeat::applyDomElement(const QDomElement &cmdElement) inherited from member applyDomElement at line 36 in file /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientCommandBase.h
 /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/clientCommands/ClientCommandHeartBeat.h:21: warning: The following parameters of QtuC::ClientCommandHeartBeat::applyDomElement(const QDomElement &cmdElement) are not documented:
   parameter 'cmdElement'
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/clientCommands/ClientCommandReqDeviceApi.h:19: warning: argument 'fromElement' of command @param is not found in the argument list of QtuC::ClientCommandReqDeviceApi::applyDomElement(const QDomElement &cmdElement) inherited from member applyDomElement at line 36 in file /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientCommandBase.h
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/clientCommands/ClientCommandReqDeviceApi.h:19: warning: The following parameters of QtuC::ClientCommandReqDeviceApi::applyDomElement(const QDomElement &cmdElement) are not documented:
+  parameter 'cmdElement'
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/clientCommands/ClientCommandSubscribe.h:28: warning: argument 'fromElement' of command @param is not found in the argument list of QtuC::ClientCommandSubscribe::applyDomElement(const QDomElement &cmdElement) inherited from member applyDomElement at line 36 in file /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientCommandBase.h
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/clientCommands/ClientCommandSubscribe.h:28: warning: The following parameters of QtuC::ClientCommandSubscribe::applyDomElement(const QDomElement &cmdElement) are not documented:
+  parameter 'cmdElement'
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/clientCommands/ClientCommandUnSubscribe.h:24: warning: argument 'fromElement' of command @param is not found in the argument list of QtuC::ClientCommandUnSubscribe::applyDomElement(const QDomElement &cmdElement) inherited from member applyDomElement at line 36 in file /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientCommandBase.h
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/clientCommands/ClientCommandUnSubscribe.h:24: warning: The following parameters of QtuC::ClientCommandUnSubscribe::applyDomElement(const QDomElement &cmdElement) are not documented:
+  parameter 'cmdElement'
 /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientConnectionManagerBase.h:46: warning: argument 'roleIsServer' of command @param is not found in the argument list of QtuC::ClientConnectionManagerBase::ClientConnectionManagerBase(QTcpSocket *socket, bool isServerRole=false, QObject *parent=0)
 /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientConnectionManagerBase.h:46: warning: The following parameters of QtuC::ClientConnectionManagerBase::ClientConnectionManagerBase(QTcpSocket *socket, bool isServerRole=false, QObject *parent=0) are not documented:
   parameter 'isServerRole'
   parameter 'parent'
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientConnectionManagerBase.h:160: warning: argument 'handShake' of command @param is not found in the argument list of QtuC::ClientConnectionManagerBase::ackHandShake(ClientCommandHandshake *handshake)
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientConnectionManagerBase.h:160: warning: The following parameters of QtuC::ClientConnectionManagerBase::ackHandShake(ClientCommandHandshake *handshake) are not documented:
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientConnectionManagerBase.h:176: warning: argument 'handShake' of command @param is not found in the argument list of QtuC::ClientConnectionManagerBase::ackHandShake(ClientCommandHandshake *handshake)
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientConnectionManagerBase.h:176: warning: The following parameters of QtuC::ClientConnectionManagerBase::ackHandShake(ClientCommandHandshake *handshake) are not documented:
   parameter 'handshake'
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientConnectionManagerBase.h:145: warning: argument 'The' of command @param is not found in the argument list of QtuC::ClientConnectionManagerBase::handleReceivedPacket(ClientPacket *packet)
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientConnectionManagerBase.h:145: warning: The following parameters of QtuC::ClientConnectionManagerBase::handleReceivedPacket(ClientPacket *packet) are not documented:
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientConnectionManagerBase.h:161: warning: argument 'The' of command @param is not found in the argument list of QtuC::ClientConnectionManagerBase::handleReceivedPacket(ClientPacket *packet)
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientConnectionManagerBase.h:161: warning: The following parameters of QtuC::ClientConnectionManagerBase::handleReceivedPacket(ClientPacket *packet) are not documented:
   parameter 'packet'
 /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientConnectionManagerBase.h:92: warning: argument 'The' of command @param is not found in the argument list of QtuC::ClientConnectionManagerBase::setSelfInfo(const QHash< QString, QString > &infoList)
 /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientConnectionManagerBase.h:92: warning: The following parameters of QtuC::ClientConnectionManagerBase::setSelfInfo(const QHash< QString, QString > &infoList) are not documented:
@@ -40,35 +49,34 @@
   parameter 'clientCommand'
 /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientPacket.h:47: warning: Unsupported xml/html tag <serverShortName> found
 /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ClientPacket.h:47: warning: Unsupported xml/html tag <packetIdNum> found
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceAPIParser.h:39: warning: argument 'The' of command @param is not found in the argument list of QtuC::DeviceAPIParser::getHash(const QString &apiString)
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceAPIParser.h:39: warning: The following parameters of QtuC::DeviceAPIParser::getHash(const QString &apiString) are not documented:
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceAPIParser.h:38: warning: argument 'The' of command @param is not found in the argument list of QtuC::DeviceAPIParser::getHash(const QString &apiString)
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceAPIParser.h:38: warning: The following parameters of QtuC::DeviceAPIParser::getHash(const QString &apiString) are not documented:
   parameter 'apiString'
 /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceCommandBase.h:114: warning: argument 'cmdStr' of command @param is not found in the argument list of QtuC::DeviceCommandBase::commandTypeFromString(const QString &typeStr)
 /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceCommandBase.h:114: warning: The following parameters of QtuC::DeviceCommandBase::commandTypeFromString(const QString &typeStr) are not documented:
   parameter 'typeStr'
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:210: warning: The following parameters of QtuC::DeviceStateVariable::DeviceStateVariable(const QString &varHwInterface, const QString &varName, const QString &varType, const QString &varRawType, const QString convertScriptFromRaw, const QString convertScriptToRaw) are not documented:
-  parameter 'convertScriptFromRaw'
-  parameter 'convertScriptToRaw'
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:35: warning: The following parameters of QtuC::DeviceStateVariable::init(const QString &varHwInterface, const QString &varName, const QString &varType, const QString &varRawType=QString(), const QString convertScriptFromRaw=QString(), const QString convertScriptToRaw=QString()) are not documented:
-  parameter 'convertScriptFromRaw'
-  parameter 'convertScriptToRaw'
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:184: warning: argument 'QString' of command @param is not found in the argument list of QtuC::DeviceStateVariable::setOnDevice(const QString &)
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:200: warning: argument 'rawValue' of command @param is not found in the argument list of QtuC::DeviceStateVariable::updated(const QVariant &mRawValue)
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:200: warning: The following parameters of QtuC::DeviceStateVariable::updated(const QVariant &mRawValue) are not documented:
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:54: warning: argument 'accessMode' of command @param is not found in the argument list of QtuC::DeviceStateVariable::init(const QString &varHwInterface, const QString &varName, const QString &varType, const QString &varRawType=QString(), const QString &accessModeStr=QString("r"), const QString convertScriptFromRaw=QString(), const QString convertScriptToRaw=QString())
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:54: warning: The following parameters of QtuC::DeviceStateVariable::init(const QString &varHwInterface, const QString &varName, const QString &varType, const QString &varRawType=QString(), const QString &accessModeStr=QString("r"), const QString convertScriptFromRaw=QString(), const QString convertScriptToRaw=QString()) are not documented:
+  parameter 'accessModeStr'
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:221: warning: argument 'QString' of command @param is not found in the argument list of QtuC::DeviceStateVariable::setOnDevice(const QString &)
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:237: warning: argument 'rawValue' of command @param is not found in the argument list of QtuC::DeviceStateVariable::updated(const QVariant &mRawValue)
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:237: warning: The following parameters of QtuC::DeviceStateVariable::updated(const QVariant &mRawValue) are not documented:
   parameter 'mRawValue'
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:193: warning: argument 'QVariant' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChanged(const QVariant &)
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:194: warning: argument 'QString' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChanged(const QString &)
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:195: warning: argument 'int' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChanged(int)
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:196: warning: argument 'double' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChanged(double)
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:197: warning: argument 'bool' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChanged(bool)
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:187: warning: argument 'QVariant' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChangedRaw(const QVariant &)
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:188: warning: argument 'QString' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChangedRaw(const QString &)
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:189: warning: argument 'int' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChangedRaw(int)
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:190: warning: argument 'double' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChangedRaw(double)
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:191: warning: argument 'bool' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChangedRaw(bool)
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ErrorHandlerBase.h:52: warning: argument 'type' of command @param is not found in the argument list of QtuC::ErrorHandlerBase::error(QtMsgType severity, const QString &msg, char const *location, const errorDetails_t &details=QHash< const char *, QString >()) const
-/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ErrorHandlerBase.h:52: warning: The following parameters of QtuC::ErrorHandlerBase::error(QtMsgType severity, const QString &msg, char const *location, const errorDetails_t &details=QHash< const char *, QString >()) const are not documented:
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:230: warning: argument 'QVariant' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChanged(const QVariant &)
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:231: warning: argument 'QString' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChanged(const QString &)
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:232: warning: argument 'int' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChanged(int)
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:233: warning: argument 'double' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChanged(double)
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:234: warning: argument 'bool' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChanged(bool)
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:224: warning: argument 'QVariant' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChangedRaw(const QVariant &)
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:225: warning: argument 'QString' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChangedRaw(const QString &)
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:226: warning: argument 'int' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChangedRaw(int)
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:227: warning: argument 'double' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChangedRaw(double)
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/DeviceStateVariable.h:228: warning: argument 'bool' of command @param is not found in the argument list of QtuC::DeviceStateVariable::valueChangedRaw(bool)
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ErrorHandlerBase.h:58: warning: argument 'type' of command @param is not found in the argument list of QtuC::ErrorHandlerBase::error(QtMsgType severity, const QString &msg, char const *location, const errorDetails_t &details=QHash< const char *, QString >()) const
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ErrorHandlerBase.h:58: warning: The following parameters of QtuC::ErrorHandlerBase::error(QtMsgType severity, const QString &msg, char const *location, const errorDetails_t &details=QHash< const char *, QString >()) const are not documented:
   parameter 'severity'
+/home/karesz/Create/electronics/projects/QtuC/release/qcCommon/ErrorHandlerBase.h:51: warning: The following parameters of QtuC::ErrorHandlerBase::signalError(QtMsgType severity, QString msg, QString location, const QtuC::ErrorHandlerBase::errorDetails_t details) const are not documented:
+  parameter 'msg'
 /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/SettingsManagerBase.h:21: warning: argument 'On' of command @param is not found in the argument list of QtuC::SettingsManagerBase::instance(QObject *parent=0)
 /home/karesz/Create/electronics/projects/QtuC/release/qcCommon/SettingsManagerBase.h:21: warning: The following parameters of QtuC::SettingsManagerBase::instance(QObject *parent=0) are not documented:
   parameter 'parent'

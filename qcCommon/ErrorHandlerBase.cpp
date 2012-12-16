@@ -95,6 +95,6 @@ void ErrorHandlerBase::printError(QtMsgType severity, const QString &msg, const 
 		case QtDebugMsg: qDebug() << line; break;
 		case QtWarningMsg: qWarning() << line; break;
 		case QtCriticalMsg: qCritical() << line; break;
-		case QtFatalMsg: qFatal( line.toStdString().c_str() );
+		case QtFatalMsg: qFatal( "%s", line.toStdString().c_str() );
 	}
 }

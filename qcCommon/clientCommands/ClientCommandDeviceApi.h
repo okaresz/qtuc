@@ -24,7 +24,9 @@ public:
 	  *	@return True if the API data matches the hash, so the data is valid, return false if not.*/
 	bool isDataValid() const;
 
-	// Inherited methods
+
+	/// @name Inherited methods from ClientCommandBase.
+	/// @{
 
 	bool applyDomElement( const QDomElement &cmdElement );
 
@@ -35,6 +37,8 @@ public:
 	QDomElement getDomElement() const;
 
 	bool isValid() const;
+
+	/// @}
 
 private:
 	bool mIsPermanent;

@@ -11,10 +11,13 @@ DeviceAPI::DeviceAPI( QObject *parent ) :
 	mEmitAllCmd(false)
 {
 	mStateManager = new DeviceStateManager(this);
-	//mDeviceLink = new SerialDeviceConnector(this);
-	mDeviceLink = new DummySocketDevice(this);
 	mDeviceAPI = new DeviceAPIFileHandler(this);
 	mDeviceInstance = 0;
+
+	//mDeviceLink = new SerialDeviceConnector(this);
+	mDeviceLink = new DummySocketDevice(this);
+
+	connect( mStateManager, SIGNAL(stateVariableUpdateRequest(DeviceStateVariable*)), this, SLOT(handleStateVariableUpdateRequest(DeviceStateVariable*)) );
 }
 
 bool DeviceAPI::call( const QString &hwInterface, const QString &function, const QString &arg )
@@ -40,9 +43,14 @@ DeviceStateVariable *DeviceAPI::getVar( const QString &hwInterface, const QStrin
 		ErrorHandlerBase::errorDetails_t errDet;
 		errDet.insert( "hwInterface", hwInterface );
 		errDet.insert( "varName", varName );
-		error( QtWarningMsg, "No such variable", "get()", errDet );
+		error( QtWarningMsg, "No such variable", "getVar()", errDet );
 	}
 	return var;
+}
+
+QList<DeviceStateVariable *> DeviceAPI::getVarList(const QString &hardwareInterface)
+{
+	return mStateManager->getVarList( hardwareInterface );
 }
 
 bool DeviceAPI::update( const QString &hwInterface, const QString &varName )

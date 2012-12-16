@@ -14,7 +14,9 @@ class ClientCommandReqDeviceApi : public ClientCommandBase
 public:
 	explicit ClientCommandReqDeviceApi();
 
-	// Inherited methods
+
+	/// @name Inherited methods from ClientCommandBase.
+	/// @{
 
 	bool applyDomElement( const QDomElement &cmdElement );
 
@@ -25,6 +27,8 @@ public:
 	QDomElement getDomElement() const;
 
 	bool isValid() const;
+
+	/// @}
 };
 
 }	//QtuC::

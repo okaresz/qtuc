@@ -190,6 +190,8 @@ bool DeviceAPIParser::parseNodeFunctionList ( const QDomElement &functionListEle
 
 bool DeviceAPIParser::parseNodeStateVariable( const QDomElement &stateVariableElement )
 {
+	// Check compulsory nodes
+
 	if( stateVariableElement.firstChildElement("name").isNull() )
 	{
 		error( QtWarningMsg, "StateVariable parsing failed (on line "+QString::number(stateVariableElement.lineNumber())+"): no name node! Skip variable...", "parseNodeStateVariable()" );
@@ -209,8 +211,12 @@ bool DeviceAPIParser::parseNodeStateVariable( const QDomElement &stateVariableEl
 
 	QHash<QString,QString> params;
 
+	// Name, hwi
+
 	params.insert( "name", stateVariableElement.firstChildElement("name").text() );
 	params.insert( "hwInterface", stateVariableElement.firstChildElement("hwInterface").text() );
+
+	// Type(s)
 
 	QDomElement typeElement = stateVariableElement.firstChildElement("type");
 	if( typeElement.firstChild().isText() )
@@ -235,6 +241,16 @@ bool DeviceAPIParser::parseNodeStateVariable( const QDomElement &stateVariableEl
 
 	// ... the rest is optional
 
+	// Access
+
+	QDomElement accessElement = stateVariableElement.firstChildElement("access");
+	if( !accessElement.isNull() )
+	{
+		params.insert( "access-mode", accessElement.attribute( "mode", "r" ) );
+	}
+
+	// Conversion scripts
+
 	if( !stateVariableElement.firstChildElement("conversion").isNull() )
 	{
 		QDomElement conversionElement = stateVariableElement.firstChildElement("conversion");
@@ -249,6 +265,8 @@ bool DeviceAPIParser::parseNodeStateVariable( const QDomElement &stateVariableEl
 			params.insert( "toDeviceScript", conversionElement.firstChildElement("toDevice").text() );
 		}
 	}
+
+	// Auto-update
 
 	QDomElement autoUpdateElement = stateVariableElement.firstChildElement("autoUpdate");
 	while( !autoUpdateElement.isNull() )

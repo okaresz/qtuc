@@ -27,7 +27,9 @@ SOURCES += main.cpp \
     ProxySettingsManager.cpp \
     QcProxy.cpp \
     DeviceCommandBuilder.cpp \
-    DummySocketDevice.cpp
+    DummySocketDevice.cpp \
+    ClientSubscription.cpp \
+    ClientSubscriptionManager.cpp
 
 HEADERS += \
     SerialDeviceConnector.h \
@@ -41,7 +43,9 @@ HEADERS += \
     ProxySettingsManager.h \
     QcProxy.h \
     DeviceCommandBuilder.h \
-    DummySocketDevice.h
+    DummySocketDevice.h \
+    ClientSubscription.h \
+    ClientSubscriptionManager.h
 
 # Config for QtSerialPort.
 # On linux, ld must find the lib (no config), on win, use the one in the QtSerialPort dir

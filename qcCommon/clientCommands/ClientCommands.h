@@ -10,6 +10,8 @@
 #include "ClientCommandReqDeviceApi.h"
 #include "ClientCommandDeviceApi.h"
 #include "ClientCommandDevice.h"
+#include "ClientCommandSubscribe.h"
+#include "ClientCommandUnSubscribe.h"
 class ClientCommandStatus;
 
 #endif // CLIENTCOMMANDS_H

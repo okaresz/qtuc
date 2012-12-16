@@ -16,7 +16,8 @@ SOURCES += main.cpp\
     ProxyConnectionManager.cpp \
     GuiSettingsManager.cpp \
     QcGuiMainView.cpp \
-    StateVariablesView.cpp
+    StateVariablesView.cpp \
+    StateVarIntView.cpp
 
 HEADERS  += \
     QcGui.h \
@@ -24,7 +25,8 @@ HEADERS  += \
     ProxyConnectionManager.h \
     GuiSettingsManager.h \
     QcGuiMainView.h \
-    StateVariablesView.h
+    StateVariablesView.h \
+    StateVarIntView.h
 
 FORMS    += \
     QcGuiMainView.ui

@@ -30,6 +30,11 @@ public:
 	  *	@return Pointer to the requested variable.*/
 	DeviceStateVariable* getVar( const QString& hardwareInterface, const QString& varName );
 
+	/** Get all variables in a specified hadware interface, or all interfaces.
+	  *	@param hardwareInterface Get all vars in this interface. If omitted or empty, all variables in all interfaces will be returned.
+	  * @param List of variable pointers.*/
+	QList<DeviceStateVariable*> getVarList( const QString &hardwareInterface = QString() );
+
 	/** Register a deviceStateVariable.
 	  *	Once a variable is registered, the stateManager handles it's signals, keep it updated , and so on...
 	  *	@param stateVar The variable to manage.*/

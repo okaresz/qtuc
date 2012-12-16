@@ -5,6 +5,7 @@
 #include "ClientCommandBase.h"
 #include "DeviceCommand.h"
 #include "Device.h"
+#include "ClientSubscriptionManager.h"
 
 namespace QtuC
 {
@@ -50,10 +51,16 @@ private slots:
 	 *	@param newClient The connected client object.*/
 	void handleNewClient( ClientConnectionManagerBase *newClient );
 
+	/** Handle subscription feed request and send the feed packet.
+	  *	@param client The subscribed client.
+	  *	@param hwInterface The subscribed hardware interface.
+	  *	@param variable The subscribed variable.*/
+	void sendSubscriptionFeed( ClientSubscription *subscription );
+
 private:
-	DeviceAPI *mDevice;
-	//GuiConnectionManager mGui;
-	ConnectionServer *mConnectionServer;
+	DeviceAPI *mDevice;		///< API object for the device.
+	ConnectionServer *mConnectionServer;	///< Holds the instance of the connection server.
+	ClientSubscriptionManager *mClientSubscriptionManager;
 
 	bool mPassThrough;	///< If true, proxy will immediately relay all device commands to all clients (as a ClientCommandDevice)
 

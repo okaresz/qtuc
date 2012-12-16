@@ -2,11 +2,23 @@
 
 using namespace QtuC;
 
-ClientCommandDevice::ClientCommandDevice( deviceCommandType_t type ) :
+ClientCommandDevice::ClientCommandDevice( deviceCommandType_t type, const DeviceStateVariable *stateVariable ) :
 	ClientCommandBase(),
 	DeviceCommandBase()
 {
+	// Warn, but proceed.
+	if( stateVariable && type == deviceCmdCall )
+		{ error( QtWarningMsg, "A get ClientCommandDevice is created with a deviceVariable, something is wrong...", "ClientCommandDevice()" ); }
+
 	commonConstruct(type);
+
+	if( stateVariable )
+	{
+		mVariable = stateVariable->getName();
+		mHwInterface = stateVariable->getHwInterface();
+		if( mType == deviceCmdSet )
+			{ mArgs.append( stateVariable->getValue().toString() ); }
+	}
 }
 
 ClientCommandDevice::ClientCommandDevice( DeviceCommandBase *deviceCommand ) :

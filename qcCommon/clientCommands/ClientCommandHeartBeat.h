@@ -16,7 +16,9 @@ public:
 
 	ClientCommandHeartBeat *cloneReply();
 
-	// Inherited methods
+
+	/// @name Inherited methods from ClientCommandBase.
+	/// @{
 
 	bool applyDomElement( const QDomElement &cmdElement );
 
@@ -27,6 +29,8 @@ public:
 	QDomElement getDomElement() const;
 
 	bool isValid() const;
+
+	/// @}
 
 	/** Get heartBeat ID.
 	  *	@return The heartBeat id.*/

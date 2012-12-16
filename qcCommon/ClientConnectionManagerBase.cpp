@@ -64,6 +64,8 @@ ClientConnectionManagerBase::~ClientConnectionManagerBase()
 	if( --mInstanceCount == 0 )
 	{
 		delete mCommandFactory;
+		mCommandFactory = 0;
+		ClientPacket::setCommandFactoryPtr( mCommandFactory );
 	}
 }
 

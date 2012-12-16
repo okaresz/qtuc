@@ -3,6 +3,8 @@
 
 using namespace QtuC;
 
+int DeviceStateVariable::maxAutoUpdateFrequency = 1000;
+
 DeviceStateVariable::DeviceStateVariable(const DeviceStateVariable &otherVar) : ErrorHandlerBase(0)
 {
 	mName = otherVar.getName();
@@ -11,19 +13,27 @@ DeviceStateVariable::DeviceStateVariable(const DeviceStateVariable &otherVar) : 
 	mType = otherVar.getType();
 	mRawValue = otherVar.getRawValue();
 	mValue = otherVar.getValue();
+	mAccessMode = otherVar.getAccessMode();
 	mConvertToRawScript = otherVar.getConvertScript(false);
 	mConvertFromRawScript = otherVar.getConvertScript(true);
 	mLastUpdate = otherVar.getLastUpdateTime();
-	mAutoUpdate = otherVar.getAutoUpdate();
 	mAutoUpdateFrequency = otherVar.getAutoUpdateFrequency();
 
-	/// @todo implement mAutoUpdateTimer
-	mAutoUpdateTimer;
+	if( otherVar.isAutoUpdateActive() )
+	{
+		if( !startAutoUpdate() )
+		{
+			errorDetails_t errDetails;
+			errDetails.insert( "name", mName );
+			errDetails.insert( "hwi", mHwInterface );
+			error( QtWarningMsg, "Unable to start auto-update", "DeviceStateVariable()", errDetails );
+		}
+	}
 
 	mConvertEngine.globalObject().setProperty( mName, mConvertEngine.newVariant(mRawValue) );
 }
 
-DeviceStateVariable* DeviceStateVariable::init( const QString &varHwInterface, const QString &varName, const QString &varType, const QString &varRawType, const QString convertScriptFromRaw, const QString convertScriptToRaw )
+DeviceStateVariable* DeviceStateVariable::init( const QString &varHwInterface, const QString &varName, const QString &varType, const QString &varRawType, const QString &accessModeStr, const QString convertScriptFromRaw, const QString convertScriptToRaw )
 {
 	if( varName.isEmpty() )
 	{
@@ -35,7 +45,7 @@ DeviceStateVariable* DeviceStateVariable::init( const QString &varHwInterface, c
 		error( QtWarningMsg, "DeviceStateVariable initialized without a hardwareInterface. Variable not created.", "init()", "DeviceStateVariable" );
 		return 0;
 	}
-	/// @todo hope only this one
+	/// @todo hope only this one (..is unreachable from gui prog, because Device is not in the common lib)
 	/*if( !Device::isValidHwInterface(varHwInterface) )
 	{
 		error( QtWarningMsg, "Attempt to create a DeviceStateVariable with invalid hardware interface: "+varHwInterface+". Variable not created.", "init()", "DeviceStateVariable" );
@@ -52,14 +62,26 @@ DeviceStateVariable* DeviceStateVariable::init( const QString &varHwInterface, c
 		return 0;
 	}
 
-	return new DeviceStateVariable( varHwInterface, varName, varType, varRawType, convertScriptFromRaw, convertScriptToRaw );
+	accessMode_t accessMode = accessModeFromString( accessModeStr );
+	if( accessMode == undefinedAccess )
+	{
+		error( QtWarningMsg, "Invalid string for accessMode, variable will be read-only", "init()", "DeviceStateVariable" );
+		accessMode = readAccess;
+	}
+
+	return new DeviceStateVariable( varHwInterface, varName, varType, varRawType, accessMode, convertScriptFromRaw, convertScriptToRaw );
 }
 
-DeviceStateVariable::DeviceStateVariable( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& varRawType, const QString convertScriptFromRaw, const QString convertScriptToRaw ) : ErrorHandlerBase(0)
+DeviceStateVariable::DeviceStateVariable( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& varRawType, accessMode_t accessMode, const QString convertScriptFromRaw, const QString convertScriptToRaw )
+	: ErrorHandlerBase(0),
+	  mLastUpdate(0),
+	  mAutoUpdateFrequency(0),
+	  mAutoUpdateTimer(0)
 {
 	mName = varName;
 	mHwInterface = varHwInterface;
 	mType = stringToType(varType);
+	mAccessMode = accessMode;
 	if( varRawType.isEmpty() )
 		{ mRawType = mType; }
 	else
@@ -79,6 +101,7 @@ bool DeviceStateVariable::isValid() const
 	valid = valid && ( mType != QVariant::Invalid );
 	valid = valid && ( !mName.isEmpty() );
 	valid = valid && ( !mHwInterface.isEmpty() );
+	valid = valid && ( mAccessMode != undefinedAccess );
 	valid = valid && ( mRawValue.isValid() );
 	valid = valid && ( !mRawValue.isNull() );
 	valid = valid && ( mValue.isValid() );
@@ -139,6 +162,11 @@ QVariant::Type DeviceStateVariable::getRawType() const
 QVariant::Type DeviceStateVariable::getType() const
 {
 	return mType;
+}
+
+DeviceStateVariable::accessMode_t DeviceStateVariable::getAccessMode() const
+{
+	return mAccessMode;
 }
 
 const QString DeviceStateVariable::getConvertScript(bool fromRaw) const
@@ -298,7 +326,7 @@ void DeviceStateVariable::emitValueChangedRaw()
 	bool b = ( mRawValue.toBool() || mRawValue == "on" || mRawValue == "high" );
 	emit valueChangedRaw(b);
 
-	emit setOnDevice( getDeviceReadyString() );
+	setOnDevice();
 }
 
 bool DeviceStateVariable::scriptConvert( bool fromRaw )
@@ -477,7 +505,7 @@ void DeviceStateVariable::swapRawValue( const QVariant &newRawVal )
 		mRawValue = newRawVal;
 		/// @todo set update time?? depends on positive ack?
 		emitValueChangedRaw();
-		emit setOnDevice(getDeviceReadyString());
+		setOnDevice();
 		calculateValue();
 	}
 }
@@ -508,6 +536,28 @@ bool DeviceStateVariable::convertQVariant( QVariant &var, QVariant::Type toType 
 	return true;
 }
 
+bool DeviceStateVariable::setOnDevice()
+{
+	if( isValid() )
+	{
+		if( mAccessMode & writeAccess )
+		{
+			emit setOnDevice(getDeviceReadyString());
+			return true;
+		}
+		else
+		{
+			debug( debugLevelVerbose, QString("Variable (%1:%2) has no write access, won't set on device").arg(mHwInterface,mName), "setOnDevice()" );
+			return false;
+		}
+	}
+	else
+	{
+		debug( debugLevelVeryVerbose, QString("Variable (%1:%2) is invalid, won't set on device").arg(mHwInterface,mName), "setOnDevice()" );
+		return false;
+	}
+}
+
 qint64 DeviceStateVariable::getLastUpdateTime() const
 {
 	return mLastUpdate;
@@ -520,21 +570,63 @@ qint64 DeviceStateVariable::getAgeMs() const
 
 bool DeviceStateVariable::startAutoUpdate( int freqHz )
 {
-	/// @todo Implement
-    return false;
+	if( !(mAccessMode & readAccess) )
+	{
+		error( QtWarningMsg, QString("Cannot start auto-update, variable (%1:%2) is write-only").arg(mHwInterface,mName), "startAutoUpdate()" );
+		return false;
+	}
+
+	if( !mAutoUpdateTimer )
+		{ mAutoUpdateTimer = new QTimer(this); }
+
+	if( freqHz == 0 && mAutoUpdateFrequency )
+		{ freqHz = mAutoUpdateFrequency; }
+
+	if( !setAutoUpdateFrequency( freqHz ) )
+	{
+		error( QtWarningMsg, "Unable to set auto-update frequency", "startAutoUpdate()" );
+		return false;
+	}
+
+	connect( mAutoUpdateTimer, SIGNAL(timeout()), this, SIGNAL(updateMe()) );
+	mAutoUpdateTimer->start();
+
+	debug( debugLevelVerbose, QString("Auto-update started with %3Hz for variable %1 in hwInterfíce %2").arg(mName, mHwInterface, QString::number(mAutoUpdateFrequency)), "startAutoUpdate()" );
+
+	return true;
 }
 
 bool DeviceStateVariable::setAutoUpdateFrequency( int freqHz )
 {
-	/// @todo Implement
-    return false;
+	if( freqHz == 0 )
+	{
+		error( QtWarningMsg, "Requested auto-update frequency zero, doing nothing", "setAutoUpdateFrequency()" );
+		return false;
+	}
+
+	if( freqHz > maxAutoUpdateFrequency )
+	{
+		error( QtWarningMsg, QString("Requested auto-update frequency is more than the maximum of %1 Hz").arg(QString::number(maxAutoUpdateFrequency)), "setAutoUpdateFrequency()" );
+		return false;
+	}
+
+	mAutoUpdateFrequency = freqHz;
+	if( mAutoUpdateTimer )
+	{
+		int f = (int)(1000.0/freqHz+0.5);
+		mAutoUpdateTimer->setInterval( f );
+	}
+
+	return true;
 }
 
+/*
 bool DeviceStateVariable::setAutoUpdate( bool state )
 {
 	/// @todo Implement
     return false;
 }
+*/
 
 bool DeviceStateVariable::setConvertScript( bool fromRaw, const QString &scriptStr )
 {
@@ -559,21 +651,17 @@ bool DeviceStateVariable::setConvertScript( bool fromRaw, const QString &scriptS
 
 void DeviceStateVariable::stopAutoUpdate()
 {
-	/// @todo Implement
+	mAutoUpdateTimer->stop();
 }
 
-bool DeviceStateVariable::getAutoUpdate() const
+bool DeviceStateVariable::isAutoUpdateActive() const
 {
-	/// @todo Implement
-    return false;
+	return mAutoUpdateTimer->isActive();
 }
 
 int DeviceStateVariable::getAutoUpdateFrequency() const
 {
-	if( getAutoUpdate() )
-		{ return mAutoUpdateFrequency; }
-	else
-		{ return 0; }
+	return mAutoUpdateFrequency;
 }
 
 const QString DeviceStateVariable::getDeviceReadyString() const
@@ -586,4 +674,16 @@ const QString DeviceStateVariable::getDeviceReadyString() const
 		case QVariant::String: return mRawValue.toString(); break;
 		default: return QString();
 	}
+}
+
+DeviceStateVariable::accessMode_t DeviceStateVariable::accessModeFromString(const QString &modeStr)
+{
+	if( modeStr == "r" )
+		{ return readAccess; }
+	else if( modeStr == "w" )
+		{ return writeAccess; }
+	else if( modeStr == "rw" )
+		{ return readWriteAccess; }
+	else
+		{ return undefinedAccess; }
 }

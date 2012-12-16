@@ -11,8 +11,7 @@ DeviceCommand::DeviceCommand() :
 DeviceCommand::DeviceCommand(const DeviceCommand &deviceCommand) :
 	ErrorHandlerBase(),
 	DeviceCommandBase(deviceCommand)
-{
-}
+{}
 
 DeviceCommand::DeviceCommand(const DeviceCommandBase &commandBase) :
 	ErrorHandlerBase(),
@@ -37,7 +36,8 @@ DeviceCommand *DeviceCommand::build( deviceCommandType_t cmdType, const DeviceSt
 	deviceCommand->setType( cmdType );
 	deviceCommand->setInterface( stateVar->getHwInterface() );
 	deviceCommand->setVariable( stateVar->getName() );
-	deviceCommand->setArg( stateVar->getDeviceReadyString() );
+	if( cmdType == deviceCmdSet )
+		{ deviceCommand->setArg( stateVar->getDeviceReadyString() ); }
 	if( deviceCommand->isValid() )
 		{ return deviceCommand; }
 	else

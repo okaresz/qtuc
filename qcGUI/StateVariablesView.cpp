@@ -115,7 +115,13 @@ QWidget *StateVariablesView::createVariableWidget(const QtuC::DeviceStateVariabl
 			QLineEdit *lineEdit = new QLineEdit();
 			lineEdit->setObjectName( widgetName );
 			lineEdit->setText( var->getValue().toString() );
-			connect( var, SIGNAL(valueChanged(QString)), lineEdit, SLOT(setText(QString)) );
+			if( var->getAccessMode() == DeviceStateVariable::readAccess )
+			{
+				lineEdit->setDisabled(true);
+				connect( var, SIGNAL(valueChanged(QString)), lineEdit, SLOT(setText(QString)) );
+			}
+			else if( var->getAccessMode() == DeviceStateVariable::writeAccess )
+				{ connect( lineEdit, SIGNAL(textEdited(QString)), var, SLOT(setValue(QString)) ); }
 			return lineEdit;
 		} break;
 		case QVariant::Bool:
@@ -123,7 +129,13 @@ QWidget *StateVariablesView::createVariableWidget(const QtuC::DeviceStateVariabl
 			QCheckBox *checkBox = new QCheckBox();
 			checkBox->setObjectName( widgetName );
 			checkBox->setChecked( var->getValue().toBool() );
-			connect( var, SIGNAL(valueChanged(bool)), checkBox, SLOT(setChecked(bool)) );
+			if( var->getAccessMode() == DeviceStateVariable::readAccess )
+			{
+				checkBox->setDisabled(true);
+				connect( var, SIGNAL(valueChanged(bool)), checkBox, SLOT(setChecked(bool)) );
+			}
+			else if( var->getAccessMode() == DeviceStateVariable::writeAccess )
+				{ connect( var, SIGNAL(valueChanged(bool)), checkBox, SLOT(setChecked(bool)) ); }
 			return checkBox;
 		} break;
 		case QVariant::Int:
@@ -132,7 +144,13 @@ QWidget *StateVariablesView::createVariableWidget(const QtuC::DeviceStateVariabl
 			spinBox->setObjectName( widgetName );
 			spinBox->setSingleStep(1);
 			spinBox->setValue( var->getValue().toInt() );
-			connect( var, SIGNAL(valueChanged(int)), spinBox, SLOT(setValue(int)) );
+			if( var->getAccessMode() == DeviceStateVariable::readAccess )
+			{
+				spinBox->setDisabled(true);
+				connect( var, SIGNAL(valueChanged(int)), spinBox, SLOT(setValue(int)) );
+			}
+			else if( var->getAccessMode() == DeviceStateVariable::writeAccess )
+				{ connect( spinBox, SIGNAL(valueChanged(int)), var, SLOT(setValue(int)) ); }
 			return spinBox;
 		} break;
 		default:

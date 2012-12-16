@@ -22,7 +22,9 @@ SOURCES += SettingsManagerBase.cpp \
     clientCommands/ClientCommandHandshake.cpp \
     DeviceCommand.cpp \
     clientCommands/ClientCommandDeviceApi.cpp \
-    clientCommands/ClientCommandReqDeviceApi.cpp
+    clientCommands/ClientCommandReqDeviceApi.cpp \
+    clientCommands/ClientCommandUnSubscribe.cpp \
+    clientCommands/ClientCommandSubscribe.cpp
 
 HEADERS += SettingsManagerBase.h \
     DeviceStateVariable.h \
@@ -40,6 +42,8 @@ HEADERS += SettingsManagerBase.h \
     clientCommands/ClientCommandHandshake.h \
     DeviceCommand.h \
     clientCommands/ClientCommandDeviceApi.h \
-    clientCommands/ClientCommandReqDeviceApi.h
+    clientCommands/ClientCommandReqDeviceApi.h \
+    clientCommands/ClientCommandUnSubscribe.h \
+    clientCommands/ClientCommandSubscribe.h
 
 INCLUDEPATH += $$PWD/clientCommands

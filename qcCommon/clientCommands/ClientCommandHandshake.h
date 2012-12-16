@@ -31,7 +31,9 @@ public:
 	  *	@param ack The value of the ack param.*/
 	ClientCommandHandshake( QHash<QString,QString> &info, bool ack );
 
-	// Inherited methods
+
+	/// @name Inherited methods from ClientCommandBase.
+	/// @{
 
 	bool applyDomElement( const QDomElement &cmdElement );
 
@@ -42,6 +44,9 @@ public:
 	QDomElement getDomElement() const;
 
 	bool isValid() const;
+
+	/// @}
+
 
 	/** Return info contained in the handShake.
 	  *	@return The handshake info.*/

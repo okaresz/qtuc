@@ -74,7 +74,7 @@ ClientPacket::~ClientPacket()
 		if( mCmdList.at(i) )
 			{ delete mCmdList.value(i); }
 	}
-	debug( debugLevelVeryVerbose, "Destroyed", "~ClientPacket()" );
+	//debug( debugLevelVeryVerbose, "Destroyed", "~ClientPacket()" );
 }
 
 bool ClientPacket::isValid()
@@ -233,7 +233,7 @@ const QByteArray ClientPacket::getPacketData() const
 
 ClientPacket* ClientPacket::fromPacketData( const QByteArray &rawPacket )
 {
-	qint16 packetSize = readPacketSize( rawPacket );
+	quint16 packetSize = readPacketSize( rawPacket );
 	if( rawPacket.size() < packetSize + sizeof(quint16) )
 	{
 		error( QtWarningMsg, "Failed to create ClientPacket: data too short", "fromPacketData()", "ClientPacket" );
@@ -280,7 +280,7 @@ ClientPacket* ClientPacket::fromPacketData( const QByteArray &rawPacket )
 	return new ClientPacket( packetElement );
 }
 
-qint16 ClientPacket::readPacketSize( const QByteArray &rawData )
+quint16 ClientPacket::readPacketSize( const QByteArray &rawData )
 {
 	if( rawData.size() < sizeof(quint16) )
 	{

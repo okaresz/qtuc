@@ -28,17 +28,39 @@ class DeviceStateVariable : public ErrorHandlerBase
 
 public:
 
+	/** I/O mode of the variable from the user's point of view.
+	 *	Default is readAccess.
+	 *	This is a maskable flag.
+	 *	* `readAccess`: setOnDevice() signal will never be emitted.
+	 *	* `writeAccess`: updateMe() signal will never be emitted.
+	 *	* `readWriteAccess`: No restrictions, behaviour is full, bidirectional. (can be tested with the previous two, but here for convenience)*/
+	enum accessMode_t
+	{
+		undefinedAccess = 0,
+		readAccess = 4,
+		writeAccess = 2,
+		readWriteAccess = 6		// here for convenience...
+	};
+
+	/** Get accessMode from string representation.
+	  *	@param modeStr The accessMode as a string.
+	  *	@return The accessMode.*/
+	static accessMode_t accessModeFromString( const QString &modeStr );
+
 	/** Copy constructor.*/
 	DeviceStateVariable( const DeviceStateVariable &otherVar );
 
 	/** Initialize a DeviceStateVariable.
-	 *This static function returns a pointer to a new DeviceStateVariable object on success, null pointer on failure.
+	 *	This static function returns a pointer to a new DeviceStateVariable object on success, null pointer on failure.
 	 * @param varHwInterface The hardware interface containing the variable.
 	 * @param varName The name of the variable.
 	 * @param varType Type of the variable. Valid values are: string, bool, boolean, int, double.
-	 * @param varRawType Type of the raw variable. If omitted, this will be the same as varType
+	 * @param varRawType Type of the raw variable. If omitted, this will be the same as varType.
+	 * @param accessMode I/O access mode of the variable. `r`: read-only, `w`: write-only, `rw`: read/write. See deviceAPI.xml documentation for more info.
+	 * @param convertScriptFromRaw FromRaw script string. Used to convert the value from device to user side.
+	 * @param convertScriptToRaw ToRaw script string. Used to convert the value from user to device side.
 	 * @return A pointer to a new DeviceStateVariable object on success, null pointer on failure.*/
-	static DeviceStateVariable* init( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& varRawType = QString(), const QString convertScriptFromRaw = QString(), const QString convertScriptToRaw = QString() );
+	static DeviceStateVariable* init( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& varRawType = QString(), const QString& accessModeStr = QString("r"), const QString convertScriptFromRaw = QString(), const QString convertScriptToRaw = QString() );
 
 	/** Retuns whether the variable is valid.
 	 * @returns True if the variable has a valid type, name, hardware interface and non-empty, valid values, otherwise returns false*/
@@ -50,6 +72,7 @@ public:
 	const QVariant getValue() const;		/// Get the user-side value as a QVariant
 	QVariant::Type getRawType() const;	///< Get raw type of variable.
 	QVariant::Type getType() const;	///< Get the <b>user-side</b> type of variable.
+	accessMode_t getAccessMode() const;	///< Get the I/O access mode of the variable.
 
 	/** Get convert script.
 	  *	@param fromRaw Set to true, to get the device-side -> user-side convert script, or false to get the other direction.
@@ -67,10 +90,10 @@ public:
 
 	/** Get the state of auto-update.
 	  * @returns True if auto-update is active, false if not.*/
-	bool getAutoUpdate() const;
+	bool isAutoUpdateActive() const;
 
 	/** Get the frequency of auto-update.
-	  * @returns The frequency of auto-update, or 0 if auto-update is off.*/
+	  * @returns The frequency of auto-update, even if auto-update is inactive.*/
 	int getAutoUpdateFrequency() const;
 
 	/** Get the raw value as a QString, ready to send to the device.
@@ -99,12 +122,13 @@ public slots:
 	 * @returns True if the frequency is successfully changed, false otherwise.*/
 	bool setAutoUpdateFrequency( int freqHz );
 
-	/** Start or stop auto-update.
+	/* Start or stop auto-update.
 	  *	This function can only be used, if there is a valid update frequency data available.
 	  * Either the startAutoUpdate() has been called once with the freq param, or the deviceAPI file contains a frequency info, or the setAutoUpdateFrequency() has been called.
 	  * @param state Start auto-update if true, stop if false.
 	  * @returns True if auto-update is started successfully, false otherwise.*/
-	bool setAutoUpdate( bool state );
+	// This is unnecessary, there's startAutoUpdate/stopAutoUpdate
+	//bool setAutoUpdate( bool state );
 
 	/** Set a value conversion script.
 	  *	The script is checked for syntax errors.
@@ -120,55 +144,55 @@ public slots:
 
 	/** Set the raw value.
 	  * @param newRawValue Set a new raw value for the variable from a QString.
-	  * The new type of tha variable will be string.
+	  * The new type of the variable will be string.
 	  * @returns True on success flase otherwise.*/
 	bool setRawValue( const QString& newRawValue );
 
 	/** Set the raw value.
 	  * @param newRawValue Set a new raw value for the variable from an integer.
-	  * The new type of tha variable will be int.
+	  * The new type of the variable will be int.
 	  * @returns True on success flase otherwise.*/
 	bool setRawValue( int newRawValue );
 
 	/** Set the raw value.
 	  * @param newRawValue Set a new raw value for the variable from a double.
-	  * The new type of tha variable will be double.
+	  * The new type of the variable will be double.
 	  * @returns True on success flase otherwise.*/
 	bool setRawValue( double newRawValue );
 
 	/** Set the raw value.
 	  * @param newRawValue Set a new raw value for the variable from a boolean.
-	  * The new type of tha variable will be bool.
+	  * The new type of the variable will be bool.
 	  * @returns True on success flase otherwise.*/
 	bool setRawValue( bool newRawValue );
 
 	/** Set the value.
 	  * @param newValue Set a new value for the variable from a QVariant.
-	  * The new type of tha variable will be the type of the variant.
+	  * The new type of the variable will be the type of the variant.
 	  * @returns True on success flase otherwise.*/
 	bool setValue( const QVariant& newValue );
 
 	/** Set the value.
 	  * @param newValue Set a new value for the variable from a QString.
-	  * The new type of tha variable will be string.
+	  * The new type of the variable will be string.
 	  * @returns True on success flase otherwise.*/
 	bool setValue( const QString& newValue );
 
 	/** Set the value.
 	  * @param newValue Set a new value for the variable from an integer.
-	  * The new type of tha variable will be int.
+	  * The new type of the variable will be int.
 	  * @returns True on success flase otherwise.*/
 	bool setValue( int newValue );
 
 	/** Set the value.
 	  * @param newValue Set a new value for the variable from a double.
-	  * The new type of tha variable will be double.
+	  * The new type of the variable will be double.
 	  * @returns True on success flase otherwise.*/
 	bool setValue( double newValue );
 
 	/** Set the value.
 	  * @param newValue Set a new value for the variable from a boolean.
-	  * The new type of tha variable will be bool.
+	  * The new type of the variable will be bool.
 	  * @returns True on success flase otherwise.*/
 	bool setValue( bool newValue );
 
@@ -177,6 +201,19 @@ public slots:
 	 *	This function pdates the rawValue, calculates the converted Value, and emits update() and all valueChanged signals
 	 *	@param newRawValue The new raw value (string) as parsed from the device command*/
 	void setFromDevice( const QString& newRawValue );
+
+private slots:
+	/** Calculate raw or user-side value based on the convert scripts.
+	  *	@param fromRaw Direction: fromRaw if true, toRaw if false.
+	  *	@return True on success, false otherwise.*/
+	bool scriptConvert( bool fromRaw );
+
+	bool calculateValue();		///< Calculate user-side value from current device-side raw value and emit valueChanged signals.
+	bool calculateRawValue();	///< Calculate device-side raw value from current user-side value and emit valueChangedRaw signals.
+
+	// Called when an auto-update tick occurs meaning the variable should be updated from the device.
+	// Currently the timeout() signal of the timer is connected directly to updateMe().
+	//void handleAutoUpdateTick();
 
 signals:
 
@@ -211,8 +248,11 @@ private:
 	 * @param varHwInterface The hardware interface containing the variable.
 	 * @param varName The name of the variable.
 	 * @param varType Type of the variable. Valid values are: string, bool, boolean, int, double.
-	 * @param varRawType Type of the raw variable. If omitted, this will be the same as vartype*/
-	DeviceStateVariable( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& varRawType, const QString convertScriptFromRaw, const QString convertScriptToRaw );
+	 * @param varRawType Type of the raw variable. If omitted, this will be the same as vartype.
+	 * @param accessMode I/O access mode of the variable.
+	 * @param convertScriptFromRaw FromRaw script string. Used to convert the value from device to user side.
+	 * @param convertScriptToRaw ToRaw script string. Used to convert the value from user to device side.*/
+	DeviceStateVariable( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& varRawType, accessMode_t accessMode, const QString convertScriptFromRaw, const QString convertScriptToRaw );
 
 	QString mName;			///< The name of the variable.
 	QString mHwInterface;	///< The name of the hardware interface containing the variable.
@@ -224,9 +264,11 @@ private:
 	QString mConvertToRawScript;		///< toRaw script string. Used to convert the value from user to device side.
 	QString mConvertFromRawScript;	///< fromRaw script string. Used to convert the value from device to user side.
 	qint64 mLastUpdate;			///< UNIX millisec timestamp of the last update. (from device).
-	bool mAutoUpdate;			///< State of autoUpdate.
+	//bool mAutoUpdateActive;			///< State of autoUpdate.
 	int mAutoUpdateFrequency;	///< Auto update frequency [Hz].
 	QTimer* mAutoUpdateTimer;	///< Timer object for auto update.
+	static int maxAutoUpdateFrequency;	///< Maximum frequency of auto-update timer. Should be 1000, since the resolution of QTimer is millisec.
+	accessMode_t mAccessMode;	///< AccessMode of the variable.
 
 	void emitValueChanged();	///< Emit valueChanged signals for all types.
 	void emitValueChangedRaw(); ///< Emit valueChangedRaw signals for all types.
@@ -264,14 +306,10 @@ private:
 	  *	@return True on success, false otherwise.*/
 	bool convertQVariant( QVariant &var, QVariant::Type toType );
 
-private slots:
-	/** Calculate raw or user-side value based on the convert scripts.
-	  *	@param fromRaw Direction: fromRaw if true, toRaw if false.
+	/** Check validity and emit setOnDevice() signal.
 	  *	@return True on success, false otherwise.*/
-	bool scriptConvert( bool fromRaw );
+	bool setOnDevice();
 
-	bool calculateValue();		///< Calculate user-side value from current device-side raw value and emit valueChanged signals.
-	bool calculateRawValue();	///< Calculate device-side raw value from current user-side value and emit valueChangedRaw signals.
 };
 
 }	//QtuC::

@@ -13,7 +13,7 @@ class ClientCommandDevice : public ClientCommandBase, public DeviceCommandBase
 {
 	Q_OBJECT
 public:
-	ClientCommandDevice( deviceCommandType_t type );
+	ClientCommandDevice( deviceCommandType_t type, const DeviceStateVariable *stateVariable = 0 );
 
 	ClientCommandDevice( DeviceCommandBase *deviceCommand );
 

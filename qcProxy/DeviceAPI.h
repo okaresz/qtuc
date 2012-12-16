@@ -30,11 +30,15 @@ public:
 	bool call( const QString &hwInterface, const QString &function, const QString &arg );
 
 	/** Get a device state variable from the stateManager.
-	  *	Please note, this function returns immediately with a DeviceStateVariable object, which may be outdated.
+	  *	Please note, this function returns immediately with a DeviceStateVariable object, the contents of which may be outdated.
 	  *	@param hwInterface Name of the hardware interface
 	  *	@param varName name of the variable.
 	  *	@return Pointer to a DeviceStateVariable object.*/
 	DeviceStateVariable *getVar( const QString &hwInterface, const QString &varName );
+
+	/** Get all variables in a specified hadware interface, or all interfaces.
+	  *	See StateManagerBase::getVarList();*/
+	QList<DeviceStateVariable*> getVarList( const QString &hardwareInterface = QString() );
 
 	/** Send a get command to the device to update this variable.
 	 *	Use the valueUpdated() signal of the variable to know when the value has been updated.
