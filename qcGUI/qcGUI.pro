@@ -17,7 +17,9 @@ SOURCES += main.cpp\
     GuiSettingsManager.cpp \
     QcGuiMainView.cpp \
     StateVariablesView.cpp \
-    StateVarIntView.cpp
+    StateVarIntView.cpp \
+    StateVariableCustomViewBase.cpp \
+    StateVariableUlongBinView.cpp
 
 HEADERS  += \
     QcGui.h \
@@ -26,7 +28,9 @@ HEADERS  += \
     GuiSettingsManager.h \
     QcGuiMainView.h \
     StateVariablesView.h \
-    StateVarIntView.h
+    StateVarIntView.h \
+    StateVariableCustomViewBase.h \
+    StateVariableUlongBinView.h
 
 FORMS    += \
     QcGuiMainView.ui

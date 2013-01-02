@@ -110,6 +110,6 @@ void QcGuiMainView::onDeviceApiSet()
 void QcGuiMainView::initModelView()
 {
 	connect( mModel, SIGNAL(signalError(QtMsgType,QString,QString,QtuC::ErrorHandlerBase::errorDetails_t)), this, SLOT(showError(QtMsgType,QString,QString,QtuC::ErrorHandlerBase::errorDetails_t)) );
-	connect( mModel, SIGNAL(deviceVariableCreated(const QtuC::DeviceStateVariable*)), mVariableView, SLOT(showVariable(const QtuC::DeviceStateVariable*)) );
+	connect( mModel, SIGNAL(deviceVariableCreated(const QtuC::DeviceStateVariable*,QString)), mVariableView, SLOT(showVariable(const QtuC::DeviceStateVariable*,QString)) );
 	connect( mModel, SIGNAL(deviceFunctionCreated(QString,QString)), mVariableView, SLOT(showFunction(QString,QString)) );
 }

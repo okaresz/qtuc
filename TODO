@@ -1,6 +1,7 @@
-Null-value stateVar is valid, but provide isNull() to check.
-Implement auto-subscribe in qcGui, based on API data.
-	
+if device removed, higgh cpu usage?!
+
+don't subscribe if var is write-only (or sg like this...)
+
 Figure out some sane Packet and command deletion plan...
 	all packets and commands are deleted by sendPacket and send* functions
 	incoming packets and commands are deleted after use: packets are when commands are detached from them, commands are at higher level...

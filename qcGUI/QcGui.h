@@ -57,7 +57,7 @@ signals:
 
 	/** Emitted if a new Device State Variable is created.
 	  *	@param newVar Pointer to the new variable.*/
-	void deviceVariableCreated( const QtuC::DeviceStateVariable *newVar );
+	void deviceVariableCreated( const QtuC::DeviceStateVariable *newVar, const QString &guiHint );
 
 	/** Emitted if a new Device Function is created.
 	  *	@param hwInterface Hardware interface of the function.
@@ -87,6 +87,12 @@ private slots:
 
 	/// Proxy connection is ready, handle it.
 	void proxyConnectionReady();
+
+	/** Handle if a variable must be set on the device.
+	  *	In our case, this means we must send a set command to the proxy.
+	  *	@param stateVar The vriable to set.
+	  *	@param newRawVal The new value.*/
+	void handleSetVariableOnDeviceRequest( DeviceStateVariable *stateVar, QString newRawVal );
 
 	/** Create new device state variable.
 	  *	Creates a new variable in the stateManager and emit stateVariableCreated().

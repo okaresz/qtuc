@@ -30,8 +30,9 @@ public slots:
 
 	/** Show variable on the GUI.
 	  *	Create and initialize the necessary GUI components to display the variable.
-	  *	@param newVar The variable to show.*/
-	void showVariable( const QtuC::DeviceStateVariable *newVar );
+	  *	@param newVar The variable to show.
+	  * @todo Create a "guiVariable" structure with the variable pointer and the guiHint params in it.*/
+	void showVariable( const QtuC::DeviceStateVariable *newVar, const QString &guiHint );
 
 	/** Show function on the GUI.
 	  *	Create and initialize the necessary GUI components to display the function.
@@ -61,7 +62,10 @@ private:
 	*	Create the appropriate widget for the passed device state variable, and connect the necessary signals/slots.
 	*	@param var The device state variable for the widget.
 	*	@return The new widget for the device state variable.*/
-	QWidget *createVariableWidget( const QtuC::DeviceStateVariable *var );
+	QWidget *createVariableWidget( const QtuC::DeviceStateVariable *var, const QString &guiHint );
+
+	/// @todo do this nicer
+	QWidget *createCustomVariableWidget( const QtuC::DeviceStateVariable *var );
 
 	QcGui *mModel;		///< Model for this view.
 	QGridLayout *mLayout;	///< Layout for StateVariablesView

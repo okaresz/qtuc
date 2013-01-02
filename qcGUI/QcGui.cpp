@@ -14,6 +14,7 @@ QcGui::QcGui(QObject *parent) : ErrorHandlerBase(parent),
 	GuiSettingsManager::instance(this);
 
 	mProxyState = new ProxyStateManager(this);
+	connect( mProxyState, SIGNAL(setVariableOnDeviceRequest(DeviceStateVariable*,QString)), this, SLOT(handleSetVariableOnDeviceRequest(DeviceStateVariable*,QString)) );
 }
 
 QcGui::~QcGui()
@@ -142,6 +143,13 @@ void QcGui::proxyConnectionReady()
 	mProxyLink->sendCommand( new ClientCommandReqDeviceApi() );
 }
 
+void QcGui::handleSetVariableOnDeviceRequest(DeviceStateVariable *stateVar, QString newRawVal)
+{
+	ClientCommandDevice *cmd = new ClientCommandDevice( deviceCmdSet, stateVar );
+	cmd->setArg( newRawVal );
+	mProxyLink->sendCommand( cmd );
+}
+
 void QcGui::createDeviceVariable(QHash<QString, QString> varParams)
 {
 	// Remove autoUpdate-device, so no timers in the stateVars will be created unnecessarily.
@@ -155,7 +163,7 @@ void QcGui::createDeviceVariable(QHash<QString, QString> varParams)
 			return;
 		}
 
-		emit deviceVariableCreated( stateVar );
+		emit deviceVariableCreated( stateVar, varParams.value("guiHint") );
 
 		// subscribe if autoUpdate-user is present in the API
 		if( varParams.contains("autoUpdate-user") )

@@ -65,7 +65,7 @@ void QcProxy::setPassThrough(bool pass)
 bool QcProxy::route(ClientCommandBase *clientCommand)
 {
 	ClientConnectionManagerBase *client = (ClientConnectionManagerBase*)sender();
-	/// @todo implement, break apart into more subfunctions
+	/// @todo implement, break apart into more subfunctions, return false on error, but don't forget to delete the command at the end: solution: sg. like: ClientCommandBase cmd = &*clientCommand; ? no copy but on the stack->implicit delete: check!
 
 	if( clientCommand->getClass() == ClientCommandBase::clientCommandControl )
 	{
@@ -88,16 +88,46 @@ bool QcProxy::route(ClientCommandBase *clientCommand)
 	}
 	else if( clientCommand->getClass() == ClientCommandBase::clientCommandDevice )
 	{
+		DeviceCommandBase *clientCommandDevice = (ClientCommandDevice*)clientCommand;
 		if( mPassThrough )
 		{
-			if( !mDevice->command( new DeviceCommand(*(DeviceCommandBase*)clientCommand) ) )
-				{ error( QtWarningMsg, QString("Failed to send command %1"), "route(ClientCommandBase*)" ); }
+			if( !mDevice->command( new DeviceCommand(*clientCommandDevice) ) )
+			{
+				error( QtWarningMsg, QString("Failed to send device command %1").arg(DeviceCommandBase::commandTypeToString(clientCommandDevice->getType())), "route(ClientCommandBase*)" );
+			}
 		}
 		else
 		{
-			/// @todo implement
+			switch( clientCommandDevice->getType() )
+			{
+				case deviceCmdGet:
+				{
+					if( !client->sendCommand( new ClientCommandDevice( deviceCmdSet, mDevice->getVar( clientCommandDevice->getHwInterface(), clientCommandDevice->getVariable() ) ) ) )
+						{ error( QtWarningMsg, QString("Failed to send set device command to %1").arg(client->getID()), "route(ClientCommandBase*)" ); }
+				}
+					break;
+				case deviceCmdSet:
+				{
+					mDevice->set( clientCommandDevice->getHwInterface(), clientCommandDevice->getVariable(), clientCommandDevice->getArg() );
+				}
+					break;
+				case deviceCmdCall:
+				{
+					/// @todo separate args
+					mDevice->call( clientCommandDevice->getHwInterface(), clientCommandDevice->getFunction(), clientCommandDevice->getArgList().join(" ") );
+				}
+					break;
+				case deviceCmdUndefined:
+					error( QtWarningMsg, "ClientCommandDevice of Undefined type has been received", "route(ClientCommandBase*)" );
+					break;
+				default:
+					error( QtWarningMsg, "Huh?", "route(ClientCommandBase*)" );
+			}
 		}
 	}
+	else
+		{ error( QtWarningMsg, "Class of undefined clientCommand received", "route(ClientCommandBase*)" ); }
+
 	debug( debugLevelVeryVerbose, QString("Route client command: %1").arg(clientCommand->getName()), "route(ClientCommandBase*)" );
 	clientCommand->deleteLater();
 	return true;

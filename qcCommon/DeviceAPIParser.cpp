@@ -286,6 +286,12 @@ bool DeviceAPIParser::parseNodeStateVariable( const QDomElement &stateVariableEl
 
 	/// @todo Implement guiHint
 
+	QDomElement guiHintElement = stateVariableElement.firstChildElement("guiHint");
+	if( !guiHintElement.isNull() )
+	{
+		params.insert( "guiHint", guiHintElement.text() );
+	}
+
 	emit newStateVariable( params );
 
 	return true;

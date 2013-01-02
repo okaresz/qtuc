@@ -5,6 +5,9 @@
 #include "ErrorHandlerBase.h"
 #include <QLabel>
 #include <QPushButton>
+#include "StateVariableUlongBinView.h"
+#include <QSlider>
+#include "StateVarIntView.h"
 
 using namespace qcGui;
 
@@ -30,17 +33,18 @@ bool StateVariablesView::setModel(QcGui *model)
 	}
 }
 
-void StateVariablesView::showVariable(const QtuC::DeviceStateVariable *newVar)
+void StateVariablesView::showVariable(const QtuC::DeviceStateVariable *newVar, const QString &guiHint)
 {
 	QGroupBox *hwiGroup = getHwiGroup(newVar->getHwInterface());
 	if( !hwiGroup )
 		{ hwiGroup = createHwiGroup( newVar->getHwInterface() ); }
 
-	QWidget *varWidget = createVariableWidget( newVar );
+	QWidget *varWidget = createVariableWidget( newVar, guiHint );
 	if( !varWidget )
 		{ QtuC::ErrorHandlerBase::error( QtWarningMsg, "Variable skipped", "showVariable()", "StateVariablesView" ); }
 	else
 	{
+		//QLayout::addWidget() does this for me
 		//varWidget->setParent(hwiGroup);
 
 		QLabel *label = new QLabel(hwiGroup);
@@ -94,6 +98,7 @@ QGroupBox *StateVariablesView::getHwiGroup(const QString &hwiName)
 
 QGroupBox *StateVariablesView::createHwiGroup(const QString &hwiName)
 {
+	int maxRowCount = 3;
 	QGroupBox * group = new QGroupBox();
 	group->setObjectName(hwiName);
 	group->setLayout(new QGridLayout);
@@ -104,8 +109,12 @@ QGroupBox *StateVariablesView::createHwiGroup(const QString &hwiName)
 	return group;
 }
 
-QWidget *StateVariablesView::createVariableWidget(const QtuC::DeviceStateVariable *var)
+QWidget *StateVariablesView::createVariableWidget(const QtuC::DeviceStateVariable *var, const QString &guiHint)
 {
+	QWidget *customWidget = createCustomVariableWidget(var);
+	if( customWidget )
+		{ return customWidget; }
+
 	QString widgetName( var->getName()+"Widget" );
 	switch( var->getType() )
 	{
@@ -135,28 +144,69 @@ QWidget *StateVariablesView::createVariableWidget(const QtuC::DeviceStateVariabl
 				connect( var, SIGNAL(valueChanged(bool)), checkBox, SLOT(setChecked(bool)) );
 			}
 			else if( var->getAccessMode() == DeviceStateVariable::writeAccess )
-				{ connect( var, SIGNAL(valueChanged(bool)), checkBox, SLOT(setChecked(bool)) ); }
+				{ connect( checkBox, SIGNAL(clicked(bool)), var, SLOT(setValue(bool)) ); }
 			return checkBox;
 		} break;
 		case QVariant::Int:
+		case QVariant::UInt:
 		{
-			QSpinBox *spinBox = new QSpinBox();
-			spinBox->setObjectName( widgetName );
-			spinBox->setSingleStep(1);
-			spinBox->setValue( var->getValue().toInt() );
-			if( var->getAccessMode() == DeviceStateVariable::readAccess )
+			if( guiHint == "slider" )
 			{
-				spinBox->setDisabled(true);
-				connect( var, SIGNAL(valueChanged(int)), spinBox, SLOT(setValue(int)) );
+				QSlider *slider = new QSlider();
+				slider->setObjectName( widgetName );
+				slider->setMinimum(0);
+				slider->setMaximum(65535);
+				slider->setSingleStep(10);
+				slider->setOrientation(Qt::Horizontal);
+				slider->setTracking(true);
+				slider->setValue( var->getValue().toInt() );
+				if( var->getAccessMode() == DeviceStateVariable::readAccess )
+				{
+					slider->setDisabled(true);
+					connect( var, SIGNAL(valueChanged(int)), slider, SLOT(setValue(int)) );
+				}
+				else if( var->getAccessMode() == DeviceStateVariable::writeAccess )
+					{ connect( slider, SIGNAL(valueChanged(int)), var, SLOT(setValue(int)) ); }
+				return slider;
 			}
-			else if( var->getAccessMode() == DeviceStateVariable::writeAccess )
-				{ connect( spinBox, SIGNAL(valueChanged(int)), var, SLOT(setValue(int)) ); }
-			return spinBox;
+			else
+			{
+				StateVarIntView *spinBox = new StateVarIntView();
+				spinBox->setObjectName( widgetName );
+				spinBox->setMaximum(65535);
+				spinBox->setSingleStep(1);
+				spinBox->setValue( var->getValue().toInt() );
+				if( var->getAccessMode() == DeviceStateVariable::readAccess )
+				{
+					spinBox->setDisabled(true);
+					connect( var, SIGNAL(valueChanged(int)), spinBox, SLOT(setValue(int)) );
+				}
+				else if( var->getAccessMode() == DeviceStateVariable::writeAccess )
+					{ connect( spinBox, SIGNAL(valueEdited(int)), var, SLOT(setValue(int)) ); }
+				return spinBox;
+			}
 		} break;
 		default:
 			QtuC::ErrorHandlerBase::error( QtWarningMsg, QString("No matching widget for variable %1 (%2)").arg(var->getName(),QVariant::typeToName(var->getType())), "createVariableWidget()", "StateVariablesView()" );
 	}
 	return 0;
+}
+
+QWidget *StateVariablesView::createCustomVariableWidget(const DeviceStateVariable *var)
+{
+	if( var->getHwInterface() == "hwlf" && ( var->getName() == "lineBitsL" || var->getName() == "lineBitsH" || var->getName() == "chBits") )
+	{
+		StateVariableUlongBinView *lineBitsView = new StateVariableUlongBinView();
+
+		lineBitsView->setBValue( var->getValue().toUInt() );
+
+		//lineBitsView->setDisabled(true);
+		connect( var, SIGNAL(valueChanged(uint)), lineBitsView, SLOT(setBValue(uint)) );
+
+		return lineBitsView;
+	}
+	else
+		return 0;
 }
 
 void StateVariablesView::clearApiGui()

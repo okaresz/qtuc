@@ -66,7 +66,7 @@ void SerialDeviceConnector::receivePart()
 	if( fullCmd )
 	{
 		mCmdRxBuffer = mCmdRxBufferShadow;
-		debug( debugLevelInfo, QString("Command received on serial: %1").arg(mCmdRxBuffer), "receivePart()" );
+		debug( debugLevelVeryVerbose, QString("Command received on serial: %1").arg(mCmdRxBuffer), "receivePart()" );
 
 		DeviceCommandBuilder *cmd = DeviceCommandBuilder::fromString( mCmdRxBuffer );
 		if( cmd )

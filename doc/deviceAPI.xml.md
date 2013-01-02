@@ -101,9 +101,10 @@ The bare minimum information you must define is the name, the hardware interface
 **hwInterface**: A valid hardware interface name. <br>
 **name**: The name of the variable. Can only use the english alphabet, numbers, and the underscore (regex: `[a-zA-Z0-9_]`). <br>
 **type**: The type of the variable. Possible values:
-  * `string`
-  * `int` or `integer`
-  * `double`
+  * `string`: a string value
+  * `int` or `integer`: a 32bit signed integer
+  * `uint`: a 32bit unsigned integer
+  * `double`:	actual bit size depends on the host system, usually 64bit
   * `bool` or `boolean`
 
 With only one value, the type of the variable will be tha same both on device and user sides.

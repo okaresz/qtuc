@@ -1,12 +1,13 @@
 #ifndef STATEVARINTVIEW_H
 #define STATEVARINTVIEW_H
 
-#include <QObject>
+#include "DeviceStateVariable.h"
+#include <QSpinBox>
 
 namespace qcGui
 {
 
-class StateVarIntView : public QObject
+class StateVarIntView : public QSpinBox
 {
 	Q_OBJECT
 
@@ -17,12 +18,16 @@ enum viewType_t
 };
 
 public:
-	explicit StateVarIntView(QObject *parent = 0);
+	explicit StateVarIntView( QWidget *parent = 0);
 	
 signals:
+
+	void valueEdited(int newVal);
 	
-public slots:
-	
+private slots:
+	void onEditingFinished();
+
+private:
 };
 
 }	//qcGui::

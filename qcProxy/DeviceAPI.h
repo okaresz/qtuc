@@ -64,7 +64,7 @@ public:
 	 *	@param varName Name of the variable.
 	 *	@param newVal The new user-side value.
 	 *	@return Returns if set is successful, false otherwise.*/
-	bool set( const QString &hwInterface, const QString &varName, const QVariant &newVal );
+	bool set( const QString &hwInterface, const QString &varName, const QString &newVal );
 
 	/** Initialize the deviceAPI.
 	 *	This function can only be called if no API is set so far. If you want to update the API, use reInitAPI().
@@ -88,11 +88,16 @@ public:
 	const DeviceAPIParser *getApiParser()
 		{ return (DeviceAPIParser*)mDeviceAPI; }
 
-public slots:
+private slots:
 
 	void handleDeviceCommand( DeviceCommand *cmd );
 
 	void handleStateVariableUpdateRequest( DeviceStateVariable *stateVar );
+
+	/** Handle if a variable must be set on the device.
+	  *	@param stateVar The vriable to set.
+	  *	@param newRawVal The new value.*/
+	void handleSetVariableOnDeviceRequest( DeviceStateVariable *stateVar, QString newRawVal );
 
 signals:
 

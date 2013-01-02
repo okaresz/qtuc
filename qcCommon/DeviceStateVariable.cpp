@@ -211,6 +211,14 @@ bool DeviceStateVariable::setRawValue( int newRawValue )
 	return true;
 }
 
+bool DeviceStateVariable::setRawValue( uint newRawValue )
+{
+	QVariant castedNewRawVal( newRawValue );
+	if( !convertQVariant(castedNewRawVal, mRawType) ) return false;
+	swapRawValue(castedNewRawVal);
+	return true;
+}
+
 bool DeviceStateVariable::setRawValue( double newRawValue )
 {
 	QVariant castedNewRawVal( newRawValue );
@@ -237,6 +245,16 @@ bool DeviceStateVariable::setValue( const QVariant& newValue )
 		error( QtWarningMsg, "New value is invalid.", "setValue(const QVariant&)", errDetails );
 		return false;
 	}
+	QVariant convQVar(newValue);
+	if( !convertQVariant(convQVar, mType) )
+	{
+		errorDetails_t errDetails;
+		errDetails.insert( "varName", mName );
+		errDetails.insert( "newValue", newValue.toString() );
+		errDetails.insert( "type", QString(QVariant::typeToName(mType)) );
+		error( QtWarningMsg, "New value cannot be converted to internal type.", "setValue(const QVariant&)", errDetails );
+		return false;
+	}
 	swapValue(newValue);
 	return true;
 }
@@ -250,6 +268,14 @@ bool DeviceStateVariable::setValue( const QString& newValue )
 }
 
 bool DeviceStateVariable::setValue( int newValue )
+{
+	QVariant castedNewVal( newValue );
+	if( !convertQVariant(castedNewVal, mType) ) return false;
+	swapValue(castedNewVal);
+	return true;
+}
+
+bool DeviceStateVariable::setValue( uint newValue )
 {
 	QVariant castedNewVal( newValue );
 	if( !convertQVariant(castedNewVal, mType) ) return false;
@@ -280,20 +306,26 @@ void DeviceStateVariable::emitValueChanged()
 		error( QtWarningMsg, "StateVariable is invalid. Signals not sent. Variable: "+mName, "emitValueChanged()" );
 		return;
 	}
-/// @todo don't try to convert to number if statevar type is string.... and vica versa, emit only type correct signals
+/// @todo (also:templyate function) don't try to convert to number if statevar type is string.... and vica versa, emit only type correct signals, and the ones that can be converted for sure.
 	bool ok = true;
 	emit valueChanged( mValue );	//QVariant
 	emit valueChanged( mValue.toString() );	//QString
 
 	int v = mValue.toInt(&ok);
 	if( !ok )
-	{ error( QtWarningMsg, QString("StateVar conversion raw to int failed. Variable: %1, value: %2").arg( mName, mValue.toString() ), "emitValueChanged()" ); }
+		{ error( QtWarningMsg, QString("StateVar conversion to int failed. Variable: %1, value: %2").arg( mName, mValue.toString() ), "emitValueChanged()" ); }
 	else
 		{ emit valueChanged( v ); }
 
+	uint vu = mValue.toUInt(&ok);
+	if( !ok )
+		{ error( QtWarningMsg, QString("StateVar conversion to uint failed. Variable: %1, value: %2").arg( mName, mValue.toString() ), "emitValueChanged()" ); }
+	else
+		{ emit valueChanged( vu ); }
+
 	double vd = mValue.toDouble(&ok);
 	if( !ok )
-		{ error( QtWarningMsg, QString("StateVar conversion raw to double failed. Variable: %1, value: %2").arg( mName, mValue.toString() ), "emitValueChanged()" ); }
+		{ error( QtWarningMsg, QString("StateVar conversion to double failed. Variable: %1, value: %2").arg( mName, mValue.toString() ), "emitValueChanged()" ); }
 	else
 		{ emit valueChanged( vd ); }
 
@@ -319,6 +351,12 @@ void DeviceStateVariable::emitValueChangedRaw()
 		{ error( QtWarningMsg, QString("StateVar conversion raw to int failed. Variable: %1, value: %2").arg( mName, mRawValue.toString() ), "emitValueChangedRaw()" ); }
 	else
 		{ emit valueChangedRaw( v ); }
+
+	uint vu = mRawValue.toUInt(&ok);
+	if( !ok )
+		{ error( QtWarningMsg, QString("StateVar conversion raw to uint failed. Variable: %1, value: %2").arg( mName, mRawValue.toString() ), "emitValueChangedRaw()" ); }
+	else
+		{ emit valueChangedRaw( vu ); }
 
 	double vd = mRawValue.toDouble(&ok);
 	if( !ok )
@@ -436,13 +474,28 @@ QVariant DeviceStateVariable::variantFromString( const QString& strVal, QVariant
 	{
 		case QVariant::String:
 		{
-			castedNewVal = strVal;
+			castedNewVal = QVariant(strVal);
 			break;
 		}
 		case QVariant::Int:
 		{
 			bool ok;
-			castedNewVal = strVal.toInt(&ok, 0);
+			castedNewVal = QVariant(strVal.toInt(&ok, 0));
+			if( !ok )
+			{
+				errorDetails_t errDetails;
+				errDetails.insert( "varName", mName );
+				errDetails.insert( "strVal", strVal );
+				errDetails.insert( "toType", QVariant::typeToName(varType) );
+				error( QtWarningMsg, "Conversion from string failed.", "variantFromString()", errDetails );
+				return QVariant();
+			}
+			break;
+		}
+		case QVariant::UInt:
+		{
+			bool ok;
+			castedNewVal = QVariant( strVal.toUInt(&ok, 0) );
 			if( !ok )
 			{
 				errorDetails_t errDetails;
@@ -457,7 +510,7 @@ QVariant DeviceStateVariable::variantFromString( const QString& strVal, QVariant
 		case QVariant::Double:
 		{
 			bool ok;
-			castedNewVal = strVal.toDouble(&ok);
+			castedNewVal = QVariant( strVal.toDouble(&ok) );
 			if( !ok )
 			{
 				errorDetails_t errDetails;
@@ -472,7 +525,7 @@ QVariant DeviceStateVariable::variantFromString( const QString& strVal, QVariant
 		case QVariant::Bool:
 		{
 			bool b = !( strVal == "false" || strVal == "off" || strVal == "low" || strVal == "0" );
-			castedNewVal = b;
+			castedNewVal = QVariant( b );
 			break;
 		}
 		default:
@@ -489,6 +542,8 @@ QVariant::Type DeviceStateVariable::stringToType( const QString& strType )
 		{ return QVariant::String; }
 	else if( strType == "int" )
 		{ return QVariant::Int; }
+	else if( strType == "uint" )
+		{ return QVariant::UInt; }
 	else if( strType == "double" )
 		{ return QVariant::Double; }
 	else if( strType == "bool" || strType == "boolean" )

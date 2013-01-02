@@ -135,6 +135,8 @@ public slots:
 	bool setConvertScript( bool fromRaw, const QString &scriptStr );
 
 	/** Set the raw value.
+	  * @todo is it really necessary to convert the QVariant explicitly? The type-based constructors are enough tfor the correct type.
+	  * @todo or at least make a template function for it.
 	  * @param newRawValue The new raw value for the variable as a QVariant.
 	  * @returns True on success flase otherwise.*/
 	bool setRawValue( const QVariant& newRawValue );
@@ -150,6 +152,12 @@ public slots:
 	  * The new type of the variable will be int.
 	  * @returns True on success flase otherwise.*/
 	bool setRawValue( int newRawValue );
+
+	/** Set the raw value.
+	  * @param newRawValue Set a new raw value for the variable from an unsigned integer.
+	  * The new type of the variable will be uint.
+	  * @returns True on success flase otherwise.*/
+	bool setRawValue( uint newRawValue );
 
 	/** Set the raw value.
 	  * @param newRawValue Set a new raw value for the variable from a double.
@@ -180,6 +188,12 @@ public slots:
 	  * The new type of the variable will be int.
 	  * @returns True on success flase otherwise.*/
 	bool setValue( int newValue );
+
+	/** Set the value.
+	  * @param newValue Set a new value for the variable from an unsigned integer.
+	  * The new type of the variable will be uint.
+	  * @returns True on success flase otherwise.*/
+	bool setValue( uint newValue );
 
 	/** Set the value.
 	  * @param newValue Set a new value for the variable from a double.
@@ -215,18 +229,21 @@ private slots:
 signals:
 
 	/** Emitted if the variable should be updated on the device, e.g.\ a set command must be sent.
-	 * @param QString The raw value cast to a string, ready to be included in a set command*/
+	 * @param QString The raw value cast to a string, ready to be included in a set command
+	 *	@todo Param is unnecessary, remove and propagate changes.*/
 	void setOnDevice( const QString& );
 
 	void valueChangedRaw( const QVariant& );	///< Emitted if rawValue has changed. @param QVariant The raw value as a QVariant.
 	void valueChangedRaw( const QString& );		///< Emitted if rawValue has changed. @param QString The rawValue cast to a string.
 	void valueChangedRaw( int );		///< Emitted if rawValue has changed. @param int The rawValue cast to an integer.
+	void valueChangedRaw( uint );		///< Emitted if rawValue has changed. @param uint The rawValue cast to an unsigned integer.
 	void valueChangedRaw( double );		///< Emitted if rawValue has changed. @param double The rawValue cast to a double.
 	void valueChangedRaw( bool );		///< Emitted if rawValue has changed. @param bool The rawValue cast to a boolean.
 
 	void valueChanged( const QVariant& );	///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param QVariant The rvalue as stored.
 	void valueChanged( const QString& );	///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param QString The value cast to a string.
 	void valueChanged( int );			///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param int The value cast to an integer.
+	void valueChanged( uint );			///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param uint The value cast to an unsigned integer.
 	void valueChanged( double );		///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param double The value cast to a double.
 	void valueChanged( bool );		///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param bool The value cast to a boolean.
 

@@ -14,10 +14,11 @@ DeviceAPI::DeviceAPI( QObject *parent ) :
 	mDeviceAPI = new DeviceAPIFileHandler(this);
 	mDeviceInstance = 0;
 
-	//mDeviceLink = new SerialDeviceConnector(this);
-	mDeviceLink = new DummySocketDevice(this);
+	mDeviceLink = new SerialDeviceConnector(this);
+	//mDeviceLink = new DummySocketDevice(this);
 
 	connect( mStateManager, SIGNAL(stateVariableUpdateRequest(DeviceStateVariable*)), this, SLOT(handleStateVariableUpdateRequest(DeviceStateVariable*)) );
+	connect( mStateManager, SIGNAL(setVariableOnDeviceRequest(DeviceStateVariable*,QString)), this, SLOT(handleSetVariableOnDeviceRequest(DeviceStateVariable*,QString)) );
 }
 
 bool DeviceAPI::call( const QString &hwInterface, const QString &function, const QString &arg )
@@ -77,23 +78,22 @@ bool DeviceAPI::command(DeviceCommand *cmd)
 	}
 }
 
-bool DeviceAPI::set( const QString &hwInterface, const QString &varName, const QVariant &newVal )
-{
+bool DeviceAPI::set( const QString &hwInterface, const QString &varName, const QString &newVal )
+{/// @todo QVariant version of this func? Also: QVariant.toString is not an elegant solution... somehow a static deviceformatter function?
 	if( Device::positiveAck() )
 	{
-		/// @todo this QVariant.toString is not an elegant solution... somehow a static deviceformatter function?
 		DeviceCommandBuilder *cmd = new DeviceCommandBuilder();
 		cmd->setType( deviceCmdSet);
 		cmd->setInterface( hwInterface );
 		cmd->setVariable( varName );
-		cmd->setArgumentString( newVal.toString() );
+		cmd->setArgumentString( newVal );
 		if( !mDeviceLink->sendCommand( cmd ) )
 		{
 			errorDetails_t errDet;
 			errDet.insert( "posAck", "true");
 			errDet.insert( "hwInterface", hwInterface );
 			errDet.insert( "varName", varName );
-			errDet.insert( "varVal", newVal.toString() );
+			errDet.insert( "varVal", newVal );
 			error( QtWarningMsg, "Failed to send set command", "set()", errDet );
 			return false;
 		}
@@ -109,7 +109,7 @@ bool DeviceAPI::set( const QString &hwInterface, const QString &varName, const Q
 			errDet.insert( "posAck", "false");
 			errDet.insert( "hwInterface", hwInterface );
 			errDet.insert( "varName", varName );
-			errDet.insert( "varVal", newVal.toString() );
+			errDet.insert( "varVal", newVal );
 			error( QtWarningMsg, "Failed to send set command: no such variable", "set()", errDet );
 			return false;
 		}
@@ -263,4 +263,10 @@ void DeviceAPI::handleStateVariableUpdateRequest(DeviceStateVariable *stateVar)
 {
 	if( !mDeviceLink->sendCommand( DeviceCommand::build( deviceCmdGet, stateVar ) ) )
 		{ error( QtWarningMsg, QString("Failed to update stateVar: %1").arg(stateVar->getName()), "handleStateVariableUpdateRequest()" ); }
+}
+
+void DeviceAPI::handleSetVariableOnDeviceRequest(DeviceStateVariable *stateVar, QString newRawVal)
+{
+	if( !mDeviceLink->sendCommand( DeviceCommand::build( deviceCmdSet, stateVar ) ) )
+		{ error( QtWarningMsg, QString("Failed to set %1:%2 on device").arg(stateVar->getHwInterface(),stateVar->getName()), "handleStateVariableUpdateRequest()" ); }
 }
