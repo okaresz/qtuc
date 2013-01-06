@@ -103,8 +103,8 @@ QGroupBox *StateVariablesView::createHwiGroup(const QString &hwiName)
 	group->setObjectName(hwiName);
 	group->setLayout(new QGridLayout);
 	group->setTitle(hwiName);
+	mLayout->addWidget(group, (int)(mHwInterfaceGroups.size()/3), mHwInterfaceGroups.size()%maxRowCount);
 	mHwInterfaceGroups.append(group);
-	mLayout->addWidget(group, mLayout->rowCount(), 0);
 	group->show();
 	return group;
 }
@@ -154,7 +154,12 @@ QWidget *StateVariablesView::createVariableWidget(const QtuC::DeviceStateVariabl
 			{
 				QSlider *slider = new QSlider();
 				slider->setObjectName( widgetName );
-				slider->setMinimum(0);
+
+				if( var->getType() == QVariant::Int )
+					{ slider->setMinimum(-65535); }
+				else
+					{ slider->setMinimum(0); }
+
 				slider->setMaximum(65535);
 				slider->setSingleStep(10);
 				slider->setOrientation(Qt::Horizontal);
@@ -174,6 +179,8 @@ QWidget *StateVariablesView::createVariableWidget(const QtuC::DeviceStateVariabl
 				StateVarIntView *spinBox = new StateVarIntView();
 				spinBox->setObjectName( widgetName );
 				spinBox->setMaximum(65535);
+				if( var->getType() == QVariant::Int )
+					{ spinBox->setMinimum(-65535); }
 				spinBox->setSingleStep(1);
 				spinBox->setValue( var->getValue().toInt() );
 				if( var->getAccessMode() == DeviceStateVariable::readAccess )
@@ -194,7 +201,7 @@ QWidget *StateVariablesView::createVariableWidget(const QtuC::DeviceStateVariabl
 
 QWidget *StateVariablesView::createCustomVariableWidget(const DeviceStateVariable *var)
 {
-	if( var->getHwInterface() == "hwlf" && ( var->getName() == "lineBitsL" || var->getName() == "lineBitsH" || var->getName() == "chBits") )
+	if( var->getHwInterface() == "hwiLineFollower" && ( var->getName() == "lineBitsL" || var->getName() == "lineBitsH" || var->getName() == "chBits") )
 	{
 		StateVariableUlongBinView *lineBitsView = new StateVariableUlongBinView();
 
