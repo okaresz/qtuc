@@ -14,7 +14,7 @@ QcGui::QcGui(QObject *parent) : ErrorHandlerBase(parent),
 	GuiSettingsManager::instance(this);
 
 	mProxyState = new ProxyStateManager(this);
-	connect( mProxyState, SIGNAL(setVariableOnDeviceRequest(DeviceStateVariable*,QString)), this, SLOT(handleSetVariableOnDeviceRequest(DeviceStateVariable*,QString)) );
+	connect( mProxyState, SIGNAL(stateVariableSendRequest(DeviceStateVariableBase*)), this, SLOT(handleStateVariableSendRequest(DeviceStateVariableBase*)) );
 }
 
 QcGui::~QcGui()
@@ -24,6 +24,7 @@ QcGui::~QcGui()
 
 void QcGui::connectProxy()
 {
+	/// @todo Maybe we should tell this to the user...
 	// If mProxyLink is not null, chances are that it's already connected!
 	if( mProxyLink )
 		{ return; }
@@ -143,10 +144,9 @@ void QcGui::proxyConnectionReady()
 	mProxyLink->sendCommand( new ClientCommandReqDeviceApi() );
 }
 
-void QcGui::handleSetVariableOnDeviceRequest(DeviceStateVariable *stateVar, QString newRawVal)
+void QcGui::handleStateVariableSendRequest(DeviceStateVariableBase *stateVar)
 {
 	ClientCommandDevice *cmd = new ClientCommandDevice( deviceCmdSet, stateVar );
-	cmd->setArg( newRawVal );
 	mProxyLink->sendCommand( cmd );
 }
 
@@ -154,9 +154,9 @@ void QcGui::createDeviceVariable(QHash<QString, QString> varParams)
 {
 	// Remove autoUpdate-device, so no timers in the stateVars will be created unnecessarily.
 	varParams.remove("autoUpdate-device");
-	if( mProxyState->registerStateVariable(varParams) )
+	if( mProxyState->registerNewStateVariable(varParams) )
 	{
-		DeviceStateVariable *stateVar = mProxyState->getVar( varParams.value("hwInterface"), varParams.value("name") );
+		DeviceStateVariableBase *stateVar = mProxyState->getVar( varParams.value("hwInterface"), varParams.value("name") );
 		if(  stateVar == 0 )
 		{
 			error( QtWarningMsg, "StateVar is null", "createDeviceVariable()");
@@ -219,9 +219,9 @@ bool QcGui::handleDeviceCmd(ClientCommandDevice *deviceCmd)
 {
 	if( deviceCmd->getType() == deviceCmdSet )
 	{
-		DeviceStateVariable *var = mProxyState->getVar( deviceCmd->getHwInterface(), deviceCmd->getVariable() );
+		DeviceStateVariableBase *var = mProxyState->getVar( deviceCmd->getHwInterface(), deviceCmd->getVariable() );
 		if( var )
-			{ var->setFromDevice( deviceCmd->getArg() ); }
+			{ var->setValue( deviceCmd->getArg() ); }
 		else
 		{
 			error( QtWarningMsg, QString("Failed to set variable from device, no such variable (hwI: %1, name: %2)").arg(deviceCmd->getHwInterface(),deviceCmd->getVariable()), "handleDeviceCmd()" );

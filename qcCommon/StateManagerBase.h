@@ -9,7 +9,7 @@
 namespace QtuC
 {
 
-class DeviceStateVariable;
+class DeviceStateVariableBase;
 
 /** Class StateManagerBase
  *	Base for the state manager classes dealing with DeviceStateVariables.*/
@@ -22,55 +22,52 @@ public:
 	  *	@param parent The usual optional parent object.*/
 	StateManagerBase( QObject* parent = 0 );
 
-	~ StateManagerBase();
+	~StateManagerBase();
 
 	/** Get a pointer to  a specific device state variable.
 	  *	@param hardwareInterface The hardware interface name containing the variable.
 	  *	@param varName The name of the variable.
 	  *	@return Pointer to the requested variable.*/
-	DeviceStateVariable* getVar( const QString& hardwareInterface, const QString& varName );
+	DeviceStateVariableBase* getVar( const QString& hardwareInterface, const QString& varName );
 
 	/** Get all variables in a specified hadware interface, or all interfaces.
 	  *	@param hardwareInterface Get all vars in this interface. If omitted or empty, all variables in all interfaces will be returned.
 	  * @param List of variable pointers.*/
-	QList<DeviceStateVariable*> getVarList( const QString &hardwareInterface = QString() );
+	QList<DeviceStateVariableBase*> getVarList( const QString &hardwareInterface = QString() );
 
 	/** Register a deviceStateVariable.
 	  *	Once a variable is registered, the stateManager handles it's signals, keep it updated , and so on...
 	  *	@param stateVar The variable to manage.*/
-	void registerStateVariable( DeviceStateVariable* stateVar );
+	void registerStateVariable( DeviceStateVariableBase* stateVar );
 
 signals:
 
 	/** Emitted if a stateVariable requested an update.
 	  *	@param stateVar The stateVariable who requested the update.*/
-	void stateVariableUpdateRequest( DeviceStateVariable *stateVar );
+	void stateVariableUpdateRequest( DeviceStateVariableBase *stateVar );
 
-	/** Emitted when a state variable requested a set command to device with a new raw value.
-	  *	@param stateVar The stateVariable who made the request.
-	  *	@param newRawVal The new Raw value to set on the device.*/
-	void setVariableOnDeviceRequest( DeviceStateVariable *stateVar, QString newRawVal );
+	/** Emitted when a state variable requested to send a set command with the new value.
+	  *	@param stateVar The stateVariable who made the request.*/
+	void stateVariableSendRequest( DeviceStateVariableBase *stateVar );
 
 public slots:
-	/** Create a deviceStateVariable from a QHash of params and register it if valid.
+	/** Create a new deviceStateVariable from a QHash of params and register it if valid.
 	  *	This slot is usually connected to DeviceAPIParser::newStateVariable() signal.
 	  *	Tries to build a variable from the params passed. If the variable is created, it will be registered using registerStateVariable().
 	  *	@param params The params to build a variable from.
 	  *	@return True on success, false otherwise.*/
-	bool registerStateVariable( QHash<QString,QString> params );
+	virtual bool registerNewStateVariable( QHash<QString,QString> params );
 
 private slots:
 
 	/** Handle update request from a state variable.*/
-	void handleStateVariableUpdateRequest();
+	virtual void onUpdateRequest();
 
-	/** Set a new value for variable on device.
-	  *	Basically a request to send a set command to the device.
-	  *	@param newRawVal The new raw value to set.*/
-	void handleSetOnDevice( const QString &newRawVal );
+	/** Rrequest to send a set command.*/
+	virtual void onSendRequest();
 
 private:
-	QList<DeviceStateVariable*>* mStateVars;
+	QList<DeviceStateVariableBase*>* mStateVars;
 
 };
 

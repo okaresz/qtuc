@@ -1,4 +1,5 @@
 #include "ClientSubscriptionManager.h"
+//#include "DeviceStateVariableBase.h"
 
 using namespace QtuC;
 
@@ -89,7 +90,7 @@ void ClientSubscriptionManager::handleSubscriptionTick()
 	emit subscriptionFeedRequest( subscription );
 }
 
-bool ClientSubscriptionManager::moreSpecificSubscriptionExists( const DeviceStateVariable *variable, const ClientSubscription *subscription ) const
+bool ClientSubscriptionManager::moreSpecificSubscriptionExists( const DeviceStateVariableBase *variable, const ClientSubscription *subscription ) const
 {
 	for( int i=0; i<mSubscriptions.size(); ++i )
 	{

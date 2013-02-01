@@ -9,8 +9,6 @@
 namespace QtuC
 {
 
-class DeviceStateVariable;
-
 class DeviceAPIParser : public ErrorHandlerBase
 {
 	Q_OBJECT

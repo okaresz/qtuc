@@ -1,7 +1,6 @@
 #ifndef STATEVARINTVIEW_H
 #define STATEVARINTVIEW_H
 
-#include "DeviceStateVariable.h"
 #include <QSpinBox>
 
 namespace qcGui

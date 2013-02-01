@@ -5,11 +5,13 @@ using namespace QtuC;
 DeviceCommandBase::DeviceCommandBase()
 {
 	mType = deviceCmdUndefined;
+	mTimestamp = 0;
 }
 
 DeviceCommandBase::DeviceCommandBase( const DeviceCommandBase &deviceCommand )
 {
 	mType = deviceCommand.getType();
+	mTimestamp = deviceCommand.getTimestamp();
 	mHwInterface = deviceCommand.getHwInterface();
 	mVariable = deviceCommand.getVariable();
 	mArgs = QStringList( deviceCommand.getArgList() );
@@ -31,11 +33,6 @@ const QString DeviceCommandBase::getArg(int argIndex) const
 		{ return mArgs.at(argIndex); }
 	else
 		{ return QString(); }
-}
-
-void DeviceCommandBase::setType( deviceCommandType_t type )
-{
-	mType = type;
 }
 
 bool DeviceCommandBase::setInterface( const QString &hwi )

@@ -4,6 +4,8 @@
 #include "ClientConnectionManagerBase.h"
 #include <QCoreApplication>
 #include "ProxySettingsManager.h"
+#include <QFile>
+#include <QTextStream>
 
 using namespace QtuC;
 
@@ -133,9 +135,9 @@ bool QcProxy::route(ClientCommandBase *clientCommand)
 	return true;
 }
 
-bool QcProxy::route(DeviceCommand *deviceCommand)
+bool QcProxy::route( DeviceCommand *deviceCommand )
 {
-	debug( debugLevelVeryVerbose, QString("Route device command: %1").arg( DeviceCommandBuilder(*deviceCommand).getCommandString() ), "route(DeviceCommand*)" );
+	debug( debugLevelVeryVerbose, QString("Route device command: %1").arg( deviceCommand->getCommandString() ), "route(DeviceCommand*)" );
 	if( mPassThrough )
 	{
 		mConnectionServer->broadcast( new ClientCommandDevice(deviceCommand) );
@@ -151,7 +153,32 @@ bool QcProxy::route(DeviceCommand *deviceCommand)
 bool QcProxy::handleDeviceMessage(deviceMessageType_t msgType, QString msg)
 {
 	/// @todo implement
+
+	// log
+	QString logFilePath;
+	switch( msgType )
+	{
+		case deviceMsgInfo: logFilePath = ProxySettingsManager::instance()->value("deviceLog/infoLogPath").toString(); break;
+		case deviceMsgDebug: logFilePath = ProxySettingsManager::instance()->value("deviceLog/debugLogPath").toString(); break;
+		case deviceMsgError: logFilePath = ProxySettingsManager::instance()->value("deviceLog/errorLogPath").toString(); break;
+		default:
+			error( QtWarningMsg, "Unknown device message type", "handleDeviceMessage()" );
+			return false;
+	}
+
+	QFile logFile( logFilePath );
+	if (!logFile.open(QIODevice::Append | QIODevice::Text))
+		{ error( QtWarningMsg, "Failed to open logfile", "handleDeviceMessage()" ); }
+	else
+	{
+		QTextStream fileStream(&logFile);
+		fileStream<<msg<<"\n";
+		fileStream.flush();
+		logFile.close();
+	}
+
 	debug( debugLevelVeryVerbose, QString("Device message received (%1): %2").arg( Device::messageTypeToString(msgType),msg), "handleDeviceMessage()" );
+
 	return true;
 }
 
@@ -164,7 +191,7 @@ void QcProxy::sendSubscriptionFeed( ClientSubscription *subscription )
 {
 	if( subscription->getVariable().isEmpty() )
 	{
-		QList<DeviceStateVariable*> varList = mDevice->getVarList( subscription->getHwInterface() );
+		QList<DeviceStateVariableBase*> varList = mDevice->getVarList( subscription->getHwInterface() );
 		QList<ClientCommandBase*> clientCmdList;
 
 		for( int i=0; i<varList.size(); ++i )
@@ -189,7 +216,7 @@ void QcProxy::sendSubscriptionFeed( ClientSubscription *subscription )
 	}
 	else
 	{
-		DeviceStateVariable *stateVar = mDevice->getVar( subscription->getHwInterface(), subscription->getVariable() );
+		DeviceStateVariableBase *stateVar = mDevice->getVar( subscription->getHwInterface(), subscription->getVariable() );
 
 		// Don't send uninitialized and invalid variables
 		if( !(!stateVar->isNull() && stateVar->isValid()) )

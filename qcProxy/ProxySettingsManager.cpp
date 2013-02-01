@@ -44,6 +44,14 @@ ProxySettingsManager::ProxySettingsManager(QObject *parent) :
 	if( !contains("dummyDeviceSocket/port") )
 		{ setValue( "dummyDeviceSocket/port", 8246 ); }
 
+	// device log
+	if( !contains("deviceLog/debugLogPath") )
+		{ setValue( "deviceLog/debugLogPath", "deviceDebugMsgLog" ); }
+	if( !contains("deviceLog/infoLogPath") )
+		{ setValue( "deviceLog/infoLogPath", "deviceInfoMsgLog" ); }
+	if( !contains("deviceLog/errorLogPath") )
+		{ setValue( "deviceLog/errorLogPath", "deviceErrorMsgLog" ); }
+
 	sync();
 }
 

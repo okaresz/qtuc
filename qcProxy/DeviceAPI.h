@@ -10,8 +10,6 @@
 namespace QtuC
 {
 
-class DeviceStateVariable;
-
 /** DeviceAPI class.
  * Acts as an interface to the various device variables, functions, states, communication, etc...*/
 class DeviceAPI : public ErrorHandlerBase
@@ -31,14 +29,16 @@ public:
 
 	/** Get a device state variable from the stateManager.
 	  *	Please note, this function returns immediately with a DeviceStateVariable object, the contents of which may be outdated.
+	  *	@todo cast to DeviceStateProxyVariable*?
 	  *	@param hwInterface Name of the hardware interface
 	  *	@param varName name of the variable.
 	  *	@return Pointer to a DeviceStateVariable object.*/
-	DeviceStateVariable *getVar( const QString &hwInterface, const QString &varName );
+	DeviceStateVariableBase *getVar( const QString &hwInterface, const QString &varName );
 
 	/** Get all variables in a specified hadware interface, or all interfaces.
+	  *	@todo cast to QList<DeviceStateProxyVariable*>?
 	  *	See StateManagerBase::getVarList();*/
-	QList<DeviceStateVariable*> getVarList( const QString &hardwareInterface = QString() );
+	QList<DeviceStateVariableBase*> getVarList( const QString &hardwareInterface = QString() );
 
 	/** Send a get command to the device to update this variable.
 	 *	Use the valueUpdated() signal of the variable to know when the value has been updated.
@@ -92,12 +92,11 @@ private slots:
 
 	void handleDeviceCommand( DeviceCommand *cmd );
 
-	void handleStateVariableUpdateRequest( DeviceStateVariable *stateVar );
+	void handleStateVariableUpdateRequest( DeviceStateProxyVariable *stateVar );
 
-	/** Handle if a variable must be set on the device.
-	  *	@param stateVar The vriable to set.
-	  *	@param newRawVal The new value.*/
-	void handleSetVariableOnDeviceRequest( DeviceStateVariable *stateVar, QString newRawVal );
+	/** Handle if a variable must be sent to the device.
+	  *	@param stateVar The vriable to send.*/
+	void handleStateVariableSendRequest( DeviceStateProxyVariable *stateVar );
 
 signals:
 
@@ -111,6 +110,10 @@ signals:
 	void commandReceived( DeviceCommand *cmd );
 
 private:
+	/** Handle the device greeting message.
+	 *	If the greeting contains device parameters (name, platform, ...), parse the parameters and update the Device object accordingly.
+	 *	@param cmd The greeting command.*/
+	void handleDeviceGreeting( DeviceCommand *greetingCmd );
 
 	DeviceStateManager* mStateManager;		///< The DeviceStateManager instance. Handles the device variables
 	DeviceConnectionManagerBase* mDeviceLink;	///< DeviceConnectionManagerBase instance. Handles the connection to the device.

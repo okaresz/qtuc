@@ -8,7 +8,6 @@ TEMPLATE = lib
 CONFIG += staticlib
 
 SOURCES += SettingsManagerBase.cpp \
-    DeviceStateVariable.cpp \
     StateManagerBase.cpp \
     DeviceCommandBase.cpp \
     ClientCommandBase.cpp \
@@ -19,15 +18,14 @@ SOURCES += SettingsManagerBase.cpp \
     ErrorHandlerBase.cpp \
     ClientCommandFactory.cpp \
     clientCommands/ClientCommandHeartBeat.cpp \
-    clientCommands/ClientCommandHandshake.cpp \
-    DeviceCommand.cpp \
+	clientCommands/ClientCommandHandshake.cpp \
     clientCommands/ClientCommandDeviceApi.cpp \
     clientCommands/ClientCommandReqDeviceApi.cpp \
     clientCommands/ClientCommandUnSubscribe.cpp \
-    clientCommands/ClientCommandSubscribe.cpp
+    clientCommands/ClientCommandSubscribe.cpp \
+    DeviceStateVariableBase.cpp
 
 HEADERS += SettingsManagerBase.h \
-    DeviceStateVariable.h \
     StateManagerBase.h \
     DeviceCommandBase.h \
     ClientCommandBase.h \
@@ -39,11 +37,11 @@ HEADERS += SettingsManagerBase.h \
     ClientCommandFactory.h \
     clientCommands/ClientCommands.h \
     clientCommands/ClientCommandHeartBeat.h \
-    clientCommands/ClientCommandHandshake.h \
-    DeviceCommand.h \
+	clientCommands/ClientCommandHandshake.h \
     clientCommands/ClientCommandDeviceApi.h \
     clientCommands/ClientCommandReqDeviceApi.h \
     clientCommands/ClientCommandUnSubscribe.h \
-    clientCommands/ClientCommandSubscribe.h
+    clientCommands/ClientCommandSubscribe.h \
+    DeviceStateVariableBase.h
 
 INCLUDEPATH += $$PWD/clientCommands

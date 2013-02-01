@@ -15,7 +15,7 @@ SerialDeviceConnector::~SerialDeviceConnector()
 	this->closePort();
 }
 
-bool SerialDeviceConnector::sendCommand( DeviceCommandBuilder *cmd )
+bool SerialDeviceConnector::sendCommand( DeviceCommand *cmd )
 {
 	if( !cmd )
 		{ return false; }
@@ -68,7 +68,7 @@ void SerialDeviceConnector::receivePart()
 		mCmdRxBuffer = mCmdRxBufferShadow;
 		debug( debugLevelVeryVerbose, QString("Command received on serial: %1").arg(mCmdRxBuffer), "receivePart()" );
 
-		DeviceCommandBuilder *cmd = DeviceCommandBuilder::fromString( mCmdRxBuffer );
+		DeviceCommand *cmd = DeviceCommand::fromString( mCmdRxBuffer );
 		if( cmd )
 			{ emit commandReceived((DeviceCommand*)cmd); }
 		else
@@ -122,7 +122,7 @@ bool SerialDeviceConnector::connectPort()
 			return false;
 		}
 
-		debug( debugLevelInfo, "Serial port opened", "connectPort()" );
+		debug( debugLevelInfo, QString("Serial port %1 opened").arg(ProxySettingsManager::instance()->value( "devicePort/portName" ).toString()), "connectPort()" );
 	}
 	else
 	{

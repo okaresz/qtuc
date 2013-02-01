@@ -1,4 +1,5 @@
 #include "ClientSubscription.h"
+#include "DeviceStateVariableBase.h"
 #include <QTimerEvent>
 
 using namespace QtuC;
@@ -79,7 +80,7 @@ bool ClientSubscription::includes(const ClientSubscription &other) const
 	return false;
 }
 
-bool ClientSubscription::includes(const DeviceStateVariable *variable) const
+bool ClientSubscription::includes(const DeviceStateVariableBase *variable) const
 {
 	if( mHwInterface.isEmpty() && mVariable.isEmpty() )
 		{ return true; }

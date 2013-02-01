@@ -20,7 +20,7 @@ public:
 	~DummySocketDevice();
 
 	/// Inherited from DeviceConnectionManagerBase.
-	bool sendCommand( DeviceCommandBuilder *cmd );
+	bool sendCommand( DeviceCommand *cmd );
 
 	/// Inherited from DeviceConnectionManagerBase.
 	void closeDevice();

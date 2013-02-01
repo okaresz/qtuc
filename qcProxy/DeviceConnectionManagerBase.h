@@ -1,10 +1,7 @@
 #ifndef DEVICECONNECTIONMANAGERBASE_H
 #define DEVICECONNECTIONMANAGERBASE_H
 
-#include <QObject>
-#include "DeviceCommandBuilder.h"
 #include "DeviceCommand.h"
-#include "ErrorHandlerBase.h"
 
 namespace QtuC
 {
@@ -24,10 +21,7 @@ public:
 	/** Send command.
 	 *	Put the command to the send queue.
 	 *	@param cmd The command to send,*/
-	virtual bool sendCommand( DeviceCommandBuilder *cmd ) = 0;
-
-	/** Overloaded function.*/
-	bool sendCommand( DeviceCommand *cmd );
+	virtual bool sendCommand( DeviceCommand *cmd ) = 0;
 
 	/** Close the device connection.*/
 	virtual void closeDevice() = 0;

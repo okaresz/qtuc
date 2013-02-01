@@ -25,7 +25,7 @@ void parseAppArg( const QString &, int & );
 int main(int argc, char *argv[])
 {
 	int versionMajor = 0;
-	int versionMinor = 5;
+	int versionMinor = 8;
 	int versionFix = 0;
 
 	QCoreApplication qcProxyApp(argc, argv);

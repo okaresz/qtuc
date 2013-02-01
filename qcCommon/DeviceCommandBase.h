@@ -2,7 +2,6 @@
 #define DEVICECOMMANDBASE_H
 
 #include <QStringList>
-#include "DeviceStateVariable.h"
 
 namespace QtuC
 {
@@ -37,6 +36,11 @@ public:
 	deviceCommandType_t getType() const
 		{ return mType; }
 
+	/** Get command timestamp.
+	 *	@return command timestamp*/
+	quint64 getTimestamp() const
+		{ return mTimestamp; }
+
 	/** Get the hardware interface of the command.
 	  *	@return Hardware interface name.*/
 	const QString getHwInterface() const
@@ -64,9 +68,20 @@ public:
 	const QStringList getArgList() const
 		{ return mArgs; }
 
+	/** Get if command has argument(s)
+	 *	@return True if the command has one or more argument, otherwise false.*/
+	bool hasArg() const
+		{ return !mArgs.isEmpty(); }
+
 	/** Set command type.
 	 *	@param type The command type to set.*/
-	void setType( deviceCommandType_t type );
+	void setType( deviceCommandType_t type )
+		{ mType = type; }
+
+	/** Set timestamp.
+	 *	@param timestamp New value for the timestamp.*/
+	 void setTimestamp( quint64 const &timestamp )
+		{ mTimestamp = timestamp; }
 
 	/** Set hardware interface.
 	 *	You can only set a valid hardware interface.
@@ -116,9 +131,14 @@ public:
 	static deviceCommandType_t commandTypeFromString( const QString &typeStr );
 
 protected:
+	deviceCommandType_t mType;	///< Command type.
+
+	/** Command timestamp.
+	 *	Creation time of this command.
+	 *	The actual value and representation is device-dependent.*/
+	quint64 mTimestamp;
 
 	QString mHwInterface;		///< Hardware interface name
-	deviceCommandType_t mType;	///< Command type.
 	QString mVariable;			///< Command variable.
 	QStringList mArgs;			///< Command arguments
 };

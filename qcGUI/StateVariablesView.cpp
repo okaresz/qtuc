@@ -33,7 +33,7 @@ bool StateVariablesView::setModel(QcGui *model)
 	}
 }
 
-void StateVariablesView::showVariable(const QtuC::DeviceStateVariable *newVar, const QString &guiHint)
+void StateVariablesView::showVariable( DeviceStateVariableBase *newVar, const QString &guiHint)
 {
 	QGroupBox *hwiGroup = getHwiGroup(newVar->getHwInterface());
 	if( !hwiGroup )
@@ -109,7 +109,7 @@ QGroupBox *StateVariablesView::createHwiGroup(const QString &hwiName)
 	return group;
 }
 
-QWidget *StateVariablesView::createVariableWidget(const QtuC::DeviceStateVariable *var, const QString &guiHint)
+QWidget *StateVariablesView::createVariableWidget(const DeviceStateVariableBase *var, const QString &guiHint)
 {
 	QWidget *customWidget = createCustomVariableWidget(var);
 	if( customWidget )
@@ -124,12 +124,12 @@ QWidget *StateVariablesView::createVariableWidget(const QtuC::DeviceStateVariabl
 			QLineEdit *lineEdit = new QLineEdit();
 			lineEdit->setObjectName( widgetName );
 			lineEdit->setText( var->getValue().toString() );
-			if( var->getAccessMode() == DeviceStateVariable::readAccess )
+			if( var->getAccessMode() == DeviceStateVariableBase::readAccess )
 			{
 				lineEdit->setDisabled(true);
 				connect( var, SIGNAL(valueChanged(QString)), lineEdit, SLOT(setText(QString)) );
 			}
-			else if( var->getAccessMode() == DeviceStateVariable::writeAccess )
+			else if( var->getAccessMode() == DeviceStateVariableBase::writeAccess )
 				{ connect( lineEdit, SIGNAL(textEdited(QString)), var, SLOT(setValue(QString)) ); }
 			return lineEdit;
 		} break;
@@ -138,12 +138,12 @@ QWidget *StateVariablesView::createVariableWidget(const QtuC::DeviceStateVariabl
 			QCheckBox *checkBox = new QCheckBox();
 			checkBox->setObjectName( widgetName );
 			checkBox->setChecked( var->getValue().toBool() );
-			if( var->getAccessMode() == DeviceStateVariable::readAccess )
+			if( var->getAccessMode() == DeviceStateVariableBase::readAccess )
 			{
 				checkBox->setDisabled(true);
 				connect( var, SIGNAL(valueChanged(bool)), checkBox, SLOT(setChecked(bool)) );
 			}
-			else if( var->getAccessMode() == DeviceStateVariable::writeAccess )
+			else if( var->getAccessMode() == DeviceStateVariableBase::writeAccess )
 				{ connect( checkBox, SIGNAL(clicked(bool)), var, SLOT(setValue(bool)) ); }
 			return checkBox;
 		} break;
@@ -165,12 +165,12 @@ QWidget *StateVariablesView::createVariableWidget(const QtuC::DeviceStateVariabl
 				slider->setOrientation(Qt::Horizontal);
 				slider->setTracking(true);
 				slider->setValue( var->getValue().toInt() );
-				if( var->getAccessMode() == DeviceStateVariable::readAccess )
+				if( var->getAccessMode() == DeviceStateVariableBase::readAccess )
 				{
 					slider->setDisabled(true);
 					connect( var, SIGNAL(valueChanged(int)), slider, SLOT(setValue(int)) );
 				}
-				else if( var->getAccessMode() == DeviceStateVariable::writeAccess )
+				else if( var->getAccessMode() == DeviceStateVariableBase::writeAccess )
 					{ connect( slider, SIGNAL(valueChanged(int)), var, SLOT(setValue(int)) ); }
 				return slider;
 			}
@@ -183,12 +183,12 @@ QWidget *StateVariablesView::createVariableWidget(const QtuC::DeviceStateVariabl
 					{ spinBox->setMinimum(-65535); }
 				spinBox->setSingleStep(1);
 				spinBox->setValue( var->getValue().toInt() );
-				if( var->getAccessMode() == DeviceStateVariable::readAccess )
+				if( var->getAccessMode() == DeviceStateVariableBase::readAccess )
 				{
 					spinBox->setDisabled(true);
 					connect( var, SIGNAL(valueChanged(int)), spinBox, SLOT(setValue(int)) );
 				}
-				else if( var->getAccessMode() == DeviceStateVariable::writeAccess )
+				else if( var->getAccessMode() == DeviceStateVariableBase::writeAccess )
 					{ connect( spinBox, SIGNAL(valueEdited(int)), var, SLOT(setValue(int)) ); }
 				return spinBox;
 			}
@@ -199,7 +199,7 @@ QWidget *StateVariablesView::createVariableWidget(const QtuC::DeviceStateVariabl
 	return 0;
 }
 
-QWidget *StateVariablesView::createCustomVariableWidget(const DeviceStateVariable *var)
+QWidget *StateVariablesView::createCustomVariableWidget(const DeviceStateVariableBase *var)
 {
 	if( var->getHwInterface() == "hwiLineFollower" && ( var->getName() == "lineBitsL" || var->getName() == "lineBitsH" || var->getName() == "chBits") )
 	{

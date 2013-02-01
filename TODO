@@ -1,4 +1,22 @@
-if device removed, higgh cpu usage?!
+if device removed, high cpu usage?! -> QtSerialPort bug, or even lower (moserial also)
+
+--- timestamping ------------------------------------------------------------------------------------
+
+set @35d2 hwiname varName 0x3f5d20
+
+the optional timestamp is a hex number after a "@" sign, meaning the microseconds since device startup (so the stamp is relative to device boot)
+since qcProxy stores variable last update time with UNIX timestamp, it needs the device startup time to synchronize the two and calculate the UNIX stamp from the device stamp.
+qcProxy will take the time of the first device command (ideally a device greeting), and store it as the base reference for the future device stamps.
+If this first device command contains a timestamp, the value of that timestamp is taken into account when calculating the reference time, whoch in this case
+is theoratically the actual device startup time (or the start of the device timekeeping to be exact)
+If the device timestamp is omitted from the command, the time of arrival will be used.
+
+Since logging and plotting is the task of a client, the client must first acquire the stateVariable to log. This can be with explicit get command or with subscription.
+Either way, normally it is not guarantied that all update of the device variable will be cought by the client, but all registered updates will be stored with the correct time (not the time of arrival), thanks to the timestamps.
+However, by using the proxy in passthrough mode, full synchronization without update loss is achievable.
+
+---------------------------------------------------------------------------------------
+
 
 don't subscribe if var is write-only (or sg like this...)
 

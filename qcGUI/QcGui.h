@@ -5,7 +5,7 @@
 #include "ProxyStateManager.h"
 #include "ProxyConnectionManager.h"
 #include "DeviceAPIParser.h"
-#include "DeviceStateVariable.h"
+#include "DeviceStateVariableBase.h"
 
 using namespace QtuC;
 
@@ -57,7 +57,7 @@ signals:
 
 	/** Emitted if a new Device State Variable is created.
 	  *	@param newVar Pointer to the new variable.*/
-	void deviceVariableCreated( const QtuC::DeviceStateVariable *newVar, const QString &guiHint );
+	void deviceVariableCreated( QtuC::DeviceStateVariableBase *newVar, QString guiHint );
 
 	/** Emitted if a new Device Function is created.
 	  *	@param hwInterface Hardware interface of the function.
@@ -92,7 +92,7 @@ private slots:
 	  *	In our case, this means we must send a set command to the proxy.
 	  *	@param stateVar The vriable to set.
 	  *	@param newRawVal The new value.*/
-	void handleSetVariableOnDeviceRequest( DeviceStateVariable *stateVar, QString newRawVal );
+	void handleStateVariableSendRequest( DeviceStateVariableBase *stateVar );
 
 	/** Create new device state variable.
 	  *	Creates a new variable in the stateManager and emit stateVariableCreated().

@@ -61,6 +61,7 @@ void QcGuiMainView::createGui()
 	setStatusBar( new QStatusBar(this) );
 
 	mVariableView = new StateVariablesView();
+	mVariableView->setModel( mModel );
 
 	setCentralWidget(mVariableView);
 	mVariableView->show();
@@ -110,6 +111,6 @@ void QcGuiMainView::onDeviceApiSet()
 void QcGuiMainView::initModelView()
 {
 	connect( mModel, SIGNAL(signalError(QtMsgType,QString,QString,QtuC::ErrorHandlerBase::errorDetails_t)), this, SLOT(showError(QtMsgType,QString,QString,QtuC::ErrorHandlerBase::errorDetails_t)) );
-	connect( mModel, SIGNAL(deviceVariableCreated(const QtuC::DeviceStateVariable*,QString)), mVariableView, SLOT(showVariable(const QtuC::DeviceStateVariable*,QString)) );
+	connect( mModel, SIGNAL(deviceVariableCreated(QtuC::DeviceStateVariableBase*,QString)), mVariableView, SLOT(showVariable(QtuC::DeviceStateVariableBase*,QString)) );
 	connect( mModel, SIGNAL(deviceFunctionCreated(QString,QString)), mVariableView, SLOT(showFunction(QString,QString)) );
 }

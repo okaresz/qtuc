@@ -7,13 +7,15 @@
 namespace QtuC
 {
 
+class DeviceStateVariableBase;
+
 /** ClientCommandDevice class.
  *	Client Command used to represent a deviceCommand on the client side.*/
 class ClientCommandDevice : public ClientCommandBase, public DeviceCommandBase
 {
 	Q_OBJECT
 public:
-	ClientCommandDevice( deviceCommandType_t type, const DeviceStateVariable *stateVariable = 0 );
+	ClientCommandDevice( deviceCommandType_t type, const DeviceStateVariableBase *stateVariable = 0 );
 
 	ClientCommandDevice( DeviceCommandBase *deviceCommand );
 

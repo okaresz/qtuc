@@ -1,11 +1,12 @@
 #ifndef CLIENTSUBSCRIPTION_H
 #define CLIENTSUBSCRIPTION_H
 
-#include "DeviceStateVariable.h"
 #include "ClientConnectionManagerBase.h"
 
 namespace QtuC
 {
+
+class DeviceStateVariableBase;
 
 /** Class to represent a clientSubscription.
   *	To every subscribe command a ClientSubscription is created, unless it results in a subscription duplicate.
@@ -53,7 +54,7 @@ public:
 	  *	  * both hardware interface name and variable name of the subscription is empty (every variable is included).
 	  *	@param variable The variable to check.
 	  *	@return True if the passed variable is included in the subscription.*/
-	bool includes( const DeviceStateVariable *variable ) const;
+	bool includes( const DeviceStateVariableBase *variable ) const;
 
 	/** Get subscritpion variable.
 	  *	 @return The variable.*/

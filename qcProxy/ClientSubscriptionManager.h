@@ -9,6 +9,7 @@ namespace QtuC
 {
 
 class ClientConnectionManagerBase;
+class DeviceStateVariableBase;
 
 /// Class to manage client subscriptions.
 class ClientSubscriptionManager : public ErrorHandlerBase
@@ -25,7 +26,7 @@ public:
 	 *	@param variable The variable to check.
 	 *	@param subscription Search for subscriptions more specific than this.
 	 *	@return True, if a more specific subscription is found, false otherwise.*/
-	bool moreSpecificSubscriptionExists( const DeviceStateVariable* variable, const ClientSubscription *subscription ) const;
+	bool moreSpecificSubscriptionExists( const DeviceStateVariableBase* variable, const ClientSubscription *subscription ) const;
 
 public slots:
 

@@ -17,13 +17,13 @@ DeviceAPI::DeviceAPI( QObject *parent ) :
 	mDeviceLink = new SerialDeviceConnector(this);
 	//mDeviceLink = new DummySocketDevice(this);
 
-	connect( mStateManager, SIGNAL(stateVariableUpdateRequest(DeviceStateVariable*)), this, SLOT(handleStateVariableUpdateRequest(DeviceStateVariable*)) );
-	connect( mStateManager, SIGNAL(setVariableOnDeviceRequest(DeviceStateVariable*,QString)), this, SLOT(handleSetVariableOnDeviceRequest(DeviceStateVariable*,QString)) );
+	connect( mStateManager, SIGNAL(stateVariableUpdateRequest(DeviceStateProxyVariable*)), this, SLOT(handleStateVariableUpdateRequest(DeviceStateProxyVariable*)) );
+	connect( mStateManager, SIGNAL(stateVariableSendRequest(DeviceStateProxyVariable*)), this, SLOT(handleStateVariableSendRequest(DeviceStateProxyVariable*)) );
 }
 
 bool DeviceAPI::call( const QString &hwInterface, const QString &function, const QString &arg )
 {
-	DeviceCommandBuilder *dCmd = new DeviceCommandBuilder();
+	DeviceCommand *dCmd = new DeviceCommand();
 	dCmd->setType( deviceCmdCall );
 	dCmd->setInterface( hwInterface );
 	dCmd->setFunction( function );
@@ -36,9 +36,9 @@ bool DeviceAPI::call( const QString &hwInterface, const QString &function, const
 	return true;
 }
 
-DeviceStateVariable *DeviceAPI::getVar( const QString &hwInterface, const QString &varName )
+DeviceStateVariableBase *DeviceAPI::getVar( const QString &hwInterface, const QString &varName )
 {
-	DeviceStateVariable *var = mStateManager->getVar( hwInterface, varName );
+	DeviceStateVariableBase *var = mStateManager->getVar( hwInterface, varName );
 	if( !var )
 	{
 		ErrorHandlerBase::errorDetails_t errDet;
@@ -49,14 +49,14 @@ DeviceStateVariable *DeviceAPI::getVar( const QString &hwInterface, const QStrin
 	return var;
 }
 
-QList<DeviceStateVariable *> DeviceAPI::getVarList(const QString &hardwareInterface)
+QList<DeviceStateVariableBase*> DeviceAPI::getVarList(const QString &hardwareInterface)
 {
 	return mStateManager->getVarList( hardwareInterface );
 }
 
 bool DeviceAPI::update( const QString &hwInterface, const QString &varName )
 {
-	if( !mDeviceLink->sendCommand( DeviceCommand::build( deviceCmdGet, getVar( hwInterface, varName ) ) ) )
+	if( !mDeviceLink->sendCommand( DeviceCommand::fromVariable( deviceCmdGet, (DeviceStateProxyVariable*)getVar( hwInterface, varName ) ) ) )
 	{
 		errorDetails_t errDet;
 		errDet.insert( "hwInterface", hwInterface );
@@ -82,7 +82,7 @@ bool DeviceAPI::set( const QString &hwInterface, const QString &varName, const Q
 {/// @todo QVariant version of this func? Also: QVariant.toString is not an elegant solution... somehow a static deviceformatter function?
 	if( Device::positiveAck() )
 	{
-		DeviceCommandBuilder *cmd = new DeviceCommandBuilder();
+		DeviceCommand *cmd = new DeviceCommand();
 		cmd->setType( deviceCmdSet);
 		cmd->setInterface( hwInterface );
 		cmd->setVariable( varName );
@@ -100,7 +100,7 @@ bool DeviceAPI::set( const QString &hwInterface, const QString &varName, const Q
 	}
 	else
 	{
-		DeviceStateVariable* var = getVar( hwInterface, varName );
+		DeviceStateProxyVariable* var = (DeviceStateProxyVariable*)getVar( hwInterface, varName );
 		if( var )
 			{ var->setValue(newVal); }
 		else
@@ -121,6 +121,7 @@ bool DeviceAPI::initAPI( const QString &apiDefString )
 {
 	/// @todo Implement argument (at reinit also)
 	/// @todo don't allow loading if something is alrady loaded.
+	/// @todo clean up this... The duplicate load and reload messages don't look so good on the console...
 
 	if( mDeviceInstance )
 	{
@@ -141,7 +142,7 @@ bool DeviceAPI::initAPI( const QString &apiDefString )
 			mDeviceInstance = Device::create(this);
 			connect( mDeviceAPI, SIGNAL(newDeviceInfo(QString,QString)), mDeviceInstance, SLOT(setInfo(QString,QString)) );
 			connect( mDeviceAPI, SIGNAL(newHardwareInterface(QString,QString)), mDeviceInstance, SLOT(addHardwareInterface(QString,QString)) );
-			connect( mDeviceAPI, SIGNAL(newStateVariable(QHash<QString,QString>)), mStateManager, SLOT(registerStateVariable(QHash<QString,QString>)) );
+			connect( mDeviceAPI, SIGNAL(newStateVariable(QHash<QString,QString>)), mStateManager, SLOT(registerNewStateVariable(QHash<QString,QString>)) );
 			connect( mDeviceAPI, SIGNAL(newDeviceFunction(QString,QString,QString)), mDeviceInstance, SLOT(addFunction(QString,QString,QString)) );
 			if( !mDeviceAPI->parseAPI(apiDefString) )
 			{
@@ -164,7 +165,7 @@ bool DeviceAPI::initAPI( const QString &apiDefString )
 			mDeviceInstance = Device::create(this);
 			connect( mDeviceAPI, SIGNAL(newDeviceInfo(QString,QString)), mDeviceInstance, SLOT(setInfo(QString,QString)) );
 			connect( mDeviceAPI, SIGNAL(newHardwareInterface(QString,QString)), mDeviceInstance, SLOT(addHardwareInterface(QString,QString)) );
-			connect( mDeviceAPI, SIGNAL(newStateVariable(QHash<QString,QString>)), mStateManager, SLOT(registerStateVariable(QHash<QString,QString>)) );
+			connect( mDeviceAPI, SIGNAL(newStateVariable(QHash<QString,QString>)), mStateManager, SLOT(registerNewStateVariable(QHash<QString,QString>)) );
 			connect( mDeviceAPI, SIGNAL(newDeviceFunction(QString,QString,QString)), mDeviceInstance, SLOT(addFunction(QString,QString,QString)) );
 			if( !mDeviceAPI->reload() )
 			{
@@ -216,6 +217,82 @@ bool DeviceAPI::reInitAPI( const QString &apiDefString )
 	}
 }
 
+void DeviceAPI::handleDeviceGreeting( DeviceCommand *greetingCmd )
+{
+	// Greeting can occur anytime, not just after proxy start as the first message, so handle accordingly...
+
+	if( greetingCmd->hasArg() )
+	{
+		QHash<QString,QString> greetingInfoList;
+		QHash<QString,QString> deviceInfoList = Device::getInfoList();
+		QString greetingMsg;
+
+		QStringList argList = greetingCmd->getArgList();
+		for( int i=0; i< argList.size(); ++i )
+		{
+			QString key = argList.at(i).left( argList.at(i).indexOf(':') );
+			QString val = argList.at(i).mid( argList.at(i).indexOf(':')+1 );
+			if( key == "msg" )
+				{ greetingMsg = val; }
+			else
+				{ greetingInfoList.insert( key, val ); }
+		}
+
+		/// @todo This should reach the clients as well!
+		if( !greetingMsg.isEmpty() )
+			{ debug( debugLevelInfo, QString("Device greeting received: %1").arg( greetingMsg ), "handleDeviceGreeting()" ); }
+
+		// If something is different than the stored info, we must update the Device object
+		bool isDiff = false;
+		QHash<QString,QString>::const_iterator info = greetingInfoList.constBegin();
+		while( info != greetingInfoList.constEnd() )
+		{
+			if( !deviceInfoList.contains( info.key() ) )
+			{
+				isDiff = true;
+				break;
+			}
+			else
+			{
+				if( deviceInfoList.value( info.key() ) != greetingInfoList.value( info.key() ) )
+				{
+					isDiff = true;
+					break;
+				}
+			}
+			++info;
+		}
+
+		// ...then update
+		if( isDiff )
+		{
+			// If name or platform is different, notify the user that the device has changed
+			/// @todo This should reach the clients as well!
+			if( !deviceInfoList.value("name").isEmpty() && deviceInfoList.value("name") != greetingInfoList.value("name") )
+				{ error( QtWarningMsg, QString("Device name (%1) differs from the one in deviceAPI (%2), possible device<->API mismatch!").arg( greetingInfoList.value("name"), deviceInfoList.value("name") ), "handleDeviceGreeting()" ); }
+			if( !deviceInfoList.value("platform").isEmpty() && deviceInfoList.value("platform") != greetingInfoList.value("platform") )
+				{ error( QtWarningMsg, QString("Device platform (%1) differs from the one in deviceAPI (%2), possible device<->API mismatch!").arg( greetingInfoList.value("platform"), deviceInfoList.value("platform") ), "handleDeviceGreeting()" ); }
+
+			// unlock Device to update
+			mDeviceInstance->setCreated( false );
+
+			info = greetingInfoList.constBegin();
+			while( info != greetingInfoList.constEnd() )
+			{
+				mDeviceInstance->setInfo( info.key(), info.value() );
+				++info;
+			}
+
+			// lock device
+			mDeviceInstance->setCreated();
+		}
+	}
+	else /// @todo This should reach the clients as well!
+		{ debug( debugLevelInfo, "Device greeting received (empty greeting)", "handleDeviceGreeting()" ); }
+
+	greetingCmd->deleteLater();
+}
+
 void DeviceAPI::handleDeviceCommand( DeviceCommand *cmd )
 {
 	if( mEmitAllCmd )
@@ -233,6 +310,10 @@ void DeviceAPI::handleDeviceCommand( DeviceCommand *cmd )
 				emit messageReceived( Device::messageTypeFromString(cmd->getArg(0)), QStringList( cmd->getArgList().mid(1) ).join(" ") );
 				cmd->deleteLater();
 			}
+			else if( cmd->getVariable() == "greeting" )
+			{
+				handleDeviceGreeting( cmd );
+			}
 			else
 				{ emit commandReceived( cmd ); }
 		}
@@ -241,15 +322,15 @@ void DeviceAPI::handleDeviceCommand( DeviceCommand *cmd )
 	{
 		if( cmd->getType() == deviceCmdGet )
 		{
-			DeviceCommand *setCmd = DeviceCommand::build( deviceCmdSet, mStateManager->getVar( cmd->getHwInterface(), cmd->getVariable() ) );
+			DeviceCommand *setCmd = DeviceCommand::fromVariable( deviceCmdSet, (DeviceStateProxyVariable*)mStateManager->getVar( cmd->getHwInterface(), cmd->getVariable() ) );
 			if( !mDeviceLink->sendCommand( setCmd ) )
 				{ error( QtWarningMsg, "Failed to reply to device get", "handleDeviceCommand()" ); }
 		}
 		else if( cmd->getType() == deviceCmdSet )
 		{
-			DeviceStateVariable *var = mStateManager->getVar( cmd->getHwInterface(), cmd->getVariable() );
+			DeviceStateProxyVariable *var = (DeviceStateProxyVariable*)mStateManager->getVar( cmd->getHwInterface(), cmd->getVariable() );
 			if( var )
-				{ var->setFromDevice( cmd->getArg() ); }
+				{ var->updateFromDevice( cmd->getArg() ); }
 			else
 				{ error( QtWarningMsg, QString("Failed to set variable from device, no such variable (hwI: %1, name: %2)").arg(cmd->getHwInterface(),cmd->getVariable()), "handleDeviceCommand()" ); }
 		}
@@ -259,14 +340,14 @@ void DeviceAPI::handleDeviceCommand( DeviceCommand *cmd )
 	}
 }
 
-void DeviceAPI::handleStateVariableUpdateRequest(DeviceStateVariable *stateVar)
+void DeviceAPI::handleStateVariableUpdateRequest(DeviceStateProxyVariable *stateVar)
 {
-	if( !mDeviceLink->sendCommand( DeviceCommand::build( deviceCmdGet, stateVar ) ) )
+	if( !mDeviceLink->sendCommand( DeviceCommand::fromVariable( deviceCmdGet, stateVar ) ) )
 		{ error( QtWarningMsg, QString("Failed to update stateVar: %1").arg(stateVar->getName()), "handleStateVariableUpdateRequest()" ); }
 }
 
-void DeviceAPI::handleSetVariableOnDeviceRequest(DeviceStateVariable *stateVar, QString newRawVal)
+void DeviceAPI::handleStateVariableSendRequest(DeviceStateProxyVariable *stateVar)
 {
-	if( !mDeviceLink->sendCommand( DeviceCommand::build( deviceCmdSet, stateVar ) ) )
-		{ error( QtWarningMsg, QString("Failed to set %1:%2 on device").arg(stateVar->getHwInterface(),stateVar->getName()), "handleStateVariableUpdateRequest()" ); }
+	if( !mDeviceLink->sendCommand( DeviceCommand::fromVariable( deviceCmdSet, stateVar ) ) )
+		{ error( QtWarningMsg, QString("Failed to send %1:%2 to device").arg(stateVar->getHwInterface(),stateVar->getName()), "handleSetVariableSendRequest()" ); }
 }

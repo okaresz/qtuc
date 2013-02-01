@@ -20,7 +20,8 @@ enum deviceMessageType_t
 /** Device class.
  *	Device info monostate class (pure static).
  *	Holds some globally reachable information about the device.
- *	Before using this class, you must call it's create() method.*/
+ *	Before using this class, you must call it's create() method.
+ *	After calling setCreated(), the Device singleton cannot be reached, only the static getters can be used, or swap().*/
 class Device : public ErrorHandlerBase
 {
 	Q_OBJECT
@@ -73,28 +74,34 @@ public:
 	static const QString getHwInterfaceInfo( const QString& hwInterfaceName );
 
 	/** Get device information.
-	  *	Returns valid value only after the device handshake has happened.
+	  *	Returns valid value only after the device handshake has happened. Before that, this returns the values in the deviceAPI.
 	  *	@param key Name of the information.
 	  *	@return The requested device information.*/
 	static const QString getInfo( const QString & key );
 
+	/** Get device information list.
+	  *	Returns valid value only after the device handshake has happened. Before that, this returns the values in the deviceAPI.
+	  *	@return The list of current device informations.*/
+	static const QHash<QString,QString> getInfoList()
+		{ return mInfo; }
+
 	/** Get the device name.
-	 *	Returns valid value only after the device handshake has happened.
+	 *	Returns valid value only after the device handshake has happened. Before that, this returns the values in the deviceAPI.
 	 *	@return The device name.*/
 	static const QString getName();
 
 	/** Get the device description.
-	 *	Returns valid value only after the device handshake has happened.
+	 *	Returns valid value only after the device handshake has happened. Before that, this returns the values in the deviceAPI.
 	 *	@return The device description 8if exists, empty string otherwise.*/
 	static const QString getDescription();
 
 	/** Get the device platform.
-	 *	Returns valid value only after the device handshake has happened.
+	 *	Returns valid value only after the device handshake has happened. Before that, this returns the values in the deviceAPI.
 	 *	@return The device platform if exists, empty string otherwise.*/
 	static const QString getPlatform();
 
 	/** Get the device project.
-	 *	Returns valid value only after the device handshake has happened.
+	 *	Returns valid value only after the device handshake has happened. Before that, this returns the values in the deviceAPI.
 	 *	@return The device project if exists, empty string otherwise.*/
 	static const QString getProject();
 

@@ -5,7 +5,7 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QList>
-#include "DeviceStateVariable.h"
+#include "DeviceStateVariableBase.h"
 #include "QcGui.h"
 
 namespace qcGui
@@ -32,7 +32,7 @@ public slots:
 	  *	Create and initialize the necessary GUI components to display the variable.
 	  *	@param newVar The variable to show.
 	  * @todo Create a "guiVariable" structure with the variable pointer and the guiHint params in it.*/
-	void showVariable( const QtuC::DeviceStateVariable *newVar, const QString &guiHint );
+	void showVariable( QtuC::DeviceStateVariableBase *newVar, const QString &guiHint );
 
 	/** Show function on the GUI.
 	  *	Create and initialize the necessary GUI components to display the function.
@@ -62,10 +62,10 @@ private:
 	*	Create the appropriate widget for the passed device state variable, and connect the necessary signals/slots.
 	*	@param var The device state variable for the widget.
 	*	@return The new widget for the device state variable.*/
-	QWidget *createVariableWidget( const QtuC::DeviceStateVariable *var, const QString &guiHint );
+	QWidget *createVariableWidget( const QtuC::DeviceStateVariableBase *var, const QString &guiHint );
 
 	/// @todo do this nicer
-	QWidget *createCustomVariableWidget( const QtuC::DeviceStateVariable *var );
+	QWidget *createCustomVariableWidget( const QtuC::DeviceStateVariableBase *var );
 
 	QcGui *mModel;		///< Model for this view.
 	QGridLayout *mLayout;	///< Layout for StateVariablesView

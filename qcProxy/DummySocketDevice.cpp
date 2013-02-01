@@ -18,7 +18,7 @@ DummySocketDevice::~DummySocketDevice()
 	mDeviceSocket->close();
 }
 
-bool DummySocketDevice::sendCommand( DeviceCommandBuilder *cmd )
+bool DummySocketDevice::sendCommand( DeviceCommand *cmd )
 {
 	if( !cmd )
 		{ return false; }
@@ -86,7 +86,7 @@ void DummySocketDevice::handleDeviceData()
 		mCmdRxBuffer = mCmdRxBufferShadow;
 		debug( debugLevelInfo, QString("Command received on serial: %1").arg(mCmdRxBuffer), "receivePart()" );
 
-		DeviceCommandBuilder *cmd = DeviceCommandBuilder::fromString( mCmdRxBuffer );
+		DeviceCommand *cmd = DeviceCommand::fromString( mCmdRxBuffer );
 		if( cmd )
 			{ emit commandReceived((DeviceCommand*)cmd); }
 		else

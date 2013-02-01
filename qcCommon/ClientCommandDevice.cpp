@@ -1,8 +1,9 @@
 #include "ClientCommandDevice.h"
+#include "DeviceStateVariableBase.h"
 
 using namespace QtuC;
 
-ClientCommandDevice::ClientCommandDevice( deviceCommandType_t type, const DeviceStateVariable *stateVariable ) :
+ClientCommandDevice::ClientCommandDevice( deviceCommandType_t type, const DeviceStateVariableBase *stateVariable ) :
 	ClientCommandBase(),
 	DeviceCommandBase()
 {
@@ -16,6 +17,7 @@ ClientCommandDevice::ClientCommandDevice( deviceCommandType_t type, const Device
 	{
 		mVariable = stateVariable->getName();
 		mHwInterface = stateVariable->getHwInterface();
+		/// @todo Send serialized QVariant, and check if local type is a match
 		if( mType == deviceCmdSet )
 			{ mArgs.append( stateVariable->getValue().toString() ); }
 	}

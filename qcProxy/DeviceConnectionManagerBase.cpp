@@ -6,12 +6,3 @@ DeviceConnectionManagerBase::DeviceConnectionManagerBase( QObject *parent ) : Er
 {
 
 }
-
-bool DeviceConnectionManagerBase::sendCommand(DeviceCommand *cmd)
-{
-	if( !cmd )
-		{ return false; }
-	DeviceCommandBuilder *cmdBuilder = new DeviceCommandBuilder( *((DeviceCommandBase*)cmd) );
-	//cmd->deleteLater();
-	return sendCommand( cmdBuilder );
-}

@@ -152,14 +152,15 @@ void Device::setInfo(const QString &key, const QString &value)
 	{
 		if( key == "positiveAck" )
 		{
-			if( value == "true" )
+			if( value == "true" || value == "1" || value == "on" )
 				{ mPositiveAck = true; }
-			else if( value == "false" )
+			else if( value == "false" || value == "0" || value == "off" )
 				{ mPositiveAck = false; }
 			else
-				{ error( QtWarningMsg, "Invalid value set for positiveAck. If parsed from API, check API file.", "setInfo()" ); }
+				{ error( QtWarningMsg, "Invalid value set for positiveAck. Allowed values: true/false, on/off, 1/0. If parsed from API, check API file.", "setInfo()" ); }
 		}
-		mInfo.insert( key, value );
+		else
+			{ mInfo.insert( key, value ); }
 	}
 }
 
