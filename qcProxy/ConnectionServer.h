@@ -1,7 +1,6 @@
 #ifndef CONNECTIONSERVER_H
 #define CONNECTIONSERVER_H
 
-//#include "ClientConnectionManagerBase.h"
 #include "ErrorHandlerBase.h"
 #include <QString>
 #include <QTcpServer>
@@ -13,12 +12,16 @@ namespace QtuC
 class ClientConnectionManagerBase;
 class ClientCommandBase;
 
+/** Class to manage client connections.
+  * As a TCP server, handle incoming connections, store connected clients and do some other server-level activities, such as broadcast a command to all clients.*/
 class ConnectionServer : public ErrorHandlerBase
 {
 	Q_OBJECT
 public:
 
+	/** Create the server.*/
 	ConnectionServer( QObject *parent = 0 );
+
 	~ConnectionServer();
 
 	/** Get a client.
@@ -48,7 +51,7 @@ public:
 signals:
 	/** Emitted if a new client has connected.
 	  * The signal is emitted only after a successful handshake is made and the client object is created.
-	  * @param newClient The new client object (of ClientConnectionManagerBase).*/
+	  * @param newClient The new client object (ClientConnectionManagerBase).*/
 	void newClientConnected( ClientConnectionManagerBase* newClient );
 
 private slots:

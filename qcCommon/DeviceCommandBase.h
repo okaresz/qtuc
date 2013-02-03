@@ -15,7 +15,8 @@ enum deviceCommandType_t
 	deviceCmdCall
 };
 
-/** Base class for all device command classes.*/
+/** Base class for representing a device command.
+*	Stores the basic parts of a device command without any device specific information.*/
 class DeviceCommandBase
 {
 public:
@@ -91,9 +92,10 @@ public:
 
 	/** Set command variable.
 	 *	You can only set a valid variable name.
+	 *	A valid name doesn't contain the command separator character, short and preferably consists ony ASCII characters.
 	 *	@param cv command variable to set.
 	 *	@return True on success, false otherwise.*/
-	void setVariable( const QString& cv );
+	virtual bool setVariable( const QString& cv );
 
 	/** Set command function.
 	  *	This is an alias for setVariable().
@@ -126,8 +128,8 @@ public:
 	static const QString commandTypeToString( deviceCommandType_t cmdType );
 
 	/** Convert a QString to commandType.
-	 *	@param cmdStr Command string to convert.
-	 *	@return the command type (may be invalid).*/
+	 *	@param typeStr Type string to convert.
+	 *	@return the command type (may be undefined).*/
 	static deviceCommandType_t commandTypeFromString( const QString &typeStr );
 
 protected:

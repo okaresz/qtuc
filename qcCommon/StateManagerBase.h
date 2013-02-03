@@ -12,14 +12,13 @@ namespace QtuC
 class DeviceStateVariableBase;
 
 /** Class StateManagerBase
- *	Base for the state manager classes dealing with DeviceStateVariables.*/
+ *	Base class for the state manager classes dealing with device state variables.*/
 class StateManagerBase : public ErrorHandlerBase
 {
 	Q_OBJECT
 
 public:
-	/** Constructor.
-	  *	@param parent The usual optional parent object.*/
+	/** Create a stateManager with an empty list of variables.*/
 	StateManagerBase( QObject* parent = 0 );
 
 	~StateManagerBase();
@@ -32,7 +31,7 @@ public:
 
 	/** Get all variables in a specified hadware interface, or all interfaces.
 	  *	@param hardwareInterface Get all vars in this interface. If omitted or empty, all variables in all interfaces will be returned.
-	  * @param List of variable pointers.*/
+	  * @return List of variable pointers.*/
 	QList<DeviceStateVariableBase*> getVarList( const QString &hardwareInterface = QString() );
 
 	/** Register a deviceStateVariable.
@@ -60,14 +59,16 @@ public slots:
 
 private slots:
 
-	/** Handle update request from a state variable.*/
+	/** Handle update request from a state variable.
+	*	This is just a proxy slot, emit stateVariableUpdateRequest() with the sender variable object.*/
 	virtual void onUpdateRequest();
 
-	/** Rrequest to send a set command.*/
+	/** Handle send request from a state variable.
+	*	This is just a proxy slot, emit stateVariableSendRequest() with the sender variable object.*/
 	virtual void onSendRequest();
 
 private:
-	QList<DeviceStateVariableBase*>* mStateVars;
+	QList<DeviceStateVariableBase*>* mStateVars;	///< List of state variables to manage.
 
 };
 

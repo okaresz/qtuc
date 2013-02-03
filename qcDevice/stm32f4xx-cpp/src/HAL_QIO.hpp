@@ -1,8 +1,3 @@
-/** @file qGpio.hpp
-*	Convenience GPIO initialization functions.
-*	@author Károly Oláh
-*	@date 2012.04.24*/
-
 #ifndef HAL_QIO_H
 #define HAL_QIO_H
 

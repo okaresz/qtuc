@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<XMI verified="false" xmi.version="1.2" timestamp="2013-02-01T00:37:59" xmlns:UML="http://schema.omg.org/spec/UML/1.3">
+<XMI verified="false" xmi.version="1.2" timestamp="2013-02-03T01:22:11" xmlns:UML="http://schema.omg.org/spec/UML/1.3">
  <XMI.header>
   <XMI.documentation>
    <XMI.exporter>umbrello uml modeller http://uml.sf.net</XMI.exporter>
@@ -1222,8 +1222,8 @@
            <startpoint startx="1250" starty="680"/>
            <endpoint endx="1250" endy="720"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1250" showstereotype="1" y="680" text="1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="701" width="20" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="4MtlAZ8kGSR4" height="20"/>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1250" showstereotype="1" y="700" text="*" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="20" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="kpwL9UhzFXBA" height="20"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1250" showstereotype="1" y="680" text="1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="701" width="20" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="LO2JVYSH6w3D" height="20"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1250" showstereotype="1" y="700" text="*" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="20" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="ddvsdiu3y0G4" height="20"/>
          </assocwidget>
          <assocwidget indexa="1" indexb="1" usesdiagramusefillcolor="0" widgetaid="IjvfJJzfyRlr" usesdiagramfillcolor="1" fillcolor="none" linecolor="none" totalcounta="2" xmi.id="BbRRywvfTizY" widgetbid="nPbeBmJ7iyo8" totalcountb="2" type="500" textcolor="none" usefillcolor="1" linewidth="none">
           <linepath>
@@ -1236,23 +1236,23 @@
            <startpoint startx="1100" starty="440"/>
            <endpoint endx="1100" endy="480"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1100" showstereotype="1" y="460" text="1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="20" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="4W9IwYNhNH0U" height="20"/>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1000" showstereotype="1" y="460" text="stateManager" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="100" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="PTDcZudeGUPO" height="20"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1100" showstereotype="1" y="460" text="1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="20" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="AL0EF1StfNlI" height="20"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1000" showstereotype="1" y="460" text="stateManager" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="90" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="IoMwIsbcEbvj" height="20"/>
          </assocwidget>
          <assocwidget indexa="1" linecolor="none" indexb="1" usesdiagramfillcolor="1" widgetbid="4xdnw99oKr4h" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="2" totalcountb="2" widgetaid="btSy3iZfy1Re" visibilityA="1" visibilityB="1" usefillcolor="1" fillcolor="none" changeabilityA="900" xmi.id="3VAb30EwQ7Ux" changeabilityB="900" type="501">
           <linepath>
            <startpoint startx="1100" starty="200"/>
            <endpoint endx="1100" endy="270"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1100" showstereotype="1" y="250" text="1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="20" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="EnISIfqKBxc8" height="20"/>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1050" showstereotype="1" y="250" text="device" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="50" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="jhUyCd7a6KCg" height="20"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1100" showstereotype="1" y="250" text="1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="20" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="FOGTz9C7VCMi" height="20"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1050" showstereotype="1" y="250" text="device" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="50" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="4dJ0cZ4sLPoe" height="20"/>
          </assocwidget>
          <assocwidget indexa="3" linecolor="none" indexb="1" usesdiagramfillcolor="1" widgetbid="6X93OgvZN8ZN" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="4" totalcountb="3" widgetaid="4xdnw99oKr4h" visibilityA="1" visibilityB="1" usefillcolor="1" fillcolor="none" changeabilityA="900" xmi.id="cdwpEGAs2AhS" changeabilityB="900" type="510">
           <linepath>
            <startpoint startx="1450" starty="440"/>
            <endpoint endx="1550" endy="510"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1470" showstereotype="1" y="490" text="deviceLink" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="80" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="VxptCpLwVpuh" height="20"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1470" showstereotype="1" y="490" text="deviceLink" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="70" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="Bobq9L6BwPCY" height="20"/>
          </assocwidget>
          <assocwidget indexa="1" indexb="1" usesdiagramusefillcolor="1" widgetaid="VtikDODlPCuu" usesdiagramfillcolor="1" fillcolor="none" linecolor="none" totalcounta="2" xmi.id="3UIn74g81KYA" widgetbid="oocY0nRMA7se" totalcountb="2" type="500" textcolor="none" usefillcolor="1" linewidth="none">
           <linepath>
@@ -1265,29 +1265,29 @@
            <startpoint startx="940" starty="200"/>
            <endpoint endx="710" endy="270"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="690" showstereotype="1" y="250" text="gui" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="30" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="SzFXJRBVFTvV" height="20"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="690" showstereotype="1" y="250" text="gui" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="30" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="yGQIfDwuZALW" height="20"/>
          </assocwidget>
          <assocwidget indexa="1" linecolor="none" indexb="1" usesdiagramfillcolor="0" widgetbid="uKnPQoSNhKY1" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="3" totalcountb="2" widgetaid="btSy3iZfy1Re" visibilityA="1" visibilityB="1" usefillcolor="0" fillcolor="#000000" changeabilityA="900" xmi.id="3bgDfEWm9UYf" changeabilityB="900" type="501">
           <linepath>
            <startpoint startx="940" starty="140"/>
            <endpoint endx="520" endy="140"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="520" showstereotype="1" y="120" text="0..1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="30" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="0PTVFOBfLQAf" height="20"/>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="520" showstereotype="1" y="140" text="clientServer" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="80" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="8mpIjRQDND4Z" height="20"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="520" showstereotype="1" y="120" text="0..1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="30" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="Nq5KDFqAVHS9" height="20"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="520" showstereotype="1" y="140" text="clientServer" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="80" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="HXekh0Ttm2jt" height="20"/>
          </assocwidget>
          <assocwidget indexa="1" indexb="1" usesdiagramusefillcolor="0" widgetaid="uKnPQoSNhKY1" usesdiagramfillcolor="0" fillcolor="#000000" linecolor="none" totalcounta="2" xmi.id="pFDOy5gyCd6E" widgetbid="oocY0nRMA7se" totalcountb="2" type="510" textcolor="none" usefillcolor="1" linewidth="none">
           <linepath>
            <startpoint startx="270" starty="150"/>
            <endpoint endx="270" endy="200"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="270" showstereotype="1" y="180" text="*" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="20" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="qL83m4YtoNBV" height="20"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="270" showstereotype="1" y="180" text="*" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="20" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="SM11UNVls9Wa" height="20"/>
          </assocwidget>
          <assocwidget indexa="1" linecolor="none" indexb="1" usesdiagramfillcolor="0" widgetbid="dptCQDqXNMyL" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="2" totalcountb="2" widgetaid="oocY0nRMA7se" visibilityA="1" visibilityB="1" usefillcolor="0" fillcolor="#000000" changeabilityA="900" xmi.id="Mempdr3O4jXD" changeabilityB="900" type="510">
           <linepath>
            <startpoint startx="130" starty="540"/>
            <endpoint endx="130" endy="610"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="80" showstereotype="1" y="590" text="state" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="50" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="mZi7mmhmCAGP" height="20"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="80" showstereotype="1" y="590" text="state" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="40" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="7xTrzAlNyofC" height="20"/>
          </assocwidget>
          <assocwidget indexa="1" indexb="2" usesdiagramusefillcolor="0" widgetaid="5FD02zBcMwmk" usesdiagramfillcolor="0" fillcolor="#000000" linecolor="none" totalcounta="2" xmi.id="QJtM0OZYyFil" widgetbid="6X93OgvZN8ZN" totalcountb="3" type="500" textcolor="none" usefillcolor="1" linewidth="none">
           <linepath>
@@ -1300,8 +1300,8 @@
            <startpoint startx="890" starty="440"/>
            <endpoint endx="630" endy="600"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="620" showstereotype="1" y="580" text="0..1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="30" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="fCATZJxKsfRc" height="20"/>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="630" showstereotype="1" y="580" text="deviceAPI" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="70" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="WP2snDVdWdgH" height="20"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="620" showstereotype="1" y="580" text="0..1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="30" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="0fNsmrSuotlo" height="20"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="630" showstereotype="1" y="580" text="deviceAPI" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="70" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="3VMWkmdA8f9c" height="20"/>
          </assocwidget>
          <assocwidget indexa="1" indexb="1" usesdiagramusefillcolor="0" widgetaid="8RS3RcLi42gZ" usesdiagramfillcolor="0" fillcolor="#000000" linecolor="none" totalcounta="2" xmi.id="0YYMZ5sqDYt1" widgetbid="HfgKVdw5zpED" totalcountb="2" type="500" textcolor="none" usefillcolor="1" linewidth="none">
           <linepath>
@@ -1317,7 +1317,7 @@
          </assocwidget>
         </associations>
        </diagram>
-       <diagram showopsig="1" linecolor="#7b7b7b" snapx="10" showattribassocs="1" snapy="10" linewidth="0" showattsig="1" textcolor="#000000" isopen="1" showpackage="1" showpubliconly="0" showstereotype="1" name="_stateProxyVar update mechanisms" font="Ubuntu,9,-1,5,50,0,0,0,0,0" canvasheight="755" canvaswidth="1483" localid="-1" snapcsgrid="0" showgrid="0" showops="1" griddotcolor="#000000" backgroundcolor="#ffffff" usefillcolor="1" fillcolor="#e4e3f2" zoom="83" xmi.id="Ue6seCgzeDPA" documentation="" showscope="1" snapgrid="1" showatts="1" type="6">
+       <diagram showopsig="1" linecolor="#7b7b7b" snapx="10" showattribassocs="1" snapy="10" linewidth="0" showattsig="1" textcolor="#000000" isopen="1" showpackage="1" showpubliconly="0" showstereotype="1" name="_stateProxyVar update mechanisms" font="Ubuntu,9,-1,5,50,0,0,0,0,0" canvasheight="701" canvaswidth="1451" localid="-1" snapcsgrid="0" showgrid="0" showops="1" griddotcolor="#000000" backgroundcolor="#ffffff" usefillcolor="1" fillcolor="#e4e3f2" zoom="83" xmi.id="Ue6seCgzeDPA" documentation="" showscope="1" snapgrid="1" showatts="1" type="6">
         <widgets>
          <signalwidget linecolor="none" usesdiagramfillcolor="1" signaltype="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="280" showstereotype="1" y="100" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="119" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="cObG8uoukl26" signalname="setRawValue" documentation="" height="25"/>
          <signalwidget linecolor="none" usesdiagramfillcolor="1" signaltype="0" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1060" showstereotype="1" y="230" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="126" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="R5ncVvv5JWJP" signalname="valueChangedRaw" documentation="" height="25"/>
@@ -1331,7 +1331,6 @@
          <signalwidget linecolor="none" usesdiagramfillcolor="1" signaltype="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1240" showstereotype="1" y="310" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="207" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="m4572BCNN5cG" signalname="set command TO device" documentation="" height="25"/>
          <signalwidget linecolor="none" usesdiagramfillcolor="1" signaltype="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="0" showstereotype="1" y="280" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="234" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="WQ4l1F7p4SdL" signalname="set command FROM device" documentation="" height="25"/>
          <signalwidget linecolor="none" usesdiagramfillcolor="1" signaltype="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="260" showstereotype="1" y="30" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="158" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="uK2mlVrXXweZ" signalname="updateFromDevice" documentation="" height="25"/>
-         <activitywidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="500" showstereotype="1" y="30" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="124" isinstance="0" usefillcolor="1" fillcolor="none" activityname="swapRawValue" xmi.id="6owTtYiOwk9x" postcondition="" documentation="" activitytype="1" height="24" precondition=""/>
          <activitywidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="500" showstereotype="1" y="100" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="124" isinstance="0" usefillcolor="1" fillcolor="none" activityname="swapRawValue" xmi.id="Fk1hLMafMMRp" postcondition="" documentation="" activitytype="1" height="24" precondition=""/>
          <activitywidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="420" showstereotype="1" y="400" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="20" isinstance="0" usefillcolor="1" fillcolor="none" activityname="" xmi.id="DwM8bvEPpfHL" postcondition="" documentation="" activitytype="4" height="20" precondition=""/>
          <activitywidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="500" showstereotype="1" y="400" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="100" isinstance="0" usefillcolor="1" fillcolor="none" activityname="swapValue" xmi.id="LfF5mC31u4jG" postcondition="" documentation="" activitytype="1" height="24" precondition=""/>
@@ -1344,6 +1343,7 @@
          <forkjoin width="10" showstereotype="1" x="630" usesdiagramusefillcolor="1" y="390" drawvertical="1" usesdiagramfillcolor="1" isinstance="0" fillcolor="none" height="40" linecolor="#000000" xmi.id="j9s1FkAW2oOn" textcolor="#000000" usefillcolor="1" linewidth="none" font="Ubuntu,9,-1,5,50,0,0,0,0,0"/>
          <activitywidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="790" showstereotype="1" y="240" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="161" isinstance="0" usefillcolor="1" fillcolor="none" activityname="emitValueChangedRaw()" xmi.id="adbeGU8ml0FH" postcondition="" documentation="" activitytype="1" height="32" precondition=""/>
          <forkjoin width="10" showstereotype="1" x="1000" usesdiagramusefillcolor="1" y="240" drawvertical="1" usesdiagramfillcolor="1" isinstance="0" fillcolor="none" height="40" linecolor="#000000" xmi.id="Qg7ihc7OjzQx" textcolor="#000000" usefillcolor="1" linewidth="none" font="Ubuntu,9,-1,5,50,0,0,0,0,0"/>
+         <forkjoin width="10" showstereotype="1" x="560" usesdiagramusefillcolor="1" y="20" drawvertical="1" usesdiagramfillcolor="1" isinstance="0" fillcolor="none" height="40" linecolor="#000000" xmi.id="RY12xv1yZV7b" textcolor="#000000" usefillcolor="1" linewidth="none" font="Ubuntu,9,-1,5,50,0,0,0,0,0"/>
         </widgets>
         <messages/>
         <associations>
@@ -1383,24 +1383,6 @@
            <endpoint endx="440" endy="30"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="6owTtYiOwk9x" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="2" totalcountb="2" widgetaid="RHtnbKdmHxuq" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
-          <linepath>
-           <startpoint startx="460" starty="30"/>
-           <endpoint endx="500" endy="30"/>
-          </linepath>
-         </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="ViURTaZtdKV6" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="2" totalcountb="2" widgetaid="6owTtYiOwk9x" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="1" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
-          <linepath>
-           <startpoint startx="620" starty="50"/>
-           <endpoint endx="700" endy="100"/>
-          </linepath>
-         </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="r6DgkU257HBu" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="2" totalcountb="2" widgetaid="6owTtYiOwk9x" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
-          <linepath>
-           <startpoint startx="620" starty="40"/>
-           <endpoint endx="810" endy="40"/>
-          </linepath>
-         </assocwidget>
          <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="uK2mlVrXXweZ" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="2" totalcountb="2" widgetaid="WQ4l1F7p4SdL" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="1" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
            <startpoint startx="230" starty="280"/>
@@ -1419,64 +1401,82 @@
            <endpoint endx="700" endy="110"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="XGuTYSSpI1VO" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="22" totalcounta="2" totalcountb="2" widgetaid="ViURTaZtdKV6" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="187" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="XGuTYSSpI1VO" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="2" totalcountb="2" widgetaid="ViURTaZtdKV6" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="1" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
            <startpoint startx="790" starty="120"/>
            <endpoint endx="790" endy="160"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="j9s1FkAW2oOn" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="22" totalcounta="2" totalcountb="2" widgetaid="LfF5mC31u4jG" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="187" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="j9s1FkAW2oOn" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="2" totalcountb="2" widgetaid="LfF5mC31u4jG" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="1" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
            <startpoint startx="600" starty="400"/>
            <endpoint endx="630" endy="400"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="2" usesdiagramfillcolor="0" widgetbid="NCvFtRonFdDO" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="22" totalcounta="3" totalcountb="2" widgetaid="j9s1FkAW2oOn" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="187" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="2" usesdiagramfillcolor="0" widgetbid="NCvFtRonFdDO" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="3" totalcountb="2" widgetaid="j9s1FkAW2oOn" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="1" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
            <startpoint startx="640" starty="400"/>
            <endpoint endx="670" endy="400"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="XGuTYSSpI1VO" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="7" totalcounta="3" totalcountb="2" widgetaid="j9s1FkAW2oOn" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="187" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="XGuTYSSpI1VO" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="3" totalcountb="2" widgetaid="j9s1FkAW2oOn" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="1" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
            <startpoint startx="640" starty="390"/>
            <endpoint endx="790" endy="190"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="DOBXsTuHaAOR" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="173" totalcounta="2" totalcountb="2" widgetaid="XGuTYSSpI1VO" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="124" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="DOBXsTuHaAOR" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="2" totalcountb="2" widgetaid="XGuTYSSpI1VO" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="1" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
            <startpoint startx="930" starty="170"/>
            <endpoint endx="1050" endy="170"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="2" usesdiagramfillcolor="0" widgetbid="adbeGU8ml0FH" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="152" totalcounta="3" totalcountb="2" widgetaid="1lhSNvDzEfbM" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="134" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="2" usesdiagramfillcolor="0" widgetbid="adbeGU8ml0FH" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="3" totalcountb="2" widgetaid="1lhSNvDzEfbM" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="1" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
            <startpoint startx="660" starty="140"/>
            <endpoint endx="790" endy="240"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="adbeGU8ml0FH" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="135" totalcounta="2" totalcountb="2" widgetaid="NCvFtRonFdDO" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="118" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="adbeGU8ml0FH" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="2" totalcountb="2" widgetaid="NCvFtRonFdDO" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="1" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
            <startpoint startx="810" starty="400"/>
            <endpoint endx="810" endy="270"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="Qg7ihc7OjzQx" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="144" totalcounta="2" totalcountb="2" widgetaid="adbeGU8ml0FH" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="Qg7ihc7OjzQx" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="2" totalcountb="2" widgetaid="adbeGU8ml0FH" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
            <startpoint startx="950" starty="240"/>
            <endpoint endx="1000" endy="240"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="R5ncVvv5JWJP" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="32" totalcounta="3" totalcountb="2" widgetaid="Qg7ihc7OjzQx" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="R5ncVvv5JWJP" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="3" totalcountb="2" widgetaid="Qg7ihc7OjzQx" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
            <startpoint startx="1010" starty="240"/>
            <endpoint endx="1060" endy="240"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="2" usesdiagramfillcolor="0" widgetbid="xOvQoXnj4PDk" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="176" totalcounta="3" totalcountb="2" widgetaid="Qg7ihc7OjzQx" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="2" usesdiagramfillcolor="0" widgetbid="xOvQoXnj4PDk" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="3" totalcountb="2" widgetaid="Qg7ihc7OjzQx" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
            <startpoint startx="1010" starty="280"/>
            <endpoint endx="1060" endy="290"/>
+          </linepath>
+         </assocwidget>
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="r6DgkU257HBu" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="240" totalcounta="3" totalcountb="2" widgetaid="RY12xv1yZV7b" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+          <linepath>
+           <startpoint startx="570" starty="50"/>
+           <endpoint endx="810" endy="50"/>
+          </linepath>
+         </assocwidget>
+         <assocwidget roleBdoc="" linecolor="none" indexa="2" usesdiagramfillcolor="0" widgetbid="ViURTaZtdKV6" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="61" totalcounta="3" totalcountb="2" widgetaid="RY12xv1yZV7b" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="44" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+          <linepath>
+           <startpoint startx="570" starty="60"/>
+           <endpoint endx="700" endy="100"/>
+          </linepath>
+         </assocwidget>
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="RY12xv1yZV7b" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="61" totalcounta="2" totalcountb="2" widgetaid="RHtnbKdmHxuq" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="44" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+          <linepath>
+           <startpoint startx="460" starty="40"/>
+           <endpoint endx="560" endy="40"/>
           </linepath>
          </assocwidget>
         </associations>
@@ -1504,8 +1504,8 @@
            <startpoint startx="1638" starty="256"/>
            <endpoint endx="1638" endy="355"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1640" showstereotype="1" y="258" text="1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="701" width="15" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="Q6OcHczl11bp" height="18"/>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1640" showstereotype="1" y="335" text="*" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="14" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="C6Qhi5yLH8pr" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1640" showstereotype="1" y="258" text="1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="701" width="15" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="4U90GmCJHWo0" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1640" showstereotype="1" y="335" text="*" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="14" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="IRAQ6K04xMxj" height="18"/>
          </assocwidget>
          <assocwidget indexa="1" indexb="1" usesdiagramusefillcolor="0" widgetaid="1Pqq8Tc4FTwB" usesdiagramfillcolor="0" fillcolor="#000000" linecolor="none" totalcounta="2" xmi.id="n4KEpycEZgcj" widgetbid="KTCilmAri1aK" totalcountb="2" type="500" textcolor="none" usefillcolor="0" linewidth="none">
           <linepath>
@@ -1518,7 +1518,7 @@
            <startpoint startx="2366" starty="278"/>
            <endpoint endx="2366" endy="207"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="2328" showstereotype="1" y="209" text="class" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="39" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="Pm9HPatpfFPu" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="2328" showstereotype="1" y="209" text="class" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="38" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="BNd0FNmJrtH8" height="18"/>
          </assocwidget>
          <assocwidget indexa="1" indexb="1" usesdiagramusefillcolor="0" widgetaid="1Pqq8Tc4FTwB" usesdiagramfillcolor="0" fillcolor="#000000" linecolor="none" totalcounta="2" xmi.id="1Ccsj3PbwRLX" widgetbid="ole7rUGDYXYF" totalcountb="2" type="500" textcolor="none" usefillcolor="1" linewidth="none">
           <linepath>
@@ -1531,15 +1531,15 @@
            <startpoint startx="2587" starty="502"/>
            <endpoint endx="2587" endy="565"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="2581" showstereotype="1" y="565" text="*" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="14" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="sMftMHgYL7F1" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="2581" showstereotype="1" y="565" text="*" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="14" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="fUPwyDuHf5fj" height="18"/>
          </assocwidget>
          <assocwidget indexa="1" linecolor="none" indexb="1" usesdiagramfillcolor="0" widgetbid="wSpbpGqymEza" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="3" totalcountb="3" widgetaid="ole7rUGDYXYF" visibilityA="1" visibilityB="1" usefillcolor="0" fillcolor="#000000" changeabilityA="900" xmi.id="ilmfVOTM4shG" changeabilityB="900" type="501">
           <linepath>
            <startpoint startx="2337" starty="565"/>
            <endpoint endx="2337" endy="207"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="2421" showstereotype="1" y="430" text="0..1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="28" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="yo7d2WXurClD" height="18"/>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="2381" showstereotype="1" y="430" text="class" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="39" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="ADNRJCGgwPxJ" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="2421" showstereotype="1" y="430" text="0..1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="28" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="2vcrouxTMNOK" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="2381" showstereotype="1" y="430" text="class" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="38" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="NgoK0j3B6f9L" height="18"/>
          </assocwidget>
          <assocwidget indexa="1" linecolor="none" indexb="0" usesdiagramfillcolor="0" widgetbid="eOB8KYDALIZM" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="2" totalcountb="0" widgetaid="eOB8KYDALIZM" visibilityA="1" visibilityB="1" usefillcolor="1" fillcolor="#000000" changeabilityA="900" xmi.id="vjTU3rIapL6b" changeabilityB="900" type="501">
           <linepath>
@@ -1548,15 +1548,15 @@
            <point x="823" y="888"/>
            <point x="1006" y="888"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1008" showstereotype="1" y="918" text="0..1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="28" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="JN8Fm4XkqeLs" height="18"/>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="929" showstereotype="1" y="918" text="instancePtr" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="77" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="RQllVzmfA96S" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1008" showstereotype="1" y="918" text="0..1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="28" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="S22WhCqh5QWs" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="929" showstereotype="1" y="918" text="instancePtr" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="75" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="YIZDLFvgtj0r" height="18"/>
          </assocwidget>
          <assocwidget indexa="1" linecolor="none" indexb="1" usesdiagramfillcolor="0" widgetbid="dptCQDqXNMyL" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="2" totalcountb="2" widgetaid="oocY0nRMA7se" visibilityA="1" visibilityB="1" usefillcolor="0" fillcolor="#000000" changeabilityA="900" xmi.id="Mempdr3O4jXD" changeabilityB="900" type="510">
           <linepath>
            <startpoint startx="506" starty="421"/>
            <endpoint endx="506" endy="468"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="465" showstereotype="1" y="448" text="state" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="41" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="8skz3WCSuwDP" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="465" showstereotype="1" y="448" text="state" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="40" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="IUJcrfvPyUbH" height="18"/>
          </assocwidget>
          <assocwidget indexa="1" indexb="1" usesdiagramusefillcolor="0" widgetaid="GOgEhgRB6oX1" usesdiagramfillcolor="0" fillcolor="#000000" linecolor="none" totalcounta="2" xmi.id="e153kgLRKq8I" widgetbid="NKZubF5wx2Zy" totalcountb="2" type="500" textcolor="none" usefillcolor="1" linewidth="none">
           <linepath>
@@ -1587,8 +1587,8 @@
            <startpoint startx="340" starty="914"/>
            <endpoint endx="340" endy="944"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="342" showstereotype="1" y="916" text="1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="701" width="15" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="v04398VTVcgG" height="18"/>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="342" showstereotype="1" y="924" text="*" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="14" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="gDyWrKNyA7xD" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="342" showstereotype="1" y="916" text="1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="701" width="15" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="jWyaDwRdyS7d" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="342" showstereotype="1" y="924" text="*" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="14" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="cxIhMpZcJrF8" height="18"/>
          </assocwidget>
          <assocwidget indexa="1" indexb="1" usesdiagramusefillcolor="0" widgetaid="mXMMP6j76fH8" usesdiagramfillcolor="0" fillcolor="#000000" linecolor="none" totalcounta="3" xmi.id="xMwHglusLM0t" widgetbid="ole7rUGDYXYF" totalcountb="3" type="502" textcolor="none" usefillcolor="0" linewidth="none">
           <linepath>
@@ -1601,7 +1601,7 @@
            <startpoint startx="1877" starty="666"/>
            <endpoint endx="1877" endy="776"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1879" showstereotype="1" y="756" text="*" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="14" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="b8gV4tsxtw01" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1879" showstereotype="1" y="756" text="*" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="14" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="WAVSc6kMagun" height="18"/>
          </assocwidget>
          <assocwidget indexa="1" indexb="1" usesdiagramusefillcolor="0" widgetaid="1Pqq8Tc4FTwB" usesdiagramfillcolor="0" fillcolor="#000000" linecolor="none" totalcounta="2" xmi.id="n4KEpycEZgcj" widgetbid="KTCilmAri1aK" totalcountb="2" type="500" textcolor="none" usefillcolor="0" linewidth="none">
           <linepath>
@@ -1632,66 +1632,88 @@
            <startpoint startx="846" starty="271"/>
            <endpoint endx="464" endy="602"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="435" showstereotype="1" y="578" text="0..1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="28" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="3b9Dj7RIF5oH" height="18"/>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="462" showstereotype="1" y="582" text="mProxyStateManager" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="135" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="3UUY6AokMlEB" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="435" showstereotype="1" y="578" text="0..1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="28" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="IdObUdh0lCRN" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="462" showstereotype="1" y="582" text="mProxyStateManager" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="133" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="cKOZmWCORT3n" height="18"/>
          </assocwidget>
          <assocwidget indexa="1" linecolor="none" indexb="2" usesdiagramfillcolor="0" widgetbid="eT9zOKzhB6Wb" linewidth="none" textcolor="none" usesdiagramusefillcolor="0" totalcounta="2" totalcountb="3" widgetaid="9QuoV1c2ptND" visibilityA="1" visibilityB="1" usefillcolor="0" fillcolor="#000000" changeabilityA="900" xmi.id="XIHx15uXGZm1" changeabilityB="900" type="501">
           <linepath>
            <startpoint startx="1110" starty="271"/>
            <endpoint endx="1460" endy="331"/>
           </linepath>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1446" showstereotype="1" y="310" text="0..1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="28" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="PxUlijxlI6wz" height="18"/>
-          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1387" showstereotype="1" y="311" text="mProxyLink" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="78" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="weEobCpegHAk" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1446" showstereotype="1" y="310" text="0..1" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="702" width="28" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="VB2xe5iwg6V8" height="18"/>
+          <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" x="1387" showstereotype="1" y="311" text="mProxyLink" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="-" role="710" width="77" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="HBhprabRuz0g" height="18"/>
          </assocwidget>
         </associations>
        </diagram>
-       <diagram showopsig="1" linecolor="#7b7b7b" snapx="10" showattribassocs="1" snapy="10" linewidth="0" showattsig="1" textcolor="#000000" isopen="1" showpackage="1" showpubliconly="0" showstereotype="1" name="_stateVarBase update mechanisms" font="Ubuntu,9,-1,5,50,0,0,0,0,0" canvasheight="642" canvaswidth="1226" localid="-1" snapcsgrid="0" showgrid="0" showops="1" griddotcolor="#808080" backgroundcolor="#ffffff" usefillcolor="1" fillcolor="#e4e3f2" zoom="100" xmi.id="LIOQ4fNirBH4" documentation="" showscope="1" snapgrid="0" showatts="1" type="6">
+       <diagram showopsig="1" linecolor="#7b7b7b" snapx="10" showattribassocs="1" snapy="10" linewidth="0" showattsig="1" textcolor="#000000" isopen="1" showpackage="1" showpubliconly="0" showstereotype="1" name="_stateVarBase update mechanisms" font="Ubuntu,9,-1,5,50,0,0,0,0,0" canvasheight="597" canvaswidth="958" localid="-1" snapcsgrid="0" showgrid="0" showops="1" griddotcolor="#808080" backgroundcolor="#ffffff" usefillcolor="1" fillcolor="#e4e3f2" zoom="100" xmi.id="LIOQ4fNirBH4" documentation="" showscope="1" snapgrid="0" showatts="1" type="6">
         <widgets>
-         <signalwidget linecolor="none" usesdiagramfillcolor="1" signaltype="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="131" showstereotype="1" y="339" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="91" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="ytiF2TezvOfc" signalname="setValue" documentation="" height="32"/>
-         <activitywidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="296" showstereotype="1" y="341" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="32" isinstance="0" usefillcolor="1" fillcolor="none" activityname="" xmi.id="LOvPIubeAz4C" postcondition="" documentation="" activitytype="4" height="32" precondition=""/>
-         <activitywidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="389" showstereotype="1" y="345" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="91" isinstance="0" usefillcolor="1" fillcolor="none" activityname="swapValue()" xmi.id="dPvUaAWW2Fl4" postcondition="" documentation="" activitytype="1" height="32" precondition=""/>
-         <signalwidget linecolor="none" usesdiagramfillcolor="1" signaltype="0" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="774" showstereotype="1" y="374" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="94" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="gO1bmeE507UI" signalname="valueChanged" documentation="" height="32"/>
-         <signalwidget linecolor="none" usesdiagramfillcolor="1" signaltype="0" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="769" showstereotype="1" y="286" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="57" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="z3wA11MeQF6z" signalname="sendMe" documentation="" height="32"/>
-         <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="277" showstereotype="1" y="306" text="old &lt;> new" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="700" width="70" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="5JQ5QuNQyKYz" height="18"/>
-         <activitywidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="534" showstereotype="1" y="343" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="137" isinstance="0" usefillcolor="1" fillcolor="none" activityname="emitValueChanged()" xmi.id="Jsbh8heUI6sA" postcondition="" documentation="" activitytype="1" height="32" precondition=""/>
-         <forkjoin width="10" showstereotype="1" x="713" usesdiagramusefillcolor="1" y="333" drawvertical="1" usesdiagramfillcolor="1" isinstance="0" fillcolor="none" height="40" linecolor="#000000" xmi.id="JKgulmFq5fvU" textcolor="#000000" usefillcolor="1" linewidth="none" font="Ubuntu,9,-1,5,50,0,0,0,0,0"/>
+         <signalwidget linecolor="none" usesdiagramfillcolor="1" signaltype="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="92" showstereotype="1" y="181" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="91" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="ytiF2TezvOfc" signalname="setValue" documentation="" height="32"/>
+         <activitywidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="257" showstereotype="1" y="183" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="32" isinstance="0" usefillcolor="1" fillcolor="none" activityname="" xmi.id="LOvPIubeAz4C" postcondition="" documentation="set command FROM device" activitytype="4" height="32" precondition=""/>
+         <activitywidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="350" showstereotype="1" y="187" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="91" isinstance="0" usefillcolor="1" fillcolor="none" activityname="swapValue()" xmi.id="dPvUaAWW2Fl4" postcondition="" documentation="" activitytype="1" height="32" precondition=""/>
+         <signalwidget linecolor="none" usesdiagramfillcolor="1" signaltype="0" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="740" showstereotype="1" y="244" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="94" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="gO1bmeE507UI" signalname="valueChanged" documentation="" height="32"/>
+         <signalwidget linecolor="none" usesdiagramfillcolor="1" signaltype="0" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="742" showstereotype="1" y="130" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="57" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="z3wA11MeQF6z" signalname="sendMe" documentation="" height="32"/>
+         <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="238" showstereotype="1" y="148" text="old &lt;> new" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="700" width="70" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="5JQ5QuNQyKYz" height="18"/>
+         <activitywidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="546" showstereotype="1" y="240" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="137" isinstance="0" usefillcolor="1" fillcolor="none" activityname="emitValueChanged()" xmi.id="Jsbh8heUI6sA" postcondition="" documentation="" activitytype="1" height="32" precondition=""/>
+         <forkjoin width="10" showstereotype="1" x="490" usesdiagramusefillcolor="1" y="182" drawvertical="1" usesdiagramfillcolor="1" isinstance="0" fillcolor="none" height="40" linecolor="#000000" xmi.id="JKgulmFq5fvU" textcolor="#000000" usefillcolor="1" linewidth="none" font="Ubuntu,9,-1,5,50,0,0,0,0,0"/>
+         <signalwidget linecolor="none" usesdiagramfillcolor="1" signaltype="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="14" showstereotype="1" y="274" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="167" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="WbKWdHRcDz5K" signalname="updateFromSource()" documentation="" height="32"/>
+         <activitywidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="264" showstereotype="1" y="276" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="32" isinstance="0" usefillcolor="1" fillcolor="none" activityname="" xmi.id="YV3DeiXpozh4" postcondition="" documentation="" activitytype="4" height="32" precondition=""/>
+         <floatingtext linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="251" showstereotype="1" y="259" text="old &lt;> new" font="Ubuntu,9,-1,5,50,0,0,0,0,0" pretext="" role="700" width="69" isinstance="0" posttext="" usefillcolor="1" fillcolor="none" xmi.id="Y0fd3rRYSj43" height="18"/>
+         <activitywidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" textcolor="#000000" usesdiagramusefillcolor="1" x="362" showstereotype="1" y="280" font="Ubuntu,9,-1,5,50,0,0,0,0,0" width="101" isinstance="0" usefillcolor="1" fillcolor="none" activityname="(change value)" xmi.id="0TdCSjW1EaCq" postcondition="" documentation="" activitytype="1" height="32" precondition=""/>
         </widgets>
         <messages/>
         <associations>
-         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="LOvPIubeAz4C" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="224" totalcounta="2" totalcountb="2" widgetaid="ytiF2TezvOfc" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="LOvPIubeAz4C" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="2" totalcountb="2" widgetaid="ytiF2TezvOfc" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
-           <startpoint startx="222" starty="341"/>
-           <endpoint endx="296" endy="341"/>
+           <startpoint startx="183" starty="199"/>
+           <endpoint endx="257" endy="199"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="dPvUaAWW2Fl4" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="160" totalcounta="2" totalcountb="2" widgetaid="LOvPIubeAz4C" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="dPvUaAWW2Fl4" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="1" totalcounta="2" totalcountb="2" widgetaid="LOvPIubeAz4C" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
-           <startpoint startx="328" starty="345"/>
-           <endpoint endx="389" endy="345"/>
+           <startpoint startx="289" starty="201"/>
+           <endpoint endx="350" endy="201"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="Jsbh8heUI6sA" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="32" totalcounta="2" totalcountb="2" widgetaid="dPvUaAWW2Fl4" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="JKgulmFq5fvU" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="208" totalcounta="2" totalcountb="2" widgetaid="dPvUaAWW2Fl4" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
-           <startpoint startx="480" starty="345"/>
-           <endpoint endx="534" endy="345"/>
+           <startpoint startx="441" starty="187"/>
+           <endpoint endx="490" endy="187"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="JKgulmFq5fvU" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="32" totalcounta="2" totalcountb="2" widgetaid="Jsbh8heUI6sA" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="2" usesdiagramfillcolor="0" widgetbid="Jsbh8heUI6sA" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="193" totalcounta="3" totalcountb="2" widgetaid="JKgulmFq5fvU" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="147" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
-           <startpoint startx="671" starty="343"/>
-           <endpoint endx="713" endy="343"/>
+           <startpoint startx="500" starty="222"/>
+           <endpoint endx="546" endy="240"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="z3wA11MeQF6z" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="112" totalcounta="3" totalcountb="2" widgetaid="JKgulmFq5fvU" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="gO1bmeE507UI" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="193" totalcounta="2" totalcountb="2" widgetaid="Jsbh8heUI6sA" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="147" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
-           <startpoint startx="723" starty="333"/>
-           <endpoint endx="769" endy="318"/>
+           <startpoint startx="683" starty="260"/>
+           <endpoint endx="740" endy="260"/>
           </linepath>
          </assocwidget>
-         <assocwidget roleBdoc="" linecolor="none" indexa="2" usesdiagramfillcolor="0" widgetbid="gO1bmeE507UI" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="112" totalcounta="3" totalcountb="2" widgetaid="JKgulmFq5fvU" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="0" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="z3wA11MeQF6z" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="227" totalcounta="3" totalcountb="2" widgetaid="JKgulmFq5fvU" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="141" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
           <linepath>
-           <startpoint startx="723" starty="373"/>
-           <endpoint endx="774" endy="374"/>
+           <startpoint startx="500" starty="182"/>
+           <endpoint endx="742" endy="162"/>
+          </linepath>
+         </assocwidget>
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="YV3DeiXpozh4" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="11" totalcounta="2" totalcountb="2" widgetaid="WbKWdHRcDz5K" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="24" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+          <linepath>
+           <startpoint startx="181" starty="276"/>
+           <endpoint endx="264" endy="276"/>
+          </linepath>
+         </assocwidget>
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="0TdCSjW1EaCq" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="11" totalcounta="2" totalcountb="2" widgetaid="YV3DeiXpozh4" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="24" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+          <linepath>
+           <startpoint startx="296" starty="280"/>
+           <endpoint endx="362" endy="280"/>
+          </linepath>
+         </assocwidget>
+         <assocwidget roleBdoc="" linecolor="none" indexa="1" usesdiagramfillcolor="0" widgetbid="Jsbh8heUI6sA" indexb="1" linewidth="none" textcolor="none" usesdiagramusefillcolor="48" totalcounta="2" totalcountb="2" widgetaid="0TdCSjW1EaCq" roleAdoc="" visibilityA="0" visibilityB="0" usefillcolor="236" fillcolor="#000000" changeabilityA="900" changeabilityB="900" documentation="" type="515">
+          <linepath>
+           <startpoint startx="463" starty="280"/>
+           <endpoint endx="546" endy="272"/>
           </linepath>
          </assocwidget>
         </associations>
@@ -1715,7 +1737,7 @@
   </UML:Model>
  </XMI.content>
  <XMI.extensions xmi.extender="umbrello">
-  <docsettings viewid="Ue6seCgzeDPA" uniqueid="Qg7ihc7OjzQx" documentation=""/>
+  <docsettings viewid="LIOQ4fNirBH4" uniqueid="0TdCSjW1EaCq" documentation=""/>
   <listview>
    <listitem open="1" type="800" id="Views">
     <listitem open="1" type="821" id="Component View"/>
@@ -2465,11 +2487,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="zooSShfLqZRZ" writeOutMethods="false" initialValue="">
+      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="zooSShfLqZRZ" writeOutMethods="false" initialValue="">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="0" tag="" parent_id="zooSShfLqZRZ" writeOutText="false" indentLevel="1" text="public commandType ;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="0" tag="" parent_id="zooSShfLqZRZ" writeOutText="false" indentLevel="1" text="public Device ;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -2500,11 +2522,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="NW8Dc3rgWxai" writeOutMethods="false" initialValue="">
+      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="NW8Dc3rgWxai" writeOutMethods="false" initialValue="">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="0" tag="" parent_id="NW8Dc3rgWxai" writeOutText="false" indentLevel="1" text="public Device ;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="0" tag="" parent_id="NW8Dc3rgWxai" writeOutText="false" indentLevel="1" text="public connectionState ;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -2763,11 +2785,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="1" listClassName="" field_type="3" parent_id="7bWmcCs1B6UE" writeOutMethods="false" initialValue=" new vector( )">
+      <codeclassfield role_id="0" listClassName="" field_type="3" parent_id="7bWmcCs1B6UE" writeOutMethods="false" initialValue="">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="0" tag="" parent_id="7bWmcCs1B6UE" writeOutText="false" indentLevel="1" text="public  Vector =  new vector( );" canDelete="false">
+       <ccfdeclarationcodeblock role_id="0" tag="" parent_id="7bWmcCs1B6UE" writeOutText="false" indentLevel="1" text="public StateManagerBase ;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -3532,11 +3554,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="bejZULd8bjsI" writeOutMethods="false" initialValue="">
+      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="bejZULd8bjsI" writeOutMethods="false" initialValue="">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="0" tag="" parent_id="bejZULd8bjsI" writeOutText="false" indentLevel="1" text="public ClientConnectionManagerBase ;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="0" tag="" parent_id="bejZULd8bjsI" writeOutText="false" indentLevel="1" text="public ConnectionServer ;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -3567,11 +3589,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="pFDOy5gyCd6E" writeOutMethods="false" initialValue=" new vector( )">
+      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="pFDOy5gyCd6E" writeOutMethods="false" initialValue="">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="1" tag="" parent_id="pFDOy5gyCd6E" writeOutText="false" indentLevel="1" text="public  Vector =  new vector( );" canDelete="false">
+       <ccfdeclarationcodeblock role_id="1" tag="" parent_id="pFDOy5gyCd6E" writeOutText="false" indentLevel="1" text="public ConnectionServer ;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -4153,11 +4175,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="WFxSeGxUHqVz" writeOutMethods="false" initialValue=" new vector( )">
+      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="WFxSeGxUHqVz" writeOutMethods="false" initialValue="">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="0" tag="" parent_id="WFxSeGxUHqVz" writeOutText="false" indentLevel="1" text="public  Vector =  new vector( );" canDelete="false">
+       <ccfdeclarationcodeblock role_id="0" tag="" parent_id="WFxSeGxUHqVz" writeOutText="false" indentLevel="1" text="public ClientPacket ;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -4401,11 +4423,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="WFxSeGxUHqVz" writeOutMethods="false" initialValue="">
+      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="WFxSeGxUHqVz" writeOutMethods="false" initialValue=" new vector( )">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="1" tag="" parent_id="WFxSeGxUHqVz" writeOutText="false" indentLevel="1" text="public ClientPacket ;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="1" tag="" parent_id="WFxSeGxUHqVz" writeOutText="false" indentLevel="1" text="public  Vector =  new vector( );" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -5185,11 +5207,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="0" listClassName="" field_type="3" parent_id="7bWmcCs1B6UE" writeOutMethods="false" initialValue="">
+      <codeclassfield role_id="1" listClassName="" field_type="3" parent_id="7bWmcCs1B6UE" writeOutMethods="false" initialValue=" new vector( )">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="1" tag="" parent_id="7bWmcCs1B6UE" writeOutText="false" indentLevel="1" text="public StateManagerBase ;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="1" tag="" parent_id="7bWmcCs1B6UE" writeOutText="false" indentLevel="1" text="public  Vector =  new vector( );" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -5823,11 +5845,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="bejZULd8bjsI" writeOutMethods="false" initialValue="">
+      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="bejZULd8bjsI" writeOutMethods="false" initialValue="">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="1" tag="" parent_id="bejZULd8bjsI" writeOutText="false" indentLevel="1" text="public ConnectionServer ;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="1" tag="" parent_id="bejZULd8bjsI" writeOutText="false" indentLevel="1" text="public ClientConnectionManagerBase ;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -5858,11 +5880,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="pFDOy5gyCd6E" writeOutMethods="false" initialValue="">
+      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="pFDOy5gyCd6E" writeOutMethods="false" initialValue=" new vector( )">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="0" tag="" parent_id="pFDOy5gyCd6E" writeOutText="false" indentLevel="1" text="public ConnectionServer ;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="0" tag="" parent_id="pFDOy5gyCd6E" writeOutText="false" indentLevel="1" text="public  Vector =  new vector( );" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -6979,11 +7001,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="zooSShfLqZRZ" writeOutMethods="false" initialValue="">
+      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="zooSShfLqZRZ" writeOutMethods="false" initialValue="">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="0" tag="tblock_0" parent_id="zooSShfLqZRZ" writeOutText="false" indentLevel="1" text=" commandType ;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="0" tag="tblock_0" parent_id="zooSShfLqZRZ" writeOutText="false" indentLevel="1" text=" Device ;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -7014,11 +7036,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="NW8Dc3rgWxai" writeOutMethods="false" initialValue="">
+      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="NW8Dc3rgWxai" writeOutMethods="false" initialValue="">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="0" tag="_0" parent_id="NW8Dc3rgWxai" writeOutText="false" indentLevel="1" text=" Device ;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="0" tag="_0" parent_id="NW8Dc3rgWxai" writeOutText="false" indentLevel="1" text=" connectionState ;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -7310,11 +7332,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="1" listClassName="" field_type="3" parent_id="7bWmcCs1B6UE" writeOutMethods="false" initialValue=" new vector( )">
+      <codeclassfield role_id="0" listClassName="" field_type="3" parent_id="7bWmcCs1B6UE" writeOutMethods="false" initialValue="">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="0" tag="tblock_0" parent_id="7bWmcCs1B6UE" writeOutText="false" indentLevel="1" text=" vector Vector;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="0" tag="tblock_0" parent_id="7bWmcCs1B6UE" writeOutText="false" indentLevel="1" text=" StateManagerBase ;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -7828,11 +7850,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="bejZULd8bjsI" writeOutMethods="false" initialValue="">
+      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="bejZULd8bjsI" writeOutMethods="false" initialValue="">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="0" tag="tblock_0" parent_id="bejZULd8bjsI" writeOutText="false" indentLevel="1" text=" ClientConnectionManagerBase ;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="0" tag="tblock_0" parent_id="bejZULd8bjsI" writeOutText="false" indentLevel="1" text=" ConnectionServer ;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -7863,11 +7885,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="pFDOy5gyCd6E" writeOutMethods="false" initialValue=" new vector( )">
+      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="pFDOy5gyCd6E" writeOutMethods="false" initialValue="">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="1" tag="_0" parent_id="pFDOy5gyCd6E" writeOutText="false" indentLevel="1" text=" vector Vector;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="1" tag="_0" parent_id="pFDOy5gyCd6E" writeOutText="false" indentLevel="1" text=" ConnectionServer ;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -8280,11 +8302,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="WFxSeGxUHqVz" writeOutMethods="false" initialValue=" new vector( )">
+      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="WFxSeGxUHqVz" writeOutMethods="false" initialValue="">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="0" tag="tblock_0" parent_id="WFxSeGxUHqVz" writeOutText="false" indentLevel="1" text=" vector Vector;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="0" tag="tblock_0" parent_id="WFxSeGxUHqVz" writeOutText="false" indentLevel="1" text=" ClientPacket ;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -8516,11 +8538,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="WFxSeGxUHqVz" writeOutMethods="false" initialValue="">
+      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="WFxSeGxUHqVz" writeOutMethods="false" initialValue=" new vector( )">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="1" tag="tblock_0" parent_id="WFxSeGxUHqVz" writeOutText="false" indentLevel="1" text=" ClientPacket ;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="1" tag="tblock_0" parent_id="WFxSeGxUHqVz" writeOutText="false" indentLevel="1" text=" vector Vector;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -9012,11 +9034,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="0" listClassName="" field_type="3" parent_id="7bWmcCs1B6UE" writeOutMethods="false" initialValue="">
+      <codeclassfield role_id="1" listClassName="" field_type="3" parent_id="7bWmcCs1B6UE" writeOutMethods="false" initialValue=" new vector( )">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="1" tag="tblock_0" parent_id="7bWmcCs1B6UE" writeOutText="false" indentLevel="1" text=" StateManagerBase ;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="1" tag="tblock_0" parent_id="7bWmcCs1B6UE" writeOutText="false" indentLevel="1" text=" vector Vector;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -9709,11 +9731,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="bejZULd8bjsI" writeOutMethods="false" initialValue="">
+      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="bejZULd8bjsI" writeOutMethods="false" initialValue="">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="1" tag="tblock_0" parent_id="bejZULd8bjsI" writeOutText="false" indentLevel="1" text=" ConnectionServer ;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="1" tag="tblock_0" parent_id="bejZULd8bjsI" writeOutText="false" indentLevel="1" text=" ClientConnectionManagerBase ;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>
@@ -9744,11 +9766,11 @@
         </header>
        </codeaccessormethod>
       </codeclassfield>
-      <codeclassfield role_id="0" listClassName="" field_type="4" parent_id="pFDOy5gyCd6E" writeOutMethods="false" initialValue="">
+      <codeclassfield role_id="1" listClassName="" field_type="4" parent_id="pFDOy5gyCd6E" writeOutMethods="false" initialValue=" new vector( )">
        <header>
         <cppcodedocumentation tag=""/>
        </header>
-       <ccfdeclarationcodeblock role_id="0" tag="_0" parent_id="pFDOy5gyCd6E" writeOutText="false" indentLevel="1" text=" ConnectionServer ;" canDelete="false">
+       <ccfdeclarationcodeblock role_id="0" tag="_0" parent_id="pFDOy5gyCd6E" writeOutText="false" indentLevel="1" text=" vector Vector;" canDelete="false">
         <header>
          <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
         </header>

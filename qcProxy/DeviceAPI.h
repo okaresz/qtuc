@@ -11,28 +11,30 @@ namespace QtuC
 {
 
 /** DeviceAPI class.
- * Acts as an interface to the various device variables, functions, states, communication, etc...*/
+ * Acts as an interface to the various device variables, device functions, states, communication, etc...
+ * and manage all the device-related objects.*/
 class DeviceAPI : public ErrorHandlerBase
 {
 	Q_OBJECT
 public:
+
 	/** Constructor.
-	 *	@param apiDefString API definition string.*/
+	*	Creates the device API object.*/
 	DeviceAPI( QObject *parent = 0 );
 
 	/** Call a device function.
 	 *	@param hwInterface The hardvare interface.
 	 *	@param function Name of the function.
 	 *	@param arg Argument(s) for the function.
-	 *	@return Returns true if function is successfully called, false otherwise.*/
+	 *	@return Returns true if function is successfully called (the command is sent at least..), false otherwise.*/
 	bool call( const QString &hwInterface, const QString &function, const QString &arg );
 
 	/** Get a device state variable from the stateManager.
-	  *	Please note, this function returns immediately with a DeviceStateVariable object, the contents of which may be outdated.
+	  *	Please note, this function returns immediately with a DeviceStateVariableBase object, the contents of which may be outdated.
 	  *	@todo cast to DeviceStateProxyVariable*?
 	  *	@param hwInterface Name of the hardware interface
 	  *	@param varName name of the variable.
-	  *	@return Pointer to a DeviceStateVariable object.*/
+	  *	@return Pointer to a DeviceStateVariableBase object.*/
 	DeviceStateVariableBase *getVar( const QString &hwInterface, const QString &varName );
 
 	/** Get all variables in a specified hadware interface, or all interfaces.
@@ -40,10 +42,10 @@ public:
 	  *	See StateManagerBase::getVarList();*/
 	QList<DeviceStateVariableBase*> getVarList( const QString &hardwareInterface = QString() );
 
-	/** Send a get command to the device to update this variable.
-	 *	Use the valueUpdated() signal of the variable to know when the value has been updated.
-	 *	This function returns immediately.
-	 *	@param hwInterface The hardware interface.
+	/** Send a get command to the device to update a variable.
+	 *	Use the updated() signal of the variable to know when the value has been updated.
+	 *	This function returns immediately after sending the get command.
+	 *	@param hwInterface The hardware interface of the variable.
 	 *	@param varName Name of the variable.
 	 *	@todo CALLBACK?
 	 *	@return True if update sent successfully, false otherwise.*/
@@ -73,29 +75,44 @@ public:
 	bool initAPI( const QString &apiDefString = QString() );
 
 	/** Re-initialize the deviceAPI.
+	 *	@todo HUGE TODO...
 	 *	This function can only be used to update the API. To initialize DevieAPI for the first time, use initAPI().
 	 *	@param apiDefString The API definition string. If omitted, the API will be loaded from file (path can be set in settings).
 	 *	@return True if API is valid and is successfully applied, false otherwise. If API change fails, the previous API (if any) remains active.*/
 	bool reInitAPI( const QString &apiDefString = QString() );
 
-	/** Whether to emit all received device command.*
-	  *	@param emitAllCmd True to emit, false to not.*/
+	/** Whether to emit all received device command.
+	  *	If set, DeviceAPI will emit all commands from the device without any parsing/processing (also called as passthrough mode)
+	  *	@param emitAllCmd The new state.*/
 	void setEmitAllCommand( bool emitAllCmd )
 		{ mEmitAllCmd = emitAllCmd; }
 
-	/** Get the deviceApiParse instance.
-	  *	@return The deviceApiParse instance.*/
+	/** Get the deviceApiParser instance.
+	  *	@return The deviceApiParser instance.*/
 	const DeviceAPIParser *getApiParser()
 		{ return (DeviceAPIParser*)mDeviceAPI; }
 
 private slots:
 
+	/** Handle an incoming command from the device.
+	 *	Depending on the command type and the state of mEmitAllCmd:
+	 *	If mEmitAllCmd is true, the command is immediately emitted further with commandReceived() signal.<br/>
+	 *	If mEmitAllCmd is false:
+	 *	  * *call*: If the interface is the special proxy interface, then handle the command (for example general device messages and greeting message)
+	 *	  * *get*: Reply to the device with the current value of the requested variable.
+	 *	  * *set*: Update the value of the variable in the state manager.
+	 *	@param cmd The device command.*/
 	void handleDeviceCommand( DeviceCommand *cmd );
 
-	void handleStateVariableUpdateRequest( DeviceStateProxyVariable *stateVar );
+	/** Handle if a variable needs update.
+	  * Send a get command to the device with theinterface and name of the variable.
+	  *	@param stateVar The state who sent the request.
+	  * @return True on success, false otherwise.*/
+	bool handleStateVariableUpdateRequest( DeviceStateProxyVariable *stateVar );
 
 	/** Handle if a variable must be sent to the device.
-	  *	@param stateVar The vriable to send.*/
+	  *	Send a set command to the device with the current value of the variable.
+	  *	@param stateVar The variable to send.*/
 	void handleStateVariableSendRequest( DeviceStateProxyVariable *stateVar );
 
 signals:
@@ -112,14 +129,14 @@ signals:
 private:
 	/** Handle the device greeting message.
 	 *	If the greeting contains device parameters (name, platform, ...), parse the parameters and update the Device object accordingly.
-	 *	@param cmd The greeting command.*/
+	 *	@param greetingCmd The greeting command.*/
 	void handleDeviceGreeting( DeviceCommand *greetingCmd );
 
 	DeviceStateManager* mStateManager;		///< The DeviceStateManager instance. Handles the device variables
 	DeviceConnectionManagerBase* mDeviceLink;	///< DeviceConnectionManagerBase instance. Handles the connection to the device.
 	DeviceAPIFileHandler *mDeviceAPI;		///< DeviceAPIFileHandler intance. handles deviceAPI and device API file.
 	Device* mDeviceInstance;		///< Pointer to the current device singleton.
-	bool mEmitAllCmd;	///< If true, emit all received device command.
+	bool mEmitAllCmd;	///< If true, emit all received device command ("passThrough" mode)
 };
 
 }	//QtuC::

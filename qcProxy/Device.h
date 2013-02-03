@@ -18,40 +18,25 @@ enum deviceMessageType_t
 };
 
 /** Device class.
- *	Device info monostate class (pure static).
- *	Holds some globally reachable information about the device.
+ *	Device info class, storing the Device parameters as static members, and contains a singleton object which can be made immutable with setCreated(). <br>
  *	Before using this class, you must call it's create() method.
- *	After calling setCreated(), the Device singleton cannot be reached, only the static getters can be used, or swap().*/
+ *	The device should not be modified after it's been created and all the parameters were set. <br>
+ *	@par How to use
+ *	First create the Device object with create(), then set all necessary params (you can use the slots of the Device singleton), and finally call setCreated().
+ *	After calling setCreated(), the Device singleton object cannot be reached, (unless a its pointer was saved previously), only the static getters are usable, or swap().
+ *	With swap() you can set the Device singleton to a new object (without changing the static members), which is still mutable, until setCreated() is called.*/
 class Device : public ErrorHandlerBase
 {
 	Q_OBJECT
 public:
 
-	/** Constructor.
-	 *	This will clear all existing static device data! Use swap() to replace only the Device object, and leave the static params.*/
-	Device( QObject *parent = 0 );
-
-	/** Create the Device object.
-	 *	This will clear all existing static device data! Use swap() to replace only the Device object, and leave the static params.
-	 *	@param hwInterfaceList A QStringList of the valid hardware interfaces.
-	 *	@param hwInterfaceInfoList Info strings for the hardware interfaces.
-	 *	@param deviceName Name of the device. (ASCII, max 50 char)*/
-	Device( const QStringList& hwInterfaceList, const QStringList& hwInterfaceInfoList, const QString & deviceName, QObject *parent = 0 );
-
-	/** Swap the Device singleton for the passed Device object.
-	  *	Think twice before you use this!
-	  *	@param newDevice The new Device singleton.*/
-	Device* swap( Device *newDevice );
-
-	/** Create the Device singleton.
-	 *	Can only be called once, after that, Device will be readonly.
-	 *	This will clear all existing static device data! Use swap() to replace only the Device object, and leave the static params.
+	/** Create an empty Device singleton.
+	 *	Can only be called if no instance exists yet. Use clear() to delete the current.
 	 *	@return The new Device instance.*/
 	static Device *create( QObject *parent );
 
 	/** Create the Device singleton.
-	 *	Can only be called once, after that, Device will be readonly.
-	 *	This will clear all existing static device data! Use swap() to replace only the Device object, and leave the static params.
+	 *	Can only be called if no instance exists yet. Use clear() to delete the current.
 	 *	@param hwInterfaceList A QStringList of the valid hardware interfaces.
 	 *	@param hwInterfaceInfoList Info strings for the hardware interfaces.
 	 *	@param deviceName Name of the device. (ASCII, max 50 char).
@@ -59,9 +44,16 @@ public:
 	static Device *create( const QStringList& hwInterfaceList, const QStringList& hwInterfaceInfoList, const QString & deviceName, QObject *parent );
 
 	/** Get Device instance.
-	  *	You can only get the pointer, if the device object has been created with create(), and the initialization has not yet occured, so setCreated() hasn't been called yet.
+	  *	You can only get the pointer, if setCreated() hasn't been called yet.
 	  *	@return Pointer to the Device singleton, or 0 if it is already initialized.*/
 	static Device *instance();
+
+	/** Swap the Device singleton for the passed Device object.
+	  *	Leave the static members, and swap the device singleton object only.
+	  * The new Device object (and so all static member of the class) will be modifiable until setCreated() is called on it.
+	  *	Think twice before you use this!
+	  *	@param newDevice The new Device singleton.*/
+	Device* swap( Device *newDevice );
 
 	/** Get if hardware interface exists and is valid.
 	  *	@param hwInterfaceName Name of the hardware interface.
@@ -126,8 +118,8 @@ public:
 		{ mCreated = created; }
 
 	/** Clear Device.
-	  *	Delete all info and data.
-	  *	@warning Think before you use this...*/
+	  *	Delete all info and data, the static members and the singleton object as well..
+	  *	@warning Think twice before you use this...*/
 	void clear();
 
 	/** Convert string to deviceMessageType_t.
@@ -166,7 +158,7 @@ public slots:
 	  *	@param value Value of information.*/
 	void setInfo( const QString &key, const QString &value );
 
-	/** Set the connection status of the device.
+	/* Set the connection status of the device.
 	 *	@param connectedState The new connection status to set.*/
 	//void setConnected( bool connectedState );
 
@@ -192,6 +184,20 @@ public slots:
 	void setPositiveAck( bool posAck );
 
 private:
+
+	/** Private constructor.
+	 *	Use the static overloaded function create().
+	 *	This will clear all existing static device data! Use swap() to replace only the Device object, and leave the static params.
+	 *	The Device must have a QObject parent.*/
+	Device( QObject *parent );
+
+	/** Create the Device object.
+	 *	Use the static overloaded function create().
+	 *	This will clear all existing static device data! Use swap() to replace only the Device object, and leave the static params.
+	 *	@param hwInterfaceList A QStringList of the valid hardware interfaces.
+	 *	@param hwInterfaceInfoList Info strings for the hardware interfaces.
+	 *	@param deviceName Name of the device. (ASCII, max 50 char)*/
+	Device( const QStringList& hwInterfaceList, const QStringList& hwInterfaceInfoList, const QString & deviceName, QObject *parent = 0 );
 
 	static Device *mInstance;	///< Pointer to the Device singleton.
 	bool mCreated;	///< After the Device is created, it cannot be modified.

@@ -203,16 +203,16 @@ public:
 	/** Send a message.
 	 *	Shortcut to send a device message with sendCommand().
 	 *	@param msgType Message type.
-	 *	@param msg msgPart1 Message part1.
-	 *	@param msg msgPart2 Message part2, optional.
-	 *	@param msg msgPart3 Message part3, optional.
-	 *	@param msg msgPart4 Message part4, optional.
-	 *	@param msg msgPart5 Message part5, optional.
-	 *	@param msg msgPart6 Message part6, optional.
-	 *	@param msg msgPart7 Message part7, optional.
-	 *	@param msg msgPart8 Message part8, optional.
-	 *	@param msg msgPart9 Message part9, optional.
-	 *	@param msg msgPart10 Message part10, optional.*/
+	 *	@param msgPart1 Message part1.
+	 *	@param msgPart2 Message part2, optional.
+	 *	@param msgPart3 Message part3, optional.
+	 *	@param msgPart4 Message part4, optional.
+	 *	@param msgPart5 Message part5, optional.
+	 *	@param msgPart6 Message part6, optional.
+	 *	@param msgPart7 Message part7, optional.
+	 *	@param msgPart8 Message part8, optional.
+	 *	@param msgPart9 Message part9, optional.
+	 *	@param msgPart10 Message part10, optional.*/
 	static void sendMessage( messageType_t const msgType, char const *msgPart1, char const *msgPart2 = 0, char const *msgPart3 = 0, char const *msgPart4 = 0, char const *msgPart5 = 0, char const *msgPart6 = 0, char const *msgPart7 = 0, char const *msgPart8 = 0, char const *msgPart9 = 0, char const *msgPart10 = 0 );
 
 	/** Send a debug message.
@@ -282,7 +282,8 @@ public:
 
 private:
 
-	/** Send device command.
+	/** Base function to send device command.
+	 *	Serves as a base method for the other public template and overloaded functions. Send command with up to five string parameters.
 	 *	This method uses QtuC::print() to print the command.
 	 *	@param type Type of the command.
 	 *	@param interface The Hardware interface name.

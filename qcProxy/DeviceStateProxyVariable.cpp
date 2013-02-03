@@ -96,7 +96,7 @@ void DeviceStateProxyVariable::updateFromDevice( const QString& newRawValue )
 		mRawValue = castNewRawVal;
 		mLastUpdate = QDateTime::currentMSecsSinceEpoch();
 		emit updated();
-		// Do not emit valueChangedRaw ( signal-slot recursion, because valueChangedRaw usually connected to setOnDevice(), however this connect - if exists - is outside  DeviceStateVar )
+		// Do not emit valueChangedRaw ( signal-slot recursion, because valueChangedRaw usually connected to sendMe(), however this connect - if exists - is outside  DeviceStateVar )
 		// This will call valueUpdated signals
 		calculateValue();
 	}

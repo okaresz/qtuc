@@ -19,10 +19,11 @@ class ClientSubscription : public ErrorHandlerBase
 public:
 
 	/** Create a subscription.
-	  *	@param interval Interval of the subscription feed in milliseconds. Must be more than minSubscriptionInterval.
 	  *	@param client The subscribed client.
+	  *	@param interval Interval of the subscription feed in milliseconds. Must be more than mMinSubscriptionInterval.
 	  *	@param hwInterface The subscribed hardware interface.
-	  *	@param variable The subscribed variable.*/
+	  *	@param variable The subscribed variable.
+	  *	@param parent A compulsory parent to the subscription.*/
 	explicit ClientSubscription( ClientConnectionManagerBase *client, quint32 interval, const QString &hwInterface, const QString &variable, QObject *parent );
 
 	~ClientSubscription();
@@ -32,7 +33,7 @@ public:
 	  *	@return True if the subscription is valid and the feed can be started, false otherwise.*/
 	bool start();
 
-	/// Stop emitting subscriptionTick().
+	/// Stop emitting subscriptionTick(), subscription feed will stop.
 	void stop();
 
 	/** Custom equality operator.
@@ -56,12 +57,12 @@ public:
 	  *	@return True if the passed variable is included in the subscription.*/
 	bool includes( const DeviceStateVariableBase *variable ) const;
 
-	/** Get subscritpion variable.
+	/** Get subscription variable.
 	  *	 @return The variable.*/
 	const QString getVariable() const
 		{ return mVariable; }
 
-	/** Get subscritpion hardware interface.
+	/** Get subscription hardware interface.
 	  *	 @return The hardware interface.*/
 	const QString getHwInterface() const
 		{ return mHwInterface; }
@@ -80,8 +81,11 @@ public:
 	*	@return True if all members are initialized and valid, false otherwise.*/
 	bool isValid();
 
-	/// Maximum frequency of a client subscription.
-	static quint32 minSubscriptionInterval;
+	/** Get minimum subscription interval.
+	 *	@todo include in settings. There's no reason for a setter.
+	 *	@return The minimum interval of a subscription in milliseconds.*/
+	static quint32 getMinSubscriptionInterval()
+		{ return mMinSubscriptionInterval; }
 
 public slots:
 
@@ -96,6 +100,7 @@ signals:
 
 private:
 
+	/// Re-implement QObject::timerEvent().
 	void timerEvent( QTimerEvent *timerEvent );
 
 	ClientConnectionManagerBase *mClient;	///< The client that requested this subscription.
@@ -103,6 +108,8 @@ private:
 	QString mHwInterface;		///< Subscription hardware interface.
 	quint32 mInterval;	///< Interval of the subscripiton, in milliseconds, 32bit unsigned integer.
 	int mTimerId;	///< Internal id of the QObject timer in use.
+	static quint32 mMinSubscriptionInterval;	///< Minimum interval of a client subscription in milliseconds.
+
 };
 
 }	//QtuC::

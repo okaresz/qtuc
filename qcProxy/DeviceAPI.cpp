@@ -3,6 +3,7 @@
 #include "SerialDeviceConnector.h"
 #include "DummySocketDevice.h"
 #include "DeviceAPIFileHandler.h"
+#include "ProxySettingsManager.h"
 
 using namespace QtuC;
 
@@ -16,6 +17,9 @@ DeviceAPI::DeviceAPI( QObject *parent ) :
 
 	mDeviceLink = new SerialDeviceConnector(this);
 	//mDeviceLink = new DummySocketDevice(this);
+
+	// set device command separator
+	DeviceCommand::setSeparator( ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar() );
 
 	connect( mStateManager, SIGNAL(stateVariableUpdateRequest(DeviceStateProxyVariable*)), this, SLOT(handleStateVariableUpdateRequest(DeviceStateProxyVariable*)) );
 	connect( mStateManager, SIGNAL(stateVariableSendRequest(DeviceStateProxyVariable*)), this, SLOT(handleStateVariableSendRequest(DeviceStateProxyVariable*)) );
@@ -56,15 +60,7 @@ QList<DeviceStateVariableBase*> DeviceAPI::getVarList(const QString &hardwareInt
 
 bool DeviceAPI::update( const QString &hwInterface, const QString &varName )
 {
-	if( !mDeviceLink->sendCommand( DeviceCommand::fromVariable( deviceCmdGet, (DeviceStateProxyVariable*)getVar( hwInterface, varName ) ) ) )
-	{
-		errorDetails_t errDet;
-		errDet.insert( "hwInterface", hwInterface );
-		errDet.insert( "varName", varName );
-		error( QtWarningMsg, "Failed to send get command-", "update()", errDet );
-		return false;
-	}
-	return true;
+	return handleStateVariableUpdateRequest( (DeviceStateProxyVariable*)getVar( hwInterface, varName ) );
 }
 
 bool DeviceAPI::command(DeviceCommand *cmd)
@@ -340,10 +336,14 @@ void DeviceAPI::handleDeviceCommand( DeviceCommand *cmd )
 	}
 }
 
-void DeviceAPI::handleStateVariableUpdateRequest(DeviceStateProxyVariable *stateVar)
+bool DeviceAPI::handleStateVariableUpdateRequest(DeviceStateProxyVariable *stateVar)
 {
 	if( !mDeviceLink->sendCommand( DeviceCommand::fromVariable( deviceCmdGet, stateVar ) ) )
-		{ error( QtWarningMsg, QString("Failed to update stateVar: %1").arg(stateVar->getName()), "handleStateVariableUpdateRequest()" ); }
+	{
+		error( QtWarningMsg, QString("Failed to update stateVar: %1").arg(stateVar->getName()), "handleStateVariableUpdateRequest()" );
+		return false;
+	}
+	return true;
 }
 
 void DeviceAPI::handleStateVariableSendRequest(DeviceStateProxyVariable *stateVar)

@@ -9,20 +9,46 @@
 namespace QtuC
 {
 
+/** DeviceAPI Parser class.
+*	Class to parse and handle the device API. Ideally there's only one instance of API parser in the application, no need for more.
+*	This one instance stores the current API for future comparision and checking.
+*	When the API is in string form, the XML DTD should always be included.*/
 class DeviceAPIParser : public ErrorHandlerBase
 {
 	Q_OBJECT
 public:
 
-	/** c'tor*/
+	/** Creates an empty parser object.*/
 	DeviceAPIParser ( QObject* parent = 0 );
 
 	~DeviceAPIParser();
 
+	/** Return if the parser object is empty.
+	  *	Object is empty when there's no stored API.
+	  *	@return True if empty, false if not.*/
+	virtual bool isEmpty() const
+		{ return mCurrentApiHash.isEmpty() && mCurrentApiString.isEmpty(); }
+
+	/** Clear this API parser object.
+	  *	Clear and discard the stored API.*/
+	virtual void clear();
+
 	/** Parse passed string or try to load from file
+	  *	This function can only be called if this parser object is empty (see isEmpty()).
+	  *	If you would like to replace the API, use clear() first, to discard the current API.
 	  *	@param deviceAPIString If passed, parse this string. This must be the full device API definition string, as in the deviceAPI.xml. The XML DTD is optional.
 	  *	@return True on success, false otherwise.*/
-	bool parseAPI ( const QString& deviceAPIString );
+	bool parseAPI( const QByteArray &deviceAPIString );
+
+	/** Overloaded parseAPI() for QString.
+	  *	@param deviceAPIString The QString is converted to UTF-8 QByteArray with QString::toUtf8() and passed to parseAPI(const QByteArray&).*/
+	bool parseAPI( const QString &deviceAPIString )
+		{ return parseAPI( deviceAPIString.toUtf8() ); }
+
+	/** Generate the API hash of the passed deviceAPI string.
+	  *	@param apiString The deviceAPI string (content of the deviceAPI.xml, including the DTD).
+	  *	@return The hash as a QByteArray.*/
+	static const QByteArray generateHash( const QString &apiString );
 
 	/** Get the hash of current API.
 	  *	@return Hash of the current API as a QByteArray. If API is invalid, returns an empty QByteArray.*/
@@ -30,17 +56,23 @@ public:
 
 	/** Get the current API string.
 	  *	@return Current API as a QString. If API is invalid, returns an empty QString.*/
-	const QString getString() const;
-
-	/** Get hash of the passed deviceAPI string.
-	  *	@param The deviceAPI string (content of the deviceAPI.xm, with or without the DTD.
-	  *	@return The hash as a QByteArray.*/
-	static const QByteArray getHash( const QString &apiString );
+	const QString getApiString() const;
 
 	/** Just for your convenience.
-	  *	@param deviceAPIString API string to compare.
+	  *	Generate API hash from the passed string, and compare it to the self hash.
+	  *	@param deviceAPIString API string to compare (content of the deviceAPI.xml, including the DTD).
 	  *	@return True if deviceAPIString equals the current, false otherwise.*/
 	bool operator==( const QString &deviceAPIString );
+
+	/** Set API DTD name.
+	  *	A new DTD name can only be set on an empty parser object. See isEmpty().
+	  *	@param name The new DTD name. Must be valid by XML standards.*/
+	bool setDocTypeName( QString const &name );
+
+	/** Get API DTD name.
+	  *	@return The API DTD name.*/
+	QString const getDocTypeName()
+		{ return mDocTypeName; }
 
 signals:
 
@@ -92,8 +124,9 @@ private:
 	 *	@return True on success, false otherwise.*/
 	bool parseNodeStateVariable( const QDomElement &stateVariableElement );
 
-	QByteArray mCurrentApiHash;	///< MD5 hash of the current API file.
+	QByteArray mCurrentApiHash;	///< MD5 hash of the current API string.
 	QString mCurrentApiString;	///< Current API string.
+	QString mDocTypeName;	///< DTD name of the deviceAPI. Parsed APIs are checked against this.
 };
 
 }	//QtuC::

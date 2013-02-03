@@ -7,7 +7,7 @@ namespace QtuC
 {
 
 /** DeviceConnectionManagerBase class.
- *	The base class for implementing a device connection manager class.*/
+ *	The base class for implementing a class to handle device connection.*/
 class DeviceConnectionManagerBase : public ErrorHandlerBase
 {
 	Q_OBJECT
@@ -19,7 +19,6 @@ public:
 	//virtual ~DeviceConnectionManagerBase()=0;
 
 	/** Send command.
-	 *	Put the command to the send queue.
 	 *	@param cmd The command to send,*/
 	virtual bool sendCommand( DeviceCommand *cmd ) = 0;
 

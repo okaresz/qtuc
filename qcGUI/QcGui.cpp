@@ -58,6 +58,8 @@ bool QcGui::setDeviceApi(const QString &apiString)
 		}
 		else
 		{
+			mApiParser->clear();
+			connect( mApiParser, SIGNAL(signalError(QtMsgType,QString,QString,QtuC::ErrorHandlerBase::errorDetails_t)), this, SIGNAL(signalError(QtMsgType,QString,QString,QtuC::ErrorHandlerBase::errorDetails_t)) );
 			//connect( mDeviceAPI, SIGNAL(newDeviceInfo(QString,QString)), mDeviceInstance, SLOT(setInfo(QString,QString)) );
 			//connect( mDeviceAPI, SIGNAL(newHardwareInterface(QString,QString)), mDeviceInstance, SLOT(addHardwareInterface(QString,QString)) );
 			connect( mApiParser, SIGNAL(newStateVariable(QHash<QString,QString>)), this, SLOT(createDeviceVariable(QHash<QString,QString>)) );

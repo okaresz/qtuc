@@ -49,17 +49,19 @@ public:
 signals:
 	/** Emitted whenever an error occurs.
 	  *	@param severity Severity of the error.
+	  * @param msg A message string.
 	  *	@param location Location of the error.
 	  * @param details Details. The type must be written fully resolved, because the signal/slot type comparison of Qt (requires full char-by-char match).*/
 	void signalError( QtMsgType severity, QString msg, QString location, const QtuC::ErrorHandlerBase::errorDetails_t details ) const;
 
 protected slots:
-	/** Error handler (slot).
+
+	/** Error handler.
 	  * Call this when an error occurs.
 	  * This function emits signalError() signal with these exact arguments,
 	  * then calls qDebug/qWarning/qCritical/qFatal depending on the severity. The printed output contains the class name, location and message.
 	  *	The execution is not halted explicitly, however qFatal() probably will terminate your program. Refer to Qt docs for more info.
-	  *	@param type severity of error.
+	  *	@param severity severity of error.
 	  * @param msg A message string.
 	  *	@param location Location (usually the function name) of the error.
 	  *	@param details An associative array of detail name and value.*/

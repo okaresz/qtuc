@@ -12,7 +12,7 @@ SerialDeviceConnector::SerialDeviceConnector( QObject *parent ) : DeviceConnecti
 
 SerialDeviceConnector::~SerialDeviceConnector()
 {
-	this->closePort();
+	this->closeDevice();
 }
 
 bool SerialDeviceConnector::sendCommand( DeviceCommand *cmd )
@@ -27,7 +27,7 @@ bool SerialDeviceConnector::sendCommand( DeviceCommand *cmd )
 		return false;
 	}
 
-	if( mSerialPort->write( cmd->getCommandString().toStdString().c_str() ) <= 0 )
+	if( mSerialPort->write( cmd->getCommandString().toAscii() ) <= 0 )
 	{
 		errorDetails_t errDet;
 		errDet.insert( "cmdStr", cmd->getCommandString() );
@@ -61,11 +61,10 @@ void SerialDeviceConnector::receivePart()
 	}
 
 	if( !block.isEmpty() )
-		{ mCmdRxBufferShadow.append(block); }
+		{ mCmdRxBuffer.append(block); }
 
 	if( fullCmd )
 	{
-		mCmdRxBuffer = mCmdRxBufferShadow;
 		debug( debugLevelVeryVerbose, QString("Command received on serial: %1").arg(mCmdRxBuffer), "receivePart()" );
 
 		DeviceCommand *cmd = DeviceCommand::fromString( mCmdRxBuffer );
@@ -73,11 +72,11 @@ void SerialDeviceConnector::receivePart()
 			{ emit commandReceived((DeviceCommand*)cmd); }
 		else
 			{ error( QtWarningMsg, "Invalid device command received, command dropped", "receivePart()"); }
-		mCmdRxBufferShadow.clear();
+		mCmdRxBuffer.clear();
 	}
 }
 
-void SerialDeviceConnector::closePort()
+void SerialDeviceConnector::closeDevice()
 {
 	if( mSerialPort->isOpen() )
 	{
@@ -86,7 +85,7 @@ void SerialDeviceConnector::closePort()
 	}
 }
 
-bool SerialDeviceConnector::connectPort()
+bool SerialDeviceConnector::openDevice()
 {
     mSerialPort->setPort( ProxySettingsManager::instance()->value( "devicePort/portName" ).toString() );
 	QString serialBaud = ProxySettingsManager::instance()->value( "devicePort/baudRate" ).toString();
@@ -132,14 +131,4 @@ bool SerialDeviceConnector::connectPort()
 		return false;
 	}
 	return true;
-}
-
-void SerialDeviceConnector::closeDevice()
-{
-	closePort();
-}
-
-bool SerialDeviceConnector::openDevice()
-{
-	return connectPort();
 }

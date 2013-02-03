@@ -17,6 +17,20 @@ However, by using the proxy in passthrough mode, full synchronization without up
 
 ---------------------------------------------------------------------------------------
 
+error():
+	use Q_FUNC or similar macro instead of the hardcoded function names
+	would be nice to include __LINE__ and __FILE__, maybe with an error macro
+	timestamping all errors and info
+
+make a qcInfo() function or something to print state info to stdout (always printed, independent of verbopsity or debuglevel)
+	-> add a verbosity level, level 1 (-v) will be debugLevelInfo, and so on...
+	timestamp!
+
+global optimization
+	use compiler optimization
+	volatile, inline, ...
+	manual code optimization for speed, starting on the critical parts
+	-> code profiling?...
 
 don't subscribe if var is write-only (or sg like this...)
 

@@ -7,6 +7,7 @@ namespace QtuC
 {
 
 /** Base for settings manager classes.
+*	The location of the configuration file is printed to stdout when initialized.
 *	This class is essentially a singleton wrapper above QSettings.
 *	As QSettings is initialized without parameters, according to the Qt manual, you must specify application-related information before using QSettings.*/
 class SettingsManagerBase : public QSettings
@@ -18,7 +19,7 @@ public:
 	~SettingsManagerBase();
 
 	/** Every settings class must reimplement this function, returning an instance of itself (the derived class).
-	 *	@param On first call, the object will be created, so a parent argument should  be passed. On subsequent calls, you can omit it.*/
+	 *	@param parent On first call, the object will be created, so a parent argument should  be passed. On subsequent calls, you can omit it.*/
 	static SettingsManagerBase* instance(QObject *parent = 0);
 
 protected:

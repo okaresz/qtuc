@@ -24,7 +24,7 @@ ConnectionServer::~ConnectionServer()
 {
 	if( mTcpServer && mTcpServer->isListening() )
 		{ mTcpServer->close(); }
-	/// @todo destroy clients (so far this is not necessary, both socket and client objects are parent of server)
+	/// @todo destroy clients (so far this is not necessary, both socket and client objects are parent of server), but we should disconnect them first
 }
 
 void ConnectionServer::handleNewConnection()

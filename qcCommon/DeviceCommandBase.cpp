@@ -22,8 +22,8 @@ bool DeviceCommandBase::isValid() const
 	bool validity = true;
 	validity = validity && mType != deviceCmdUndefined;
 	validity = validity && !mHwInterface.isEmpty();
-	validity = validity && !( mType == deviceCmdSet && (mArgs.isEmpty() || mHwInterface.isEmpty()) );
-	validity = validity && !( mType == deviceCmdCall && (mArgs.isEmpty() || mHwInterface.isEmpty()) );
+	validity = validity && !( mType == deviceCmdSet && (mArgs.isEmpty() || mVariable.isEmpty()) );
+	validity = validity && !( mType == deviceCmdCall && mVariable.isEmpty() );
 	return validity;
 }
 
@@ -41,9 +41,13 @@ bool DeviceCommandBase::setInterface( const QString &hwi )
 	return true;	// can't check, Device is in proxy
 }
 
-void DeviceCommandBase::setVariable( const QString& cv )
+bool DeviceCommandBase::setVariable( const QString& cv )
 {
+	if( cv.isEmpty() )
+		{ return false; }
+
 	mVariable = cv;
+	return true;
 }
 
 bool DeviceCommandBase::setArgList( const QStringList &argList )

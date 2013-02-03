@@ -12,15 +12,18 @@
 
 namespace QtuC
 {
-/// @todo proper up-to-date doc! "device"->*source*
+
 /** DeviceStateVariableBase class.
- * This class represents a state variable on the *source*. The *source* can be an embedded device, or a proxy, in any case a *source*, whose state should be mirrored in this variable.
- * Each variable must have a name, a corresponding valid hardware interface, and a type. Type can be string, boolean, int, uint, and double.
+ *	This class represents a state variable on the *source*. The *source* can be an embedded device, or a proxy, in any case a *source*, whose particular state should be mirrored in this variable.
+ *	Each variable must have a name, a corresponding valid hardware interface, and a type. Type can be string, boolean, int, uint, and double.
+ *	A variable also has an accessMode. See accessMode_t. <br>
+ *	Internally, a stateVariable uses a QVariant to store the value. By default, till the first value assignment, the variable has *null* value (like QVariant). This can be checked with isNull().
+ *	A variable holding a null value still can be valid.
  *	<br>
  * <b>Recommended usage</b><br>
  * Use the setValue() slots to set the value.
- * valueChanged() signals can be connected to GUI slots. GUI valueChanged() signals should be connected to the setValue() slots of the variable. These slots update the value, calculate the rawValue,
- * and emit all valueChangedRaw(), all valueChanged() <b>and setOnDevice()</b> signals. You should always connect the actual command sending to setOnDevice().*/
+ * valueChanged() signals can be connected to GUI slots. GUI valueChanged() signals should be connected to the setValue() slots of the variable. These slots update the value,
+ * and emit all valueChanged() signals <b>and sendMe()</b>. You should always connect the actual command sending towards the *source* to sendMe().*/
 class DeviceStateVariableBase : public ErrorHandlerBase
 {
 	Q_OBJECT
@@ -30,7 +33,7 @@ public:
 	/** I/O mode of the variable from the user's point of view.
 	 *	Default is readAccess.
 	 *	This is a maskable flag.
-	 *	* `readAccess`: setOnDevice() signal will never be emitted.
+	 *	* `readAccess`: sendMe() signal will never be emitted.
 	 *	* `writeAccess`: updateMe() signal will never be emitted.
 	 *	* `readWriteAccess`: No restrictions, behaviour is full, bidirectional. (can be tested with the previous two, but here for convenience)*/
 	enum accessMode_t
@@ -55,15 +58,16 @@ public:
 
 	/** Initialize a DeviceStateVariableBase.
 	 *	This static function returns a pointer to a new DeviceStateVariableBase object on success, null pointer on failure.
-	 * @param varHwInterface The hardware interface containing the variable.
-	 * @param varName The name of the variable.
-	 * @param varType Type of the variable. Valid values are: string, bool, boolean, int, double.
-	 * @param accessMode I/O access mode of the variable. `r`: read-only, `w`: write-only, `rw`: read/write. See deviceAPI.xml documentation for more info.
-	 * @return A pointer to a new DeviceStateVariableBase object on success, null pointer on failure.*/
+	 *	@param varHwInterface The hardware interface containing the variable.
+	 *	@param varName The name of the variable.
+	 *	@param varType Type of the variable. Valid values are: string, bool, boolean, int, double.
+	 *	@param accessModeStr I/O access mode string of the variable. `r`: read-only, `w`: write-only, `rw`: read/write. See deviceAPI.xml documentation for more info.
+	 *	@return A pointer to a new DeviceStateVariableBase object on success, null pointer on failure.*/
 	static DeviceStateVariableBase* init( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& accessModeStr = QString("r") );
 
 	/** Retuns whether the variable is valid.
-	 * @returns True if the variable has a valid type, name, hardware interface and non-empty, valid values, otherwise returns false*/
+	 *	A valid uninitialized variable (holding a null value) is considered to be valid.
+	 * @returns True if the variable has a valid type, accessMode, name, hardware interface, otherwise returns false*/
 	virtual bool isValid() const;
 
 	const QString getName() const;			///< Get the name of the variable.
@@ -79,11 +83,11 @@ public:
 		{ return mValue.isNull(); }
 
 	/** Get last update time.
-	  * @returns The milliseconds (as a UNIX timestamp) when the variable was last updated (read from device).*/
+	  * @returns The milliseconds (as a UNIX timestamp) when the variable was last updated (read from *source*).*/
 	qint64 getLastUpdateTime() const;
 
 	/** Get the number of milliseconds since the last update.
-	 * ...meaning the time since the last set command for this var from the device.
+	 * ...meaning the time since the last set command for this var from the *source*.
 	 * @returns The number of milliseconds since the last update.*/
 	qint64 getAgeMs() const;
 
@@ -125,47 +129,52 @@ public slots:
 	  * @returns True on success flase otherwise.*/
 	bool setValue( bool newValue );
 
+	/** Updates the value of the variable received from the *source*.
+	 *	Call or connect this slot when you receive a set command from the *source*.
+	 *	This function updates the value, emits updated() and all valueChanged signals
+	 *	@param newValue The new value (string).*/
+	virtual void updateFromSource( const QString& newValue );
+
 protected slots:
 
 signals:
 
 	void sendMe();	///< Emitted if the variable should be sent to the source.
 
-	void valueChanged( const QVariant& );	///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param QVariant The rvalue as stored.
-	void valueChanged( const QString& );	///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param QString The value cast to a string.
-	void valueChanged( int );			///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param int The value cast to an integer.
-	void valueChanged( uint );			///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param uint The value cast to an unsigned integer.
-	void valueChanged( double );		///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param double The value cast to a double.
-	void valueChanged( bool );		///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param bool The value cast to a boolean.
+	void valueChanged( const QVariant& );	///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param The rvalue as stored.
+	void valueChanged( const QString& );	///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param The value cast to a string.
+	void valueChanged( int );			///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param The value cast to an integer.
+	void valueChanged( uint );			///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param The value cast to an unsigned integer.
+	void valueChanged( double );		///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param The value cast to a double.
+	void valueChanged( bool );		///< Emitted if value has changed. @note You should connect the GUI set* slots to one of these valueChanged() signals. @param The value cast to a boolean.
 
-	/** Emitted if the variable gets updated from the source.
-	 *	An update occurs when the proxy receives a set command from the device, and the raw value sent differs from the current.
-	 *	@param rawValue The new raw value as a QVariant.*/
+	/** Emitted if the variable gets updated from the *source*.
+	 *	An update occurs when the proxy receives a set command from the *source*, and the received value differs from the current.*/
 	void updated();
 
 	/** Emitted if the variable should be updated.
-	  *	If emitted, a get command must be sent to the device to request an up to date value for this variable.*/
+	  *	If emitted, a get command must be sent to the *source* to request an up to date value for this variable.*/
 	void updateMe();
 
 protected:
 	/** A protected constructor.
 	 *	Use init() to create a new DeviceStateVariableBase.
-	 * @param varHwInterface The hardware interface containing the variable.
-	 * @param varName The name of the variable.
-	 * @param varType Type of the variable. Valid values are: string, bool, boolean, int, double.
-	 * @param accessMode I/O access mode of the variable.*/
+	 *	@param varHwInterface The hardware interface containing the variable.
+	 *	@param varName The name of the variable.
+	 *	@param varType Type of the variable. Valid values are: string, bool, boolean, int, double.
+	 *	@param accessModeStr I/O access mode of the variable.*/
 	DeviceStateVariableBase( const QString& varHwInterface, const QString& varName, const QString& varType, const QString &accessModeStr );
 
 	QString mName;			///< The name of the variable.
 	QString mHwInterface;	///< The name of the hardware interface containing the variable.
 	QVariant::Type mType;	///< The converted type of the variable.
 	QVariant mValue;			///< The (converted) value of the variable.
-	quint32 mLastUpdate;			///< UNIX millisec timestamp of the last update. (from device).
+	quint32 mLastUpdate;			///< UNIX millisec timestamp of the last update (from *source*).
 	accessMode_t mAccessMode;	///< AccessMode of the variable.
 
 	void emitValueChanged();	///< Emit valueChanged signals for all types.
 
-	/** Check validity and access rights, then emit setOnDevice() signal.
+	/** Check validity and access rights, then emit sendMe() signal.
 	  *	@return True on success, false otherwise.*/
 	bool emitSendMe();
 

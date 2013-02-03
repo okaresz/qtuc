@@ -15,13 +15,14 @@ class DeviceAPI;
 class ClientConnectionManagerBase;
 
 /** QcProxy class.
- * The QcProxy class is the main coordinator between the device and the clients.*/
+ *	The QcProxy class is the main coordinator between the device and the clients.
+ *	See route() methods for the actual data flow between them.*/
 class QcProxy : public ErrorHandlerBase
 {
 	Q_OBJECT
 public:
 
-	/** C'tor.*/
+	/** Create proxy object.*/
 	QcProxy( QObject *parent = 0 );
 
 	~QcProxy();
@@ -31,13 +32,19 @@ public:
 	bool start();
 
 	/** Set behaviour to pass through.
-	  *	In pass through mode, proxy will immediately relay all device commands to all clients (as a ClientCommandDevice).
-	  *	@param pass True to pass through commands, falsi to normal mode.*/
+	  *	In pass through mode, proxy will immediately relay all received device commands to all clients (as a ClientCommandDevice),
+	  *	without storing any value or stateVariable. In passThrough mode, proxy is stateless.
+	  *	@param pass True to pass through commands, false to normal mode.*/
 	void setPassThrough( bool pass );
 
 public slots:
 
+	/** Route and process client commands.
+	 *	@param clientCommand The client command.*/
 	bool route( ClientCommandBase *clientCommand );
+
+	/** Route and process device commands.
+	 *	@param deviceCommand The device command.*/
 	bool route( DeviceCommand *deviceCommand );
 
 	/** Handle incoming device message*
@@ -51,17 +58,15 @@ private slots:
 	 *	@param newClient The connected client object.*/
 	void handleNewClient( ClientConnectionManagerBase *newClient );
 
-	/** Handle subscription feed request and send the feed packet.
+	/** Handle subscription feed request and send the feed to the client.
 	  *	Called on every ClientSubscription::subscriptionTick() of every subscription.
-	  *	@param client The subscribed client.
-	  *	@param hwInterface The subscribed hardware interface.
-	  *	@param variable The subscribed variable.*/
+	  *	@param subscription The subscription who sent the request.*/
 	void sendSubscriptionFeed( ClientSubscription *subscription );
 
 private:
 	DeviceAPI *mDevice;		///< API object for the device.
 	ConnectionServer *mConnectionServer;	///< Holds the instance of the connection server.
-	ClientSubscriptionManager *mClientSubscriptionManager;
+	ClientSubscriptionManager *mClientSubscriptionManager;	///< Holds the instance of the subscription manager.
 
 	bool mPassThrough;	///< If true, proxy will immediately relay all device commands to all clients (as a ClientCommandDevice)
 

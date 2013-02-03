@@ -6,6 +6,7 @@
 #include "ProxySettingsManager.h"
 #include <QFile>
 #include <QTextStream>
+#include <iostream>
 
 using namespace QtuC;
 
@@ -16,6 +17,8 @@ QcProxy::QcProxy( QObject *parent ) :
 	mClientSubscriptionManager(0),
 	mPassThrough(false)
 {
+	std::cout << QString("QcProxy %1").arg( QCoreApplication::applicationVersion() ).toStdString() << std::endl;
+
 	// On windows default format is registry, but we want file.
 	#ifdef Q_OS_WIN32
 		QSettings::setDefaultFormat( QSettings::IniFormat );
@@ -33,9 +36,7 @@ QcProxy::QcProxy( QObject *parent ) :
 }
 
 QcProxy::~QcProxy()
-{
-	debug( debugLevelVeryVerbose, "QcProxy destructor", "~QcProxy()" );
-}
+{}
 
 bool QcProxy::start()
 {
@@ -74,7 +75,7 @@ bool QcProxy::route(ClientCommandBase *clientCommand)
 		if( clientCommand->getName() == "reqDeviceAPI" )
 		{	/// @todo Permission to send API?
 			debug( debugLevelVeryVerbose, "Got API request, send API...", "route(ClientCommandBase*)" );
-			client->sendCommand( new ClientCommandDeviceApi( mDevice->getApiParser()->getString() ) );
+			client->sendCommand( new ClientCommandDeviceApi( mDevice->getApiParser()->getApiString() ) );
 		}
 		else if( clientCommand->getName() == "subscribe" )
 		{
@@ -199,6 +200,7 @@ void QcProxy::sendSubscriptionFeed( ClientSubscription *subscription )
 			// Don't send uninitialized and invalid variables
 			if( !(!varList.at(i)->isNull() && varList.at(i)->isValid()) )
 				{ continue; }
+			// Don't send if a more specific subscription is available
 			if( !mClientSubscriptionManager->moreSpecificSubscriptionExists( varList.at(i), subscription ) )
 				{ clientCmdList.append( new ClientCommandDevice( deviceCmdSet, varList.at(i) ) ); }
 		}

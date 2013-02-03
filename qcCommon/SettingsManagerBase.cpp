@@ -14,9 +14,7 @@ SettingsManagerBase::SettingsManagerBase(QObject *parent) : QSettings(parent)
 }
 
 SettingsManagerBase::~SettingsManagerBase()
-{
-	ErrorHandlerBase::debug( debugLevelVeryVerbose, "SettingsManagerBase destroyed", "~SettingsManagerBase()", "SettingsManagerBase" );
-}
+{}
 
 SettingsManagerBase *SettingsManagerBase::instance(QObject *parent)
 {

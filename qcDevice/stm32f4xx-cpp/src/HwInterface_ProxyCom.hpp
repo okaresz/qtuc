@@ -86,7 +86,7 @@ public:
 	 *	This command must be static (to be callable without an object scope). Inside the method, use the instance() method of the interface.
 	 *	@param type Type of the command.
 	 *	@param var Command variable.
-	 *	@param First command argument.
+	 *	@param arg Command argument.
 	 *	@return True if command has executed successfully, false otherwise.*/
 	static bool execCmd( QtuC::cmdType_t type, char *var, char *arg );
 

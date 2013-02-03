@@ -7,40 +7,36 @@
 namespace QtuC
 {
 
+/** Class to connect a device via a serial link.*/
 class SerialDeviceConnector : public DeviceConnectionManagerBase
 {
 	Q_OBJECT
 public:
 
+	/** Create.*/
 	SerialDeviceConnector( QObject *parent = 0 );
 
 	~SerialDeviceConnector();
 
-	/// Inherited from DeviceConnectionManagerBase.
+	/** @name Inherited from DeviceConnectionManagerBase.
+	  *	@{*/
 	bool sendCommand( DeviceCommand *cmd );
 
-	/// Inherited from DeviceConnectionManagerBase.
-	void closeDevice();
+	void closeDevice();		///< Close serial port.
 
-	/// Inherited from DeviceConnectionManagerBase.
-	bool openDevice();
-
-	/** Close serial port.*/
-	void closePort();
-
-	/** Initialize communication (init serial) and open it.
+	/** Open and initialize serial port.
 	  *	@return True on success, false otherwise.*/
-	bool connectPort();
+	bool openDevice();
+	/// @}
 
 private slots:
 
 	/** Handle a string part received on the serial port.
-	 *	Called on readyRead(), reads available data, checks for newline, and emits commandReceived() if necessary.*/
+	 *	Called on readyRead(), reads available data, checks for newline, and emits commandReceived() a full command has been received.*/
 	void receivePart();
 
 private:
 	QString mCmdRxBuffer;
-	QString mCmdRxBufferShadow;
 	QtAddOn::SerialPort::SerialPort *mSerialPort;
 };
 

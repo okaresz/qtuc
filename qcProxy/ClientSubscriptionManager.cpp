@@ -94,7 +94,10 @@ bool ClientSubscriptionManager::moreSpecificSubscriptionExists( const DeviceStat
 {
 	for( int i=0; i<mSubscriptions.size(); ++i )
 	{
-		if( mSubscriptions.at(i) != subscription && subscription->includes(*(mSubscriptions.at(i))) && mSubscriptions.at(i)->includes(variable) )
+		if( mSubscriptions.at(i) != subscription &&
+			subscription->getClient() == mSubscriptions.at(i)->getClient() &&
+			subscription->includes(*(mSubscriptions.at(i))) &&
+			mSubscriptions.at(i)->includes(variable) )
 			{ return true; }
 	}
 	return false;

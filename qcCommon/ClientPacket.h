@@ -11,8 +11,9 @@ namespace QtuC
 class ClientConnectionManagerBase;
 
 /** ClientPacket class.
- *	@todo more doc... must specify parent connection manager object, but be sure to delete every packet after sending it.
- * Represents a client packet, for encapsulating clientCommands of the same class.*/
+ *	Represents a client packet, for encapsulating clientCommands.
+ *	ClientPacket also handles the protocol header for the packets.
+ *	All packets should be created on the heap and deleted by the last command that uses it before sending (usually ClientConnectionManagerBase::sendPacket()).*/
 class ClientPacket : public ErrorHandlerBase
 {
 	Q_OBJECT
@@ -20,7 +21,7 @@ public:
 
 	/** An empty constructor.
 	 * Use when you want to build a packet from scratch.*/
-	ClientPacket(  );
+	ClientPacket();
 
 	/** Wrap a client command with a packet.
 	  *	@param clientCommand The client command tho wrap in a packet.*/
@@ -44,7 +45,7 @@ public:
 	quint64 getIDNumber() const;
 
 	/** Get the ID string of the packet.
-	  *	Format of the ID string is <serverShortName>#<packetIdNum>.
+	  *	Format of the ID string is &lt;serverShortName&gt;#&lt;packetIdNum&gt;, for example qcProxy#234.
 	  *	@return The ID string of the packet.*/
 	const QString getID() const;
 
@@ -52,7 +53,7 @@ public:
 	  *	@return The reply-to packet id string.*/
 	const QString getReplyTo() const;
 
-	/** Get packet class.
+	/* Get packet class.
 	  *	@todo Solve class chaos.
 	  *	@return packet class.*/
 	//packetClass_t getClass() const;
@@ -76,6 +77,9 @@ public:
 	  *	@return The packet size, converted to host endianness. If passed data was shorter than 4 bytes, return 0.*/
 	static quint16 readPacketSize( const QByteArray &rawData );
 
+	/** Set the command factory pointer,
+	  *	ClientPacket needs a ClientCommandFactory instance to create new packets from the incoming raw data.
+	  *	@param factoryPtr Pointer to the ClientCommandFactory instance,*/
 	static void setCommandFactoryPtr( ClientCommandFactory *factoryPtr )
 		{ mCommandFactoryPtr = factoryPtr; }
 
@@ -93,15 +97,12 @@ public:
 	  *	@param replyToPacket Reply to this packet.*/
 	void setReplyTo( const ClientPacket &replyToPacket );
 
-	/** Set the class of the packet.
+	/* Set the class of the packet.
 	 *	You must set the class before appending any command. After a command has been appended, the packet class can not be set or changed.
-	 *	The packet class must be set before appending any commands.
-	 *	@param	True on success, false otherwise.*/
+	 *	The packet class must be set before appending any commands.*/
 	//bool setClass( packetClass_t pClass );
 
 	/** Append a client command.
-	 *	Only client commands which are of the right class can be appended. (The class of the packet.)
-	 *	The packet class must be set before appending any commands.
 	 *	@return True on success, false otherwise.*/
 	bool appendCommand( ClientCommandBase *clientCommand );
 
@@ -114,12 +115,12 @@ public:
 	/** Detach and return a command.
 	  * This will delete command from the packet.
 	  *	@param command The command in the command list.
-	  *	@return The detached client command object, if found, 0 if not.
+	  *	@return The detached client command object, if found, 0 if not. The comparision compares the two pointer, not the command data.
 	  * @warning This function may return null, watch for deletions on a nullpointer, always check return value!*/
 	ClientCommandBase *detachCommand( ClientCommandBase *command );
 
 	/** Delete packet without deleting commands within the packet.
-	  *	useful if you want to work with the commands later on, but the packet can be deleted*/
+	  *	Useful if you want to work with the commands later on, but the packet can be deleted*/
 	void destroyShell();
 
 private:
@@ -143,7 +144,7 @@ private:
 	quint64 mIdNum;		///< Packet ID number. Initialized from packet count.
 	QString mReplyTo;	///< Reply-to packet id.
 	//packetClass_t mClass;		///< Class of the packet.
-	static QString mSelfId;
+	static QString mSelfId;		///< Short string ID of this side. Included in every packet sent.
 	QList<ClientCommandBase*> mCmdList;		///< Commands to be included in the packet.
 	static ClientCommandFactory *mCommandFactoryPtr;	///< Pointer to the ClientCommandFactory instance in the connection manager object of this packet.
 };

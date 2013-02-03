@@ -8,10 +8,7 @@ ClientCommandBase::ClientCommandBase( QObject *parent ) :
 {}
 
 ClientCommandBase::~ClientCommandBase()
-{
-	/// @todo implement?
-	//debug( debugLevelVeryVerbose, "Destroyed", "~ClientCommandBase()" );
-}
+{}
 
 ClientCommandBase *ClientCommandBase::cloneWithDomElement(const QDomElement &cmdElement)
 {
@@ -38,10 +35,10 @@ bool ClientCommandBase::isValid() const
 	return true;
 }
 
-bool ClientCommandBase::operator ==(ClientCommandBase *otherCommand)
-{
-	return ( otherCommand->getName() == getName() );
-}
+//bool ClientCommandBase::operator ==(ClientCommandBase *otherCommand)
+//{
+//	return ( otherCommand->getName() == getName() );
+//}
 
 bool ClientCommandBase::checkTagName(const QDomElement &cmdElement)
 {

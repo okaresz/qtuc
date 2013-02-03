@@ -71,8 +71,6 @@ bool DeviceStateVariableBase::isValid() const
 	valid = valid && ( !mHwInterface.isEmpty() );
 	valid = valid && ( mAccessMode != undefinedAccess );
 	valid = valid && ( mValue.isValid() );
-	/// @todo null value ?? what's with this?
-	//valid = valid && ( !mValue.isNull() );
 	return valid;
 }
 
@@ -165,6 +163,17 @@ bool DeviceStateVariableBase::setValue( bool newValue )
 	return true;
 }
 
+void DeviceStateVariableBase::updateFromSource(const QString &newValue)
+{
+	if( mValue != newValue )
+	{
+		mValue = newValue;
+		mLastUpdate = QDateTime::currentMSecsSinceEpoch();
+		emit updated();
+		emitValueChanged();
+	}
+}
+
 bool DeviceStateVariableBase::emitSendMe()
 {
 	if( isValid() )
@@ -176,13 +185,13 @@ bool DeviceStateVariableBase::emitSendMe()
 		}
 		else
 		{
-			debug( debugLevelVerbose, QString("Variable (%1:%2) has no write access, don't emit setOnDevice").arg(mHwInterface,mName), "emitSendMe()" );
+			debug( debugLevelVerbose, QString("Variable (%1:%2) has no write access, don't emit sendMe()").arg(mHwInterface,mName), "emitSendMe()" );
 			return false;
 		}
 	}
 	else
 	{
-		debug( debugLevelVeryVerbose, QString("Variable (%1:%2) is invalid, don't emit setOnDevice").arg(mHwInterface,mName), "emitSendMe()" );
+		debug( debugLevelVeryVerbose, QString("Variable (%1:%2) is invalid, don't emit sendMe()").arg(mHwInterface,mName), "emitSendMe()" );
 		return false;
 	}
 }

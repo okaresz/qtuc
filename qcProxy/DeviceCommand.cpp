@@ -4,21 +4,17 @@
 
 using namespace QtuC;
 
+QChar DeviceCommand::mSeparator = ' ';
+
 DeviceCommand::DeviceCommand() :
 	ErrorHandlerBase(),
-	DeviceCommandBase(),
-	mSeparator(' ')
-{
-	mSeparator = ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar();
-}
+	DeviceCommandBase()
+{}
 
 DeviceCommand::DeviceCommand( const QString &commandString ) :
 	ErrorHandlerBase(),
-	DeviceCommandBase(),
-	mSeparator(' ')
+	DeviceCommandBase()
 {
-	mSeparator = ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar();
-
 	QStringList cmdExploded = QString(commandString).remove('\n').split( mSeparator, QString::SkipEmptyParts );
 
 	int partIndex = 0;
@@ -33,7 +29,7 @@ DeviceCommand::DeviceCommand( const QString &commandString ) :
 		if( !ok )
 		{
 			mTimestamp = 0;
-			ErrorHandlerBase::error( QtWarningMsg, "Invalid timestamp, ignored.", "DeviceCommandBuilder()", "DeviceCommandBuilder" );
+			ErrorHandlerBase::error( QtWarningMsg, "Invalid timestamp, ignored.", "DeviceCommand()", "DeviceCommand" );
 		}
 	}
 
@@ -49,11 +45,8 @@ DeviceCommand::DeviceCommand( const QString &commandString ) :
 }
 
 DeviceCommand::DeviceCommand(const DeviceCommandBase &cmdBase) :
-	DeviceCommandBase(cmdBase),
-	mSeparator(' ')
-{
-	mSeparator = ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar();
-}
+	DeviceCommandBase(cmdBase)
+{}
 
 DeviceCommand *DeviceCommand::fromString( const QString &commandString )
 {
@@ -98,7 +91,12 @@ bool DeviceCommand::setInterface(const QString &hwi)
 {
 	if( !Device::isValidHwInterface(hwi) )
 	{
-		error( QtWarningMsg, QString("Try to set command from string with invalid hradware interface '%1', command ignored.").arg(hwi), "setInterface()" );
+		error( QtWarningMsg, QString("Try to set command from string with invalid (non-existent) hardware interface '%1'.").arg(hwi), "setInterface()" );
+		return false;
+	}
+	else if( hwi.contains(mSeparator) )
+	{
+		error( QtWarningMsg, QString("Passed interface ('%1') contains the command separator character.").arg(hwi), "setInterface()" );
 		return false;
 	}
 	else
@@ -106,6 +104,16 @@ bool DeviceCommand::setInterface(const QString &hwi)
 		mHwInterface = hwi;
 		return true;
 	}
+}
+
+bool DeviceCommand::setVariable( const QString &cv )
+{
+	if( cv.contains(mSeparator) )
+	{
+		error( QtWarningMsg, QString("Passed variable ('%1') contains the command separator character.").arg(cv), "setVariable()" );
+		return false;
+	}
+	return DeviceCommandBase::setVariable(cv);
 }
 
 const QString DeviceCommand::getCommandString() const

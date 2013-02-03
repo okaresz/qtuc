@@ -8,7 +8,7 @@ DeviceStateManager::DeviceStateManager( QObject *parent ) : StateManagerBase(par
 
 }
 
-bool DeviceStateManager::registerNewStateVariable(QHash<QString,QString> params)
+bool DeviceStateManager::registerNewStateVariable( QHash<QString,QString> params )
 {
 	if( params.contains("type") )
 	{
@@ -19,7 +19,6 @@ bool DeviceStateManager::registerNewStateVariable(QHash<QString,QString> params)
 	if( newStateVar )
 	{
 		//set autoupdate if necessary
-		/// @todo Only if this is the proxy?
 		if( params.contains("autoUpdate-device") )
 		{
 			bool ok;

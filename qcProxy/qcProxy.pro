@@ -17,7 +17,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     SerialDeviceConnector.cpp \
-    GuiConnectionManager.cpp \
     DeviceStateManager.cpp \
     DeviceConnectionManagerBase.cpp \
     DeviceAPIFileHandler.cpp \
@@ -34,7 +33,6 @@ SOURCES += main.cpp \
 
 HEADERS += \
     SerialDeviceConnector.h \
-    GuiConnectionManager.h \
     DeviceStateManager.h \
     DeviceConnectionManagerBase.h \
     DeviceAPIFileHandler.h \

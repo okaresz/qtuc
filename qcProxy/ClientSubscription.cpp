@@ -4,7 +4,7 @@
 
 using namespace QtuC;
 
-quint32 ClientSubscription::minSubscriptionInterval = 20;
+quint32 ClientSubscription::mMinSubscriptionInterval = 20;
 
 ClientSubscription::ClientSubscription(ClientConnectionManagerBase *client, quint32 interval, const QString &hwInterface, const QString &variable, QObject *parent) :
 	ErrorHandlerBase(parent),
@@ -23,8 +23,8 @@ ClientSubscription::ClientSubscription(ClientConnectionManagerBase *client, quin
 	if( mInterval == 0 )
 		{ error( QtWarningMsg, "Requested subscription interval is zero, doing nothing", "ClientSubscription()", errDet ); }
 
-	if( mInterval < minSubscriptionInterval )
-		{ error( QtWarningMsg, QString("Requested subscription interval is less than the minimum of %1ms").arg(QString::number(minSubscriptionInterval)), "ClientSubscription()", errDet ); }
+	if( mInterval < mMinSubscriptionInterval )
+		{ error( QtWarningMsg, QString("Requested subscription interval is less than the minimum of %1ms").arg(QString::number(mMinSubscriptionInterval)), "ClientSubscription()", errDet ); }
 
 	if( mHwInterface.isEmpty() && !mVariable.isEmpty() )
 		{ error( QtWarningMsg, "Cannot specify subscription variable when hardware interface is empty", "ClientSubscription()", errDet ); }
@@ -94,7 +94,7 @@ bool ClientSubscription::includes(const DeviceStateVariableBase *variable) const
 bool ClientSubscription::isValid()
 {
 	bool valid = true;
-	valid = valid && mInterval > minSubscriptionInterval;
+	valid = valid && mInterval > mMinSubscriptionInterval;
 	valid = valid && !( mHwInterface.isEmpty() && !mVariable.isEmpty() );
 	return valid;
 }

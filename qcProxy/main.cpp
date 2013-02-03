@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 {
 	int versionMajor = 0;
 	int versionMinor = 8;
-	int versionFix = 0;
+	int versionFix = 5;
 
 	QCoreApplication qcProxyApp(argc, argv);
 

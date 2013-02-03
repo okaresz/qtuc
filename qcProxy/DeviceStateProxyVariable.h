@@ -5,18 +5,17 @@
 
 namespace QtuC
 {
-/// @todo proper up-to-date doc!
-/** DeviceStateVariable class.
- * This class represents a state variable on the device.
- * Each variable must have a name, a corresponding valid hardware interface, and at least one type. Type can be string, boolean, int, and double.
- * Each variable holds two values. A device-side raw value and a user-side (converted) value. The raw value represents the value on the device, as sent in the command, but cast to the rawType of the variable.
- * The user-side value is converted from the rawValue, according to the conversion formula specified in the deviceAPI as a Qt script (if no script specified, value and rawvalue will be the same). The converted value can be used for example to display the value on a GUI.
- * <br>
- * <b>Recommended usage</b><br>
- * If a variable set command comes from the device, connect it to the setFromDevice() slot. This updates the rawValue, calculates the converted Value, and emits update() and all valueChanged signals.
- * Please note that setFromDevice() <i>does not emit valueChangedRaw signals</i>.<br>
- * valueChanged() signals can be connected to GUI slots. GUI valueChanged() signals should be connected to the setValue() slots of the variable. These slots update the value, calculate the rawValue,
- * and emit all valueChangedRaw(), all valueChanged() <b>and setOnDevice()</b> signals. You should always connect the actual command sending to setOnDevice().*/
+
+/** DeviceStateProxyVariable class.
+ *	Derived from DeviceStateVariableBase, but extended with the concept of *raw value*. <br>
+ *	RawVal is the value received directly from the device. This value is often specific to the device and can only be interpreted in device context.
+ *	To solve this, DeviceStateProxyVariable introduces a *convert* option to be able to convert this raw, device specific value ("device-side") to a more general, user-understandable value (for example in SI) ("user-side").
+ *	The conversion is done with Qt's scripting engine. For more information, see [conversion at the deviceAPI page](@ref doc-deviceAPIxml-stateVarList).
+ *	<br>
+ *	<b>Recommended usage</b><br>
+ *	If a set command is redeived from the device, use updateFromDevice() to update the value. This will set the rawValue, calculate the user-side value and emit valueChanged() and updated() signals, but not sendMe or valueChangedRaw().<br>
+ *	If a change is received from the clients on the user-side, use setValue() slots. These will set the value, calculate the raw value and emit valueChanged(), valueChangedRaw() and sendMe() signal as well.
+ *	Otherwise you can use setValue() and setRawValue() throughout the code. setRawValue() will set the raw value, emit valueChangedRaw() and sendMe(), calculate the user-side value and emit valueChanged() signal.*/
 class DeviceStateProxyVariable : public DeviceStateVariableBase
 {
 	Q_OBJECT
@@ -28,14 +27,14 @@ public:
 
 	/** Initialize a DeviceStateVariable.
 	 *	This static function returns a pointer to a new DeviceStateVariable object on success, null pointer on failure.
-	 * @param varHwInterface The hardware interface containing the variable.
-	 * @param varName The name of the variable.
-	 * @param varType Type of the variable. Valid values are: string, bool, boolean, int, double.
-	 * @param varRawType Type of the raw variable. If omitted, this will be the same as varType.
-	 * @param accessMode I/O access mode of the variable. `r`: read-only, `w`: write-only, `rw`: read/write. See deviceAPI.xml documentation for more info.
-	 * @param convertScriptFromRaw FromRaw script string. Used to convert the value from device to user side.
-	 * @param convertScriptToRaw ToRaw script string. Used to convert the value from user to device side.
-	 * @return A pointer to a new DeviceStateVariable object on success, null pointer on failure.*/
+	 *	@param varHwInterface The hardware interface containing the variable.
+	 *	@param varName The name of the variable.
+	 *	@param varType Type of the variable. Valid values are: string, bool, boolean, int, double.
+	 *	@param varRawType Type of the raw variable. If omitted, this will be the same as varType.
+	 *	@param accessModeStr I/O access mode of the variable. `r`: read-only, `w`: write-only, `rw`: read/write. See deviceAPI.xml documentation for more info.
+	 *	@param convertScriptFromRaw FromRaw script string. Used to convert the value from device to user side.
+	 *	@param convertScriptToRaw ToRaw script string. Used to convert the value from user to device side.
+	 *	@return A pointer to a new DeviceStateVariable object on success, null pointer on failure.*/
 	static DeviceStateProxyVariable* init( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& varRawType = QString(), const QString& accessModeStr = QString("r"), const QString convertScriptFromRaw = QString(), const QString convertScriptToRaw = QString() );
 
 	/** Retuns whether the variable is valid.
@@ -87,7 +86,7 @@ public slots:
 
 	/** Set the auto-update interval.
 	 * This function can be called even if the auto-update is active. In that case, the interval is updated immediately.
-	 * @param interval Interval in milliseconds, unsigned 32bit integer. Must be between min-max values (see minAutoUpdateInterval).
+	 * @param intervalMs Interval in milliseconds, unsigned 32bit integer. Must be between min-max values (see minAutoUpdateInterval).
 	 * @returns True if the interval is successfully changed, false otherwise.*/
 	bool setAutoUpdateInterval( quint32 intervalMs );
 
@@ -135,13 +134,18 @@ public slots:
 	  * @returns True on success flase otherwise.*/
 	bool setRawValue( bool newRawValue );
 
+	/// Inherited from base.
+	void updateFromSource( const QString& newValue )
+		{ updateFromDevice( newValue ); } // When changing to QVariant arg, just pass newValue.toString() to updateFromDevice.
+
 	/** Updates the rawValue of the variable as got from the device.
 	 *	Call or connect this slot when you receive a set command from the device.
-	 *	This function pdates the rawValue, calculates the converted Value, and emits update() and all valueChanged signals
+	 *	This function updates the rawValue, calculates the converted Value, and emits updated() and all valueChanged signals
 	 *	@param newRawValue The new raw value (string) as parsed from the device command*/
 	void updateFromDevice( const QString& newRawValue );
 
 private slots:
+
 	/** Calculate raw or user-side value based on the convert scripts.
 	  *	@param fromRaw Direction: fromRaw if true, toRaw if false.
 	  *	@return True on success, false otherwise.*/
@@ -156,23 +160,23 @@ private slots:
 
 signals:
 
-	void valueChangedRaw( const QVariant& );	///< Emitted if rawValue has changed. @param QVariant The raw value as a QVariant.
-	void valueChangedRaw( const QString& );		///< Emitted if rawValue has changed. @param QString The rawValue cast to a string.
-	void valueChangedRaw( int );		///< Emitted if rawValue has changed. @param int The rawValue cast to an integer.
-	void valueChangedRaw( uint );		///< Emitted if rawValue has changed. @param uint The rawValue cast to an unsigned integer.
-	void valueChangedRaw( double );		///< Emitted if rawValue has changed. @param double The rawValue cast to a double.
-	void valueChangedRaw( bool );		///< Emitted if rawValue has changed. @param bool The rawValue cast to a boolean.
+	void valueChangedRaw( const QVariant& );	///< Emitted if rawValue has changed. @param The raw value as a QVariant.
+	void valueChangedRaw( const QString& );		///< Emitted if rawValue has changed. @param The rawValue cast to a string.
+	void valueChangedRaw( int );		///< Emitted if rawValue has changed. @param The rawValue cast to an integer.
+	void valueChangedRaw( uint );		///< Emitted if rawValue has changed. @param The rawValue cast to an unsigned integer.
+	void valueChangedRaw( double );		///< Emitted if rawValue has changed. @param The rawValue cast to a double.
+	void valueChangedRaw( bool );		///< Emitted if rawValue has changed. @param The rawValue cast to a boolean.
 
 private:
 	/** A private constructor.
 	 *	Use init() to create a new DeviceStateVariable.
-	 * @param varHwInterface The hardware interface containing the variable.
-	 * @param varName The name of the variable.
-	 * @param varType Type of the variable. Valid values are: string, bool, boolean, int, double.
-	 * @param varRawType Type of the raw variable. If omitted, this will be the same as vartype.
-	 * @param accessMode I/O access mode of the variable.
-	 * @param convertScriptFromRaw FromRaw script string. Used to convert the value from device to user side.
-	 * @param convertScriptToRaw ToRaw script string. Used to convert the value from user to device side.*/
+	 *	@param varHwInterface The hardware interface containing the variable.
+	 *	@param varName The name of the variable.
+	 *	@param varType Type of the variable. Valid values are: string, bool, boolean, int, double.
+	 *	@param varRawType Type of the raw variable. If omitted, this will be the same as vartype.
+	 *	@param accessModeStr I/O access mode of the variable (r/w/rw).
+	 *	@param convertScriptFromRaw FromRaw script string. Used to convert the value from device to user side.
+	 *	@param convertScriptToRaw ToRaw script string. Used to convert the value from user to device side.*/
 	DeviceStateProxyVariable( const QString& varHwInterface, const QString& varName, const QString& varType, const QString& varRawType, const QString &accessModeStr, const QString convertScriptFromRaw, const QString convertScriptToRaw );
 
 	QVariant::Type mRawType; ///< The raw type of the variable.
@@ -192,7 +196,7 @@ private:
 	void swapValue( const QVariant &newValue );
 
 	/** Swap current raw value for the passed QVariant, if different.
-	  *	Also emit valueChangedRaw and setOnDevice signals, and call calculateValue().
+	  *	Also emit valueChangedRaw and sendMe signals, and call calculateValue().
 	  *	@return True on success, false otherwise.*/
 	void swapRawValue( const QVariant &newRawVal );
 

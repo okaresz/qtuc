@@ -66,8 +66,8 @@ public:
 
 private:
 
-	/** Set handshake info..
-	  *	@param info The self-info to send with handshake. must contain id at least.
+	/** Set handshake info.
+	  *	@param info The self-info to send with handshake. Must contain id at least.
 	  *	@return True if info is valid and set, false otherwise.*/
 	bool setInfo( QHash<QString,QString> &info );
 

@@ -1,5 +1,5 @@
 Client Protocol		{#doc-clientProtocol}
-========================
+=====================
 
 The proxy can communicate with the clients (qcGUI or any other 3rd party client) through a custom XML-based protocol.
 The protocol is packet based. A raw packet (on the transport layer) has the following structure:
@@ -10,7 +10,7 @@ The protocol is packet based. A raw packet (on the transport layer) has the foll
 The packets are parsed and processed on arrival, and the bare XML data remains (software layer).
 From this point, a "packet" means only the processed, decoded XML data.
   
-## Packets ## {#doc-clientProtocol-packets}
+# Packets # {#doc-clientProtocol-packets}
 
 The packets are grouping the similar commands/data as a container:
 
@@ -28,7 +28,7 @@ The packets are grouping the similar commands/data as a container:
 
 If you want to send more commands which belong to the same packet class, you can send them in one packet. In that case, the commands are processed in order.
 
-### Device packets ###		{#doc-clientProtocol-packets-device}
+## Device packets ##		{#doc-clientProtocol-packets-device}
 
 A client-side device packet is essentially a device command. Three example for the three types of deviceCommand:
 
@@ -55,11 +55,11 @@ The arguments must always be wrapped in a CDATA node.
 Special cases of commands are possible for requesting several variables at a time. To get all variable in a hardware interface, send `<get hwi="hwI_name"/>` in a device packet. Or if you want to get ALL the variables (don't do this very often though... Use [subscribe](#doc-clientProtocol-packets-subscribe) instead.), send `<get/>`.
 
 
-### Control packets ###		{#doc-clientProtocol-packets-control}
+## Control packets ##		{#doc-clientProtocol-packets-control}
 
 There are several types of control packets, and the list is not yet complete... Feel free to implement more.
 
-#### Handshake ####		{#doc-clientProtocol-packets-handshake}
+### Handshake ###		{#doc-clientProtocol-packets-control-handshake}
 
 The handshake packet is used as the first packet sent from the client to the proxy, and from the proxy to the client in return.
 The client must then acknowledge the server's reply with an empty handShake.
@@ -96,7 +96,7 @@ packet class="control" id="clientID#2339" re="qcProxy#234">
   * **ack**: Whether the handShake was accepted. If the client is rejected, this will be false, and the connection is likely to be closed by the remote end.
 
 
-#### HeartBeat ####		{#doc-clientProtocol-packets-heartbeat}
+### HeartBeat ###		{#doc-clientProtocol-packets-control-heartbeat}
 
 A heartbeat command must be sent by the client every second (1Hz). The proxy may estimate connection speed and status from the periodic heartbeats. If the heartbeats are missing, the connection considered to be lost.
 
@@ -115,7 +115,7 @@ For every HeartBeat, the proxy will reply with an acknowledge HeartBeat:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-#### deviceAPI request ####		{#doc-clientProtocol-packets-deviceAPI_req}
+### deviceAPI request ###		{#doc-clientProtocol-packets-control-deviceAPI_req}
 
 When the client is ready to handle the deviceAPI definition, it sends the deviceAPI request package:
 
@@ -126,7 +126,7 @@ When the client is ready to handle the deviceAPI definition, it sends the device
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-#### deviceAPI ####		{#doc-clientProtocol-packets-deviceAPI}
+### deviceAPI ###		{#doc-clientProtocol-packets-control-deviceAPI}
 
 In this package, the whole deviceAPI definition is sent either from the client to the proxy, or back.
 
@@ -149,7 +149,7 @@ The whole root node (with the root node tags included) of the deviceAPI file is 
 The base64 encoding is done with QByteArray::toBase64(), so according to the Qt 4.8 manual, the algorithm used to encode Base64-encoded data is defined in [RFC 2045](http://www.rfc-editor.org/rfc/rfc2045.txt).
 
 
-#### Subscribe ####		{#doc-clientProtocol-packets-subscribe}
+### Subscribe ###		{#doc-clientProtocol-packets-control-subscribe}
 
 The client can subscribe to a variable autoUpdate. After the subscription, the proxy will send the requested variable with a set command in a device packet at the defined intervals.
 The interval is a 32bit integer, interpreted as milliseconds.
@@ -184,10 +184,10 @@ and a package with all the variables (as device commands) in the *drive* interfa
 
 **An uninitialized deviceVariable is not updated**. So if a deviceVariable has never been set from the device, (it's Null), it won't be included in the subscription update feed.
 
-If the deviceAPI.xm contains a valid user-side autoUpdate node for a variable, it is up to the client whether it uses this information to automatically send a subscription to the proxy for that variable.
+If the deviceAPI.xm contains a valid user-side [autoUpdate node](@ref doc-deviceAPIxml-stateVarList) for a variable, it is up to the client whether it uses this information to automatically send a subscription to the proxy for that variable.
 
 
-#### unSubscribe ####		{#doc-clientProtocol-packets-unSubscribe}
+### unSubscribe ###		{#doc-clientProtocol-packets-control-unSubscribe}
 
 In a similar fashion to subscribe, you can unsubscribe. After this command, proxy will stop sending the update packets immediately.
 
@@ -207,17 +207,20 @@ If *hwi* and *var* both equal "*", all subscriptions are cancelled.
 If *hwi* is a valid hardware interface name, and *var* is "*", then all subscriptions for the interface or a variable in the interface is cancelled.
 
 
-#### Message ####		{#doc-clientProtocol-packets-message}
+### Message ###		{#doc-clientProtocol-packets-control-message}
 
-Messages can be sent to the client with the message commands. This messages are either from the device, routed to the client by the proxy, or from the proxy itself. Sending messages to the proxy has little practical use, they are logged, though.
+Messages can be sent to the client with the message commands. This messages are either from the device, routed to the client by the proxy, or from the proxy itself. Sending messages to the proxy has little practical use, currently the proxy discards them.
 
 A message from the proxy:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <packet class="control" id="qcProxy#524">
-	<message level="<msgLevel>"><![CDATA[<message text>]]></message>
+	<message sender="<sender>" level="<msgLevel>"><![CDATA[<message text>]]></message>
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+  * **sender**: Sender of the message
+    * *proxy*: The sender is the proxy.
+    * *device*: The sender is the device.
   * **level**: Level of the message. Possible values:
     * *debug*: A debug message.
     * *info*: Some information.
@@ -225,7 +228,7 @@ A message from the proxy:
     * *error*: A (in most cases) non-fatal error.
     * *critical*: A critical error, likely to result in an unknown critical state or application shutdown.
 
-#### Status ####		{#doc-clientProtocol-packets-status}
+### Status ###		{#doc-clientProtocol-packets-control-status}
 
 This is a one-direction command, only the proxy can send it to clients, to notify them of the current device and proxy status.
 
@@ -246,7 +249,7 @@ This is a one-direction command, only the proxy can send it to clients, to notif
     * *error*: In error state, communication stopped.
     
     
-#### Re-read deviceAPI ####		{#doc-clientProtocol-packets-reReadDeviceAPI}
+### Re-read deviceAPI ###		{#doc-clientProtocol-packets-control-reReadDeviceAPI}
 
 When the proxy receives this package, it will re-read the deviceAPI file, and reinitialize itself, considering the changes. After this command, all autoUpdates will stop.
 
@@ -259,7 +262,7 @@ The client must take the necessary actions to adapt to the possibly changed devi
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-#### Disconnect ####		{#doc-clientProtocol-packets-disconnect}
+### Disconnect ###		{#doc-clientProtocol-packets-control-disconnect}
 
 When this packet is sent to the proxy, the proxy will stop all auto update and all data flow towards the client, disconnect the client, and close the socket.
 (Keeping the device-proxy connection alive.)
@@ -271,7 +274,7 @@ When this packet is sent to the proxy, the proxy will stop all auto update and a
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-#### Quit ####		{#doc-clientProtocol-packets-quit}
+### Quit ###		{#doc-clientProtocol-packets-control-quit}
 
 When this packet is sent to the proxy, the proxy will stop all auto update and all data flow, disconnect all clients, and the device and will exit gracefully,
 

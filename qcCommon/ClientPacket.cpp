@@ -32,13 +32,13 @@ ClientPacket::ClientPacket( const QDomElement &packetElement, QObject *parent ) 
 			//if( cmd->getPacketClass() != mClass )
 				//{ error( QtWarningMsg, QString("Command (%1) packet class (%2) differs from packet class (%3)! Command dropped.").arg(cmd->getName(),cmd->getPacketClass(),mClass), "ClientPacket()" ); }
 			//else
-				{ mCmdList.append( cmd ); }
+				mCmdList.append( cmd );
 		}
 		commandElement = commandElement.nextSiblingElement();
 	}
 }
 
-ClientPacket::ClientPacket()  : ErrorHandlerBase(0)//, mClass(packetUndefined)
+ClientPacket::ClientPacket() : ErrorHandlerBase(0)//, mClass(packetUndefined)
 {
 	mIdNum = ++mPacketCount;
 	if( mCommandFactoryPtr == 0 )
@@ -74,7 +74,6 @@ ClientPacket::~ClientPacket()
 		if( mCmdList.at(i) )
 			{ delete mCmdList.value(i); }
 	}
-	//debug( debugLevelVeryVerbose, "Destroyed", "~ClientPacket()" );
 }
 
 bool ClientPacket::isValid()
@@ -294,7 +293,7 @@ quint16 ClientPacket::readPacketSize( const QByteArray &rawData )
 	}
 }
 
-bool ClientPacket::setSelfId(const QString &newId)
+bool ClientPacket::setSelfId( const QString &newId )
 {
 	if( !newId.isEmpty() )
 	{

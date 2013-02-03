@@ -10,8 +10,8 @@ ClientCommandFactory *ClientConnectionManagerBase::mCommandFactory = 0;
 
 ClientConnectionManagerBase::ClientConnectionManagerBase( QTcpSocket *socket, bool isServerRole, QObject *parent ) :
 	ErrorHandlerBase(parent),
-	mState(connectionUnInitialized),
 	mServerRole(isServerRole),
+	mState(connectionUnInitialized),
 	mHeartBeatCount(0),
 	mClientSocket(socket)
 {
@@ -45,7 +45,8 @@ ClientConnectionManagerBase::ClientConnectionManagerBase( QTcpSocket *socket, bo
 		//mClientSocket->setReadBufferSize(80);	//~one Command
 
 		connect( mClientSocket, SIGNAL(readyRead()), this, SLOT(receiveClientData()) );
-		connect( this, SIGNAL(packetReceived(ClientPacket*)), this, SLOT(handleReceivedPacket(ClientPacket*)) );
+		// called directly:
+		//connect( this, SIGNAL(packetReceived(ClientPacket*)), this, SLOT(handleReceivedPacket(ClientPacket*)) );
 
 		/// @todo Am I sure to handle it locally like this?
 		connect(mClientSocket, SIGNAL(disconnected()), this, SLOT(handleDisconnected()));
@@ -94,12 +95,12 @@ const QHash<QString,QString> ClientConnectionManagerBase::getClientInfo() const
 	return mClientInfo;
 }
 
-const QHash<QString,QString> ClientConnectionManagerBase::getSelfInfo() const
+const QHash<QString,QString> ClientConnectionManagerBase::getSelfInfo()
 {
 	return mSelfInfo;
 }
 
-const QString ClientConnectionManagerBase::getSelfInfo(const QString &infoName) const
+const QString ClientConnectionManagerBase::getSelfInfo(const QString &infoName)
 {
 	return mSelfInfo.value( infoName, QString() );
 }
@@ -227,7 +228,7 @@ void ClientConnectionManagerBase::receiveClientData()
 		}
 
 		if( packet->isValid() )
-			{ emit packetReceived( packet ); }
+			{ emit handleReceivedPacket( packet ); }
 		else
 		{
 			error( QtWarningMsg, "Received packet is invalid", "receiveClientData()" );

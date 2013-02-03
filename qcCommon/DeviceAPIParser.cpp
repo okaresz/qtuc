@@ -3,20 +3,31 @@
 
 using namespace QtuC;
 
-DeviceAPIParser::DeviceAPIParser ( QObject* parent ) : ErrorHandlerBase(parent)
-{
-
-}
+DeviceAPIParser::DeviceAPIParser ( QObject* parent ) :
+	ErrorHandlerBase(parent),
+	mDocTypeName("QtuCDeviceAPIDef")
+{}
 
 DeviceAPIParser::~DeviceAPIParser()
+{}
+
+void DeviceAPIParser::clear()
 {
-	debug( debugLevelVeryVerbose, "DeviceAPIParser destroyed", "~DeviceAPIParser()" );
+	mCurrentApiHash.clear();
+	mCurrentApiString.clear();
+	debug( debugLevelVerbose, "Device API cleared", "clear()" );
 }
 
-bool DeviceAPIParser::parseAPI ( const QString& deviceAPIString )
+/// @todo Create a checkAPI function and  rewrite the chaos of load/reload API... CheckAPI should include the checks in parseAPI (should we run the whole parse to catch semantic errors as well?...), and then in the future maybe DTD check.
+bool DeviceAPIParser::parseAPI( const QByteArray& deviceAPIString )
 {
-	/// @todo api encoding!...
-	QDomDocument apiMarkup("QtuCDeviceAPIDef");
+	if( !isEmpty() )
+	{
+		error( QtWarningMsg, "You can only call parseAPI() on an empty DeviceAPIParser! Use clear() first.", "parseAPI" );
+		return false;
+	}
+
+	QDomDocument apiMarkup;
 	QString errMsg;
 	int errLine;
 	if( !apiMarkup.setContent( deviceAPIString, false, &errMsg, &errLine ) )
@@ -28,9 +39,15 @@ bool DeviceAPIParser::parseAPI ( const QString& deviceAPIString )
 		return false;
 	}
 
+	if( apiMarkup.doctype().name() != mDocTypeName )
+	{
+		error( QtCriticalMsg, QString("API parsing failed: DTD name should be \"%1\".").arg( mDocTypeName ), "parseAPI(const QString&)" );
+		return false;
+	}
+
 	if( apiMarkup.documentElement().tagName() != "deviceAPI" )
 	{
-		error( QtCriticalMsg, "API parsing failed: root node is not deviceAPI", "parseAPI(const QString&)" );
+		error( QtCriticalMsg, "API parsing failed: root node is not \"deviceAPI\"", "parseAPI(const QString&)" );
 		return false;
 	}
 
@@ -83,7 +100,7 @@ bool DeviceAPIParser::parseAPI ( const QString& deviceAPIString )
 		}
 	}
 
-	mCurrentApiHash = getHash( deviceAPIString );
+	mCurrentApiHash = generateHash( deviceAPIString );
 	mCurrentApiString = deviceAPIString;
 
 	return true;
@@ -299,21 +316,40 @@ bool DeviceAPIParser::parseNodeStateVariable( const QDomElement &stateVariableEl
 
 bool DeviceAPIParser::operator ==( const QString &deviceAPIString )
 {
-	return ( mCurrentApiHash == getHash(deviceAPIString) );
+	return ( mCurrentApiHash == generateHash(deviceAPIString) );
 }
-
 
 const QByteArray DeviceAPIParser::getHash() const
 {
 	return mCurrentApiHash;
 }
 
-const QByteArray DeviceAPIParser::getHash(const QString &apiString)
+const QByteArray DeviceAPIParser::generateHash(const QString &apiString)
 {
 	return QCryptographicHash::hash( apiString.toAscii(), QCryptographicHash::Md5 );
 }
 
-const QString DeviceAPIParser::getString() const
+const QString DeviceAPIParser::getApiString() const
 {
 	return mCurrentApiString;
+}
+
+bool DeviceAPIParser::setDocTypeName( QString const &name )
+{
+	if( !isEmpty() )
+	{
+		error( QtWarningMsg, "Try to set API DTD name on a non-empty parser object. Left unchanged.", "setDocTypeName()" );
+		return false;
+	}
+
+	if( name.isEmpty() )
+	{
+		error( QtWarningMsg, "Try to set empty string as deviceAPI XML DTD name. Left unchanged.", "setDocTypeName()" );
+		return false;
+	}
+	else
+	{
+		mDocTypeName = name;
+		return true;
+	}
 }

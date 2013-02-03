@@ -10,9 +10,37 @@ QList<QStringList> Device::mFunctions = QList<QStringList>();
 bool Device::mPositiveAck = false;
 QHash<QString,QString> Device::mInfo = QHash<QString,QString>();
 
+Device *Device::create(QObject *parent)
+{
+	if( mInstance )
+	{
+		error( QtWarningMsg, "Only one Device insatnce can exist at a time! Use clear() first!", "create()", "Device" );
+		return 0;
+	}
+	mInstance = new Device(parent);
+	return mInstance;
+}
+
+Device *Device::create( const QStringList& hwInterfaceList, const QStringList& hwInterfaceInfoList, const QString & deviceName, QObject *parent )
+{
+	if( mInstance )
+	{
+		error( QtWarningMsg, "Only one Device insatnce can exist at a time! Use clear() first!", "create()", "Device" );
+		return 0;
+	}
+
+	if( hwInterfaceList.isEmpty() )
+	{
+		ErrorHandlerBase::error( QtCriticalMsg, "Cannot create Device with no hardware interface!", "create()", "Device" );
+		return 0;
+	}
+
+	mInstance = new Device( hwInterfaceList, hwInterfaceInfoList, deviceName, parent);
+	return mInstance;
+}
+
 Device::Device( QObject *parent ) : ErrorHandlerBase( parent ), mCreated(false)
 {
-	clear();
 	mInfo.insert( "name", QString() );
 	mInfo.insert( "description", QString() );
 	mInfo.insert( "platform", QString() );
@@ -23,7 +51,6 @@ Device::Device( QObject *parent ) : ErrorHandlerBase( parent ), mCreated(false)
 
 Device::Device( const QStringList& hwInterfaceList, const QStringList& hwInterfaceInfoList, const QString & deviceName, QObject *parent ) : ErrorHandlerBase( parent ), mCreated(false)
 {
-	clear();
 	mHardwareInterfaces = QStringList( hwInterfaceList );
 	mHardwareInterfaceInfo = QStringList( hwInterfaceInfoList );
 
@@ -51,12 +78,6 @@ Device* Device::swap(Device *newDevice)
 	Device* oldInstance = mInstance;
 	mInstance = newDevice;
 	return oldInstance;
-}
-
-Device *Device::create(QObject *parent)
-{
-	mInstance = new Device(parent);
-	return mInstance;
 }
 
 bool Device::isValidHwInterface( const QString& hwInterfaceName )
@@ -98,6 +119,8 @@ void Device::clear()
 	mInfo.clear();
 	mPositiveAck = false;
 	mCreated = false;
+	mInstance->deleteLater();
+	mInstance = 0;
 }
 
 deviceMessageType_t Device::messageTypeFromString(const QString &msgTypeStr)
@@ -206,16 +229,4 @@ void Device::setPositiveAck(bool posAck)
 {
 	if( !mCreated )
 		{ mPositiveAck = posAck; }
-}
-
-Device *Device::create( const QStringList& hwInterfaceList, const QStringList& hwInterfaceInfoList, const QString & deviceName, QObject *parent )
-{
-	if( hwInterfaceList.isEmpty() )
-	{
-		ErrorHandlerBase::error( QtCriticalMsg, "Cannot create Device with no hardware interface!", "create()", "Device" );
-		return 0;
-	}
-
-	mInstance = new Device( hwInterfaceList, hwInterfaceInfoList, deviceName, parent);
-	return mInstance;
 }

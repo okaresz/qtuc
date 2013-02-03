@@ -44,7 +44,7 @@ public:
 
 	/** Constructor.
 	 *	@param socket The TCP socket of the client.
-	 *	@param roleIsServer Set this to true if this client instance behaves as a server. When implementing a client to connect to proxy, this must be false, so you don't have to worry about it.*/
+	 *	@param isServerRole Set this to true if this client instance behaves as a server. When implementing a client to connect to proxy, this must be false, so you don't have to worry about it.*/
 	ClientConnectionManagerBase( QTcpSocket *socket, bool isServerRole = false, QObject *parent = 0 );
 
 	virtual ~ClientConnectionManagerBase();
@@ -75,12 +75,12 @@ public:
 	/** Get self info list.
 	 *	Return server information list, to be sent to the client during handShake.
 	 *	@return Server information list as a QHash.*/
-	const QHash<QString,QString> getSelfInfo() const;
+	static const QHash<QString,QString> getSelfInfo();
 
 	/** Get self info.
 	 *	Return server information with the key infoName.
 	 *	@return Server information with the key infoName.*/
-	const QString getSelfInfo( const QString &infoName) const;
+	static const QString getSelfInfo( const QString &infoName);
 
 	/** Set an advertised self-information.
 	 *	To set more info at a time, see setSelfInfo( const QHash<QString,QString>& ).
@@ -90,12 +90,13 @@ public:
 
 	/** Set the advertised self-information.
 	  *	@warning This must be set before the handshake. Calling after will do nothing.
-	  *	@param The information lis to set.*/
+	  *	@param infoList The information lis to set.*/
 	static bool setSelfInfo( const QHash<QString,QString> &infoList );
 
 	/** Send a command to the client.
 	 *  Grab the command, wrap it into a packet and send it.
 	 *	Commands should be created with new on the heap.
+	 *	The command will be deleted, whether the sending was successful or not.
 	 *	@param cmd The command to send.
 	 *	@return True on success, false otherwise.*/
 	bool sendCommand( ClientCommandBase *cmd );
@@ -105,31 +106,35 @@ public:
 	 *	If a command is invalid, it will be discarded.
 	 *  Only commands of the same class can be sent together! The class of the packet will be the packetClass of the first command. If a class of a subsequent command differs, it will be discarded.
 	 *	Commands should be created with new on the heap.
+	 *	The commands will be deleted, whether the sending was successful or not.
 	 *	@param cmdList List of the commands to send.
 	 *	@return True on success, false otherwise.*/
 	bool sendCommands( const QList<ClientCommandBase*> &cmdList );
 
 	/** Send a packet.
+	  *	The packet and the contained commands will be deleted, whether the sending was successful or not.
 	  *	@param packet The packet to send.
 	  *	@return True on success, false otherwise.*/
 	bool sendPacket( ClientPacket *packet );
 
-	/** Send handshake command.
+	/** Send initial handshake command.
+	  *	For the succeeding sendshake replies, see reflex().
 	  *	@return True on success, false otherwise.*/
 	bool sendHandShake();
 
 signals:
 
-	/** Emitted when a packet is received from the client.
+	/* Emitted when a packet is received from the client.
 	  * The QObject parent of the packet is the ClientConnectionManager, that created the packet, so the packet will be deleted by the destructor of connection manager,
 	  * but the packet must be destroyed as soon as it's handled to free memory.
-	  *	@param clientPacket Pointer to the client packet object.*/
-	void packetReceived( ClientPacket *clientPacket );
+	  *	@param clientPacket Pointer to the client packet object.
+	  * @note Deprecated, the packetReceived() and commandReceived() signals together is ambiguous. Use only commandReceived(). Also, if someone connects to packetReceived(), it may be modified or even deleted before handleReceivedPacket() gets it.*/
+	//void packetReceived( ClientPacket *clientPacket );
 
 	/** Emitted when a command is received from the client.
-	  * The QObject parent of the command is the packet it belongs to, so the command will be deleted by the destructor of the packet,
-	  *	but the command must be destroyed as soon as it's handled, to free memory.
-	  *	@param clientCommand The client command object. The object is the instance of the Client command class corresponding to the command.*/
+	  * The QObject parent of the command is the packet it belongs to, so the command will be ultimately deleted by the destructor of the packet,
+	  *	nonetheless it's recommended to destroy the command as soon as it's handled, to free memory.
+	  *	@param clientCommand The client command object. The object is the instance of the Client Command class corresponding to the command.*/
 	void commandReceived( ClientCommandBase *clientCommand );
 
 	/// Emitted when the client got disconnected.
@@ -158,8 +163,7 @@ protected slots:
 	void receiveClientData();
 
 	/** Handle received ClientPacket.
-	  *	This slot is connected to packetReceived() signal.
-	  *	@param The packet received.*/
+	  *	@param packet The packet received.*/
 	void handleReceivedPacket( ClientPacket *packet );
 
 	/** Reflex.
@@ -175,10 +179,10 @@ protected slots:
 	/** Acknowledge and reply to a handShake command.
 	 *	This will set client information based on the received handShake, and construct a handShake in reply.
 	 *	The actions will be taken regarding mServerRole.
-	 *	@param handShake The handShake command sent by the client.*/
+	 *	@param handshake The handshake command sent by the client.*/
 	void ackHandShake( ClientCommandHandshake *handshake );
 
-	/** Handle client disconnection.*/
+	/** Handle if client closes the connection.*/
 	void handleDisconnected();
 
 protected:
@@ -188,19 +192,23 @@ protected:
 	  *	@return True if socket is open, readable and writable, false if not.*/
 	bool checkSocket();
 
+	/** Set connection state.
+	  *	@param newState the new connection state to set.*/
 	void setState( connectionState_t newState );
 
-	connectionState_t mState;	///< Connection state.
-
 	/** Whether this instance behaves as a server-side client.
-	  *	Server-side client means it doesn't initiate handshake, only acknowledges it, or don't have to sen hartbeats, only reply to them, and other usually internally handled actions.*/
+	  *	Server-side client means:
+	  *	  * don't initiate handshake, only acknowledge it
+	  *	  * don't send hartbeats, only reply to them.*/
 	bool mServerRole;
+
+	connectionState_t mState;	///< Connection state.
 	qint64 mHeartBeatCount;		///< heartBeat count.
 	static QHash<QString,QString> mSelfInfo;	///< Self-information to send to the client during handShake.
 	QHash<QString,QString> mClientInfo;		///< Client information sent by the client during handShake.
 	QTcpSocket* mClientSocket;	///< TCP socket for the client connection.
-	static ClientCommandFactory *mCommandFactory;	///< A ClientCommandFactory instance to build and initialize client commands. @todo Can this be only in ClientPcket as static? Qho destroys it?
-	static int mInstanceCount;	// Number of client instances
+	static ClientCommandFactory *mCommandFactory;	///< A ClientCommandFactory instance to build and initialize client commands. @todo Can this be only in ClientPcket as static? Who destroys it?
+	static int mInstanceCount;	///< Number of ClientConnectionManagerBase instances.
 };
 
 }	//QtuC::

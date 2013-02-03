@@ -11,8 +11,20 @@ DeviceAPIFileHandler::DeviceAPIFileHandler( QObject *parent ) : DeviceAPIParser(
 	mApiFileWatcher = new QFileSystemWatcher(this);
 }
 
+DeviceAPIFileHandler::~DeviceAPIFileHandler()
+{
+	stopWatch();
+	mApiFileWatcher->deleteLater();
+}
+
 bool DeviceAPIFileHandler::load(const QString &apiFilePath)
 {
+	if( !isEmpty() )
+	{
+		error( QtWarningMsg, "You can only call load() on an empty DeviceAPIFileHandler! Use reload() instead.", "load" );
+		return false;
+	}
+
 	QString checkedApiFilePath(apiFilePath);
 
 	if( apiFilePath.isEmpty() )
@@ -48,12 +60,12 @@ bool DeviceAPIFileHandler::load(const QString &apiFilePath)
 		return false;
 	}
 
-	QTextStream apiFileStream(&apiFile);
-	if( !parseAPI( apiFileStream.readAll() ) )
+	if( !parseAPI( apiFile.readAll() ) )
 	{
 		error( QtCriticalMsg, QString("Failed to parse device API file at %1").arg(apiFilePath), "load()" );
 		return false;
 	}
+
 	apiFile.close();
 	mCurrentAPIFilePath = apiFilePath;
 
@@ -75,11 +87,27 @@ bool DeviceAPIFileHandler::save(const QString &apiFilePath)
 		checkedPath = QDir::cleanPath( apiFileDir.append(apiFileName) );
 	}
 	/// @todo Implement
-    return false;
+	return false;
+}
+
+bool DeviceAPIFileHandler::isEmpty() const
+{
+	return DeviceAPIParser::isEmpty() && mCurrentAPIFilePath.isEmpty();
+}
+
+void DeviceAPIFileHandler::clear()
+{
+	DeviceAPIParser::clear();
+	mCurrentAPIFilePath.clear();
+	stopWatch();
+	if( !mApiFileWatcher->files().isEmpty() )
+		{ mApiFileWatcher->removePaths( mApiFileWatcher->files() ); }
 }
 
 bool DeviceAPIFileHandler::reload()
 {
+	/// @todo Device API is cleared, before we know whether the new is valid...  When DeviceAPIParser::checkAPI() will be implemented!...
+	clear();
 	if( load( mCurrentAPIFilePath ) )
 	{
 		debug( debugLevelInfo, "Device API reloaded", "reload()" );
@@ -103,6 +131,13 @@ void DeviceAPIFileHandler::startWatch()
 void DeviceAPIFileHandler::stopWatch()
 {
 	mApiFileWatcher->disconnect();
-	debug( debugLevelVerbose, QString("Stopped watching of deviceAPI for changes at %1").arg(mApiFileWatcher->files().at(0)), "stopWatch()" );
+	QString fileName;
+	if( !mApiFileWatcher->files().isEmpty() )
+		{ fileName = mApiFileWatcher->files().at(0); }
+	else
+		{ fileName = mCurrentAPIFilePath; }
+
+	if( !fileName.isEmpty() )
+		{ debug( debugLevelVerbose, QString("Stopped watching of deviceAPI for changes at %1").arg(fileName), "stopWatch()" ); }
 }
 
