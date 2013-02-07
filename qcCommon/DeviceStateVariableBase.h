@@ -169,7 +169,7 @@ protected:
 	QString mHwInterface;	///< The name of the hardware interface containing the variable.
 	QVariant::Type mType;	///< The converted type of the variable.
 	QVariant mValue;			///< The (converted) value of the variable.
-	quint32 mLastUpdate;			///< UNIX millisec timestamp of the last update (from *source*).
+	qint64 mLastUpdate;			///< UNIX millisec timestamp of the last update (from *source*).
 	accessMode_t mAccessMode;	///< AccessMode of the variable.
 
 	void emitValueChanged();	///< Emit valueChanged signals for all types.

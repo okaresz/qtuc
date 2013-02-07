@@ -12,6 +12,9 @@ ProxySettingsManager::ProxySettingsManager(QObject *parent) :
 	if( !contains("device/commandSeparator") )
 		{ setValue( "device/commandSeparator", QChar(' ') ); }
 
+	if( !contains("device/timeTicksPerMs") )
+		{ setValue( "device/timeTicksPerMs", 1000.0 ); }
+
 	// devicePort
 	if( !contains("devicePort/portName") )
 		{ setValue( "devicePort/portName", "/dev/ttyS1"); }

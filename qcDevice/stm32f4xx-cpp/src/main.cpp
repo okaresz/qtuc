@@ -5,6 +5,7 @@
 #include "QtuC_Interfaces.hpp"
 #include "HwInterface_ProxyCom.hpp"
 #include "HwInterface_Led.hpp"
+#include "delay.hpp"
 
 /** Device parameters.
  *	Can be sent to QtuC with QtuC::Tools::sendGreeting().
@@ -14,6 +15,8 @@ char const *deviceParams[] = {
 	"desc", "Example code for a qcDevice implementation",
 	"platform", "STM32F4xx",
 	"project", "QtuC",
+	"timeTicksPerMs", "1000",
+	"positiveAck", "false",
 	0	// this terminating NULL pointer is necessary
 };
 
@@ -40,11 +43,6 @@ int main(void)
 
 	// We are ready, send device greeting message
 	QtuC::Tools::sendGreeting( deviceParams, "Hi proxy!" );
-	QtuC::Tools::sendMessage( QtuC::msgInfo, "Device started" );
-	QtuC::Tools::sendDebug( "debug1", 2, "debug2", 3 );
-	QtuC::Tools::sendDebug( "debughalf", 5 );
-	QtuC::Tools::sendCommand( QtuC::cmdSet, "nincs", "hehe", -332 );
-	QtuC::Tools::sendCommand( QtuC::cmdSet, "nincs", "hehestr", "-332" );
 
 	// The main loop
 	char cmd[QtuC::Conf::maxCommandLength];

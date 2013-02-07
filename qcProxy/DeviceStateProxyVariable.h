@@ -141,8 +141,9 @@ public slots:
 	/** Updates the rawValue of the variable as got from the device.
 	 *	Call or connect this slot when you receive a set command from the device.
 	 *	This function updates the rawValue, calculates the converted Value, and emits updated() and all valueChanged signals
-	 *	@param newRawValue The new raw value (string) as parsed from the device command*/
-	void updateFromDevice( const QString& newRawValue );
+	 *	@param newRawValue The new raw value (string) as parsed from the device command.
+	 *	@param timestamp An optional timestamp value. If given, the last update time of the variable will be set to this stamp. If omitted, the current time will be used.*/
+	void updateFromDevice( const QString& newRawValue, qint64 const &timestamp = 0 );
 
 private slots:
 

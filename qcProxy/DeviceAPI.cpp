@@ -4,22 +4,32 @@
 #include "DummySocketDevice.h"
 #include "DeviceAPIFileHandler.h"
 #include "ProxySettingsManager.h"
+#include <QDateTime>
 
 using namespace QtuC;
 
 DeviceAPI::DeviceAPI( QObject *parent ) :
 	ErrorHandlerBase(parent),
-	mEmitAllCmd(false)
+	mEmitAllCmd(false),
+	mReceivedDeviceCommandCounter(0)
 {
 	mStateManager = new DeviceStateManager(this);
 	mDeviceAPI = new DeviceAPIFileHandler(this);
-	mDeviceInstance = 0;
+	mDeviceInstance = Device::create(this);
 
 	mDeviceLink = new SerialDeviceConnector(this);
 	//mDeviceLink = new DummySocketDevice(this);
 
 	// set device command separator
 	DeviceCommand::setSeparator( ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar() );
+
+	// set Device Time resolution
+	bool ok;
+	mDeviceInstance->setDeviceTimeTicksPerMs( ProxySettingsManager::instance()->value( "device/timeTicksPerMs" ).toDouble(&ok) );
+	if( !ok )
+		{ error( QtWarningMsg, QString("Invalid value in config file for device/timeTicksPerMs, fallback to default(%1)").arg(QString::number(Device::getDeviceTimeTicksPerMs())), "DeviceAPI()" ); }
+	else
+		{ debug( debugLevelVerbose, QString("Device time resolution set to %1 ticks / ms").arg( QString::number(Device::getDeviceTimeTicksPerMs()) ), "DeviceAPI()" ); }
 
 	connect( mStateManager, SIGNAL(stateVariableUpdateRequest(DeviceStateProxyVariable*)), this, SLOT(handleStateVariableUpdateRequest(DeviceStateProxyVariable*)) );
 	connect( mStateManager, SIGNAL(stateVariableSendRequest(DeviceStateProxyVariable*)), this, SLOT(handleStateVariableSendRequest(DeviceStateProxyVariable*)) );
@@ -29,9 +39,19 @@ bool DeviceAPI::call( const QString &hwInterface, const QString &function, const
 {
 	DeviceCommand *dCmd = new DeviceCommand();
 	dCmd->setType( deviceCmdCall );
-	dCmd->setInterface( hwInterface );
+	if( !dCmd->setInterface( hwInterface ) )
+	{
+		error( QtWarningMsg, "Could not set interface, command is ignored.", "call()" );
+		dCmd->deleteLater();
+		return false;
+	}
 	dCmd->setFunction( function );
-	dCmd->setArgumentString(arg);
+	if( !dCmd->setArgumentString(arg) )
+	{
+		error( QtWarningMsg, "Could not set argument, command is ignored.", "call()" );
+		dCmd->deleteLater();
+		return false;
+	}
 	if( !mDeviceLink->sendCommand( dCmd ) )
 	{
 		error( QtWarningMsg, "Device function call failed", "call()" );
@@ -119,9 +139,9 @@ bool DeviceAPI::initAPI( const QString &apiDefString )
 	/// @todo don't allow loading if something is alrady loaded.
 	/// @todo clean up this... The duplicate load and reload messages don't look so good on the console...
 
-	if( mDeviceInstance )
+	if( mDeviceInstance->isCreated() )
 	{
-		error( QtWarningMsg, "API already initialized (use reInit()!)", "initAPI()" );
+		error( QtWarningMsg, "API already initialized and created. Use reInit()!", "initAPI()" );
 		return false;
 	}
 
@@ -135,7 +155,6 @@ bool DeviceAPI::initAPI( const QString &apiDefString )
 		}
 		else
 		{
-			mDeviceInstance = Device::create(this);
 			connect( mDeviceAPI, SIGNAL(newDeviceInfo(QString,QString)), mDeviceInstance, SLOT(setInfo(QString,QString)) );
 			connect( mDeviceAPI, SIGNAL(newHardwareInterface(QString,QString)), mDeviceInstance, SLOT(addHardwareInterface(QString,QString)) );
 			connect( mDeviceAPI, SIGNAL(newStateVariable(QHash<QString,QString>)), mStateManager, SLOT(registerNewStateVariable(QHash<QString,QString>)) );
@@ -158,7 +177,6 @@ bool DeviceAPI::initAPI( const QString &apiDefString )
 		}
 		else
 		{
-			mDeviceInstance = Device::create(this);
 			connect( mDeviceAPI, SIGNAL(newDeviceInfo(QString,QString)), mDeviceInstance, SLOT(setInfo(QString,QString)) );
 			connect( mDeviceAPI, SIGNAL(newHardwareInterface(QString,QString)), mDeviceInstance, SLOT(addHardwareInterface(QString,QString)) );
 			connect( mDeviceAPI, SIGNAL(newStateVariable(QHash<QString,QString>)), mStateManager, SLOT(registerNewStateVariable(QHash<QString,QString>)) );
@@ -282,6 +300,14 @@ void DeviceAPI::handleDeviceGreeting( DeviceCommand *greetingCmd )
 			// lock device
 			mDeviceInstance->setCreated();
 		}
+
+		// update startup time. This must be after the device info has been parsed from the greeting message (timeTicksPerMs must be set).
+		if( greetingCmd->hasTimestamp() )
+		{
+			mDeviceInstance->setCreated( false );
+			mDeviceInstance->setStartupTime( QDateTime::currentMSecsSinceEpoch() - Device::timeStampToMs(greetingCmd->getTimestamp()) );
+			mDeviceInstance->setCreated();
+		}
 	}
 	else /// @todo This should reach the clients as well!
 		{ debug( debugLevelInfo, "Device greeting received (empty greeting)", "handleDeviceGreeting()" ); }
@@ -291,10 +317,27 @@ void DeviceAPI::handleDeviceGreeting( DeviceCommand *greetingCmd )
 
 void DeviceAPI::handleDeviceCommand( DeviceCommand *cmd )
 {
+	++mReceivedDeviceCommandCounter;
+
 	if( mEmitAllCmd )
 	{
 		emit commandReceived( cmd );
 		return;
+	}
+
+	// If this is the first command, try to set device startup time
+	// this should run, even if this is a greeting message (handleDeviceGreeting() only sets startupTime if the greeting has a timestamp)
+	if( mReceivedDeviceCommandCounter == 1 && !Device::getStartupTime() )
+	{
+		qint64 startupTime = 0;
+		if( cmd->hasTimestamp() )	// if command has timestamp, use it
+			{ startupTime = QDateTime::currentMSecsSinceEpoch() - Device::timeStampToMs(cmd->getTimestamp()); }
+		else	// otherwise device startup time will be the current time
+			{ startupTime = QDateTime::currentMSecsSinceEpoch(); }
+
+		mDeviceInstance->setCreated( false );
+		mDeviceInstance->setStartupTime( startupTime );
+		mDeviceInstance->setCreated();
 	}
 
 	if( cmd->getType() == deviceCmdCall )
@@ -313,6 +356,8 @@ void DeviceAPI::handleDeviceCommand( DeviceCommand *cmd )
 			else
 				{ emit commandReceived( cmd ); }
 		}
+		else
+			{ cmd->deleteLater(); }
 	}
 	else
 	{
@@ -325,8 +370,15 @@ void DeviceAPI::handleDeviceCommand( DeviceCommand *cmd )
 		else if( cmd->getType() == deviceCmdSet )
 		{
 			DeviceStateProxyVariable *var = (DeviceStateProxyVariable*)mStateManager->getVar( cmd->getHwInterface(), cmd->getVariable() );
+
+			qint64 updateTime = 0;
+			if( cmd->hasTimestamp() )	// if command has timestamp, use it
+				{ updateTime = Device::timeStampToUnix(cmd->getTimestamp()); }
+			else
+				{ updateTime = QDateTime::currentMSecsSinceEpoch(); }
+
 			if( var )
-				{ var->updateFromDevice( cmd->getArg() ); }
+				{ var->updateFromDevice( cmd->getArg(), updateTime ); }
 			else
 				{ error( QtWarningMsg, QString("Failed to set variable from device, no such variable (hwI: %1, name: %2)").arg(cmd->getHwInterface(),cmd->getVariable()), "handleDeviceCommand()" ); }
 		}

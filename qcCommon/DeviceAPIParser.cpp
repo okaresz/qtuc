@@ -132,7 +132,7 @@ bool DeviceAPIParser::parseNodeHardwareInterfaceList ( const QDomElement hardwar
 	{
 		if( hwiElement.firstChildElement("name").isNull() )
 		{
-			error( QtWarningMsg, QString("Missing hardware interface name node at line %1").arg(hwiElement.lineNumber()), "parseNodeHardwareInterfaceList()" );
+			error( QtWarningMsg, QString("Missing hardware interface name node at line %1").arg(QString::number(hwiElement.lineNumber())), "parseNodeHardwareInterfaceList()" );
 			continue;
 		}
 		QString name = hwiElement.firstChildElement("name").text();
@@ -179,7 +179,7 @@ bool DeviceAPIParser::parseNodeFunctionList ( const QDomElement &functionListEle
 		QString hwi, name;
 		if( functionElement.firstChildElement("hwInterface").isNull() )
 		{
-			error( QtWarningMsg, QString("Missing hwInterface node for function at line %1, function skipped").arg(functionElement.lineNumber()), "parseNodeFunctionList()" );
+			error( QtWarningMsg, QString("Missing hwInterface node for function at line %1, function skipped").arg(QString::number(functionElement.lineNumber())), "parseNodeFunctionList()" );
 			continue;
 		}
 		else
@@ -187,7 +187,7 @@ bool DeviceAPIParser::parseNodeFunctionList ( const QDomElement &functionListEle
 
 		if( functionElement.firstChildElement("name").isNull() )
 		{
-			error( QtWarningMsg, QString("Missing name node for function at line %1, function skipped").arg(functionElement.lineNumber()), "parseNodeFunctionList()" );
+			error( QtWarningMsg, QString("Missing name node for function at line %1, function skipped").arg(QString::number(functionElement.lineNumber())), "parseNodeFunctionList()" );
 			continue;
 		}
 		else
@@ -216,13 +216,13 @@ bool DeviceAPIParser::parseNodeStateVariable( const QDomElement &stateVariableEl
 	}
 	if( stateVariableElement.firstChildElement("hwInterface").isNull() )
 	{
-		error( QtWarningMsg, QString("StateVariable parsing failed (on line %1): no hwInterface node! Skip variable...").arg(stateVariableElement.lineNumber()), "parseNodeStateVariable()" );
+		error( QtWarningMsg, QString("StateVariable parsing failed (on line %1): no hwInterface node! Skip variable...").arg(QString::number(stateVariableElement.lineNumber())), "parseNodeStateVariable()" );
 		return false;
 	}
 
 	if( stateVariableElement.firstChildElement("type").isNull() )
 	{
-		error( QtWarningMsg, QString("StateVariable parsing failed (on line %1): no type node! Skip variable...").arg(stateVariableElement.lineNumber()), "parseNodeStateVariable()" );
+		error( QtWarningMsg, QString("StateVariable parsing failed (on line %1): no type node! Skip variable...").arg(QString::number(stateVariableElement.lineNumber())), "parseNodeStateVariable()" );
 		return false;
 	}
 
@@ -244,14 +244,14 @@ bool DeviceAPIParser::parseNodeStateVariable( const QDomElement &stateVariableEl
 			{ params.insert( "deviceType", typeElement.firstChildElement("device").text() ); }
 		else
 		{
-			error( QtWarningMsg, QString("StateVariable type parsing failed (on line %1): missing device node! Skip variable...").arg(typeElement.lineNumber()), "parseNodeStateVariable()" );
+			error( QtWarningMsg, QString("StateVariable type parsing failed (on line %1): missing device node! Skip variable...").arg(QString::number(typeElement.lineNumber())), "parseNodeStateVariable()" );
 			return false;
 		}
 		if( !typeElement.firstChildElement("user").isNull() )
 			{ params.insert( "userType", typeElement.firstChildElement("user").text() ); }
 		else
 		{
-			error( QtWarningMsg, QString("StateVariable type parsing failed (on line %1): missing user node! Skip variable...").arg(typeElement.lineNumber()), "parseNodeStateVariable()" );
+			error( QtWarningMsg, QString("StateVariable type parsing failed (on line %1): missing user node! Skip variable...").arg(QString::number(typeElement.lineNumber())), "parseNodeStateVariable()" );
 			return false;
 		}
 	}
@@ -272,9 +272,9 @@ bool DeviceAPIParser::parseNodeStateVariable( const QDomElement &stateVariableEl
 	{
 		QDomElement conversionElement = stateVariableElement.firstChildElement("conversion");
 		if( conversionElement.firstChildElement("toUser").isNull() )
-			{ error( QtWarningMsg, QString("Missing toUser node in conversion node for variable %1 on line %2").arg(params.value("name"),stateVariableElement.lineNumber()), "parseNodeStateVariable()" ); }
+			{ error( QtWarningMsg, QString("Missing toUser node in conversion node for variable %1 on line %2").arg(params.value("name"),QString::number(stateVariableElement.lineNumber())), "parseNodeStateVariable()" ); }
 		else if( conversionElement.firstChildElement("toDevice").isNull() )
-			{ error( QtWarningMsg, QString("Missing toDevice node in conversion node for variable %1 on line %2").arg(params.value("name"),stateVariableElement.lineNumber()), "parseNodeStateVariable()" ); }
+			{ error( QtWarningMsg, QString("Missing toDevice node in conversion node for variable %1 on line %2").arg(params.value("name"),QString::number(stateVariableElement.lineNumber())), "parseNodeStateVariable()" ); }
 		else
 		{
 			// text() handles CDATA
@@ -294,10 +294,10 @@ bool DeviceAPIParser::parseNodeStateVariable( const QDomElement &stateVariableEl
 			if( !autoUpdateElement.text().isEmpty() )
 				{ params.insert( QString("autoUpdate-%1").arg(side), autoUpdateElement.text() ); }
 			else
-				{ error( QtWarningMsg, QString("autoUpdate is empty on line %2, for variable %1").arg(params.value("name"),autoUpdateElement.lineNumber()), "parseNodeStateVariable()" ); }
+				{ error( QtWarningMsg, QString("autoUpdate is empty on line %2, for variable %1").arg(params.value("name"),QString::number(autoUpdateElement.lineNumber())), "parseNodeStateVariable()" ); }
 		}
 		else
-			{ error( QtWarningMsg, QString("side attribute is invalid on line %2 for variable %1 ").arg(params.value("name"),autoUpdateElement.lineNumber()), "parseNodeStateVariable()" ); }
+			{ error( QtWarningMsg, QString("side attribute is invalid on line %2 for variable %1 ").arg(params.value("name"),QString::number(autoUpdateElement.lineNumber())), "parseNodeStateVariable()" ); }
 		autoUpdateElement = autoUpdateElement.nextSiblingElement("autoUpdate");
 	}
 

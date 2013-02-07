@@ -5,15 +5,18 @@
 #include <QString>
 #include "DeviceCommandBase.h"
 #include <QHash>
+#include <QDateTime>
 
 namespace QtuC
 {
 
+/** Device message type.*/
 enum deviceMessageType_t
 {
 	deviceMsgUndefined,
 	deviceMsgInfo,
 	deviceMsgDebug,
+	deviceMsgWarning,
 	deviceMsgError
 };
 
@@ -101,10 +104,23 @@ public:
 	 *	@return COnnection status: true if connected, false if not or an error happened.*/
 	//static bool isConnected() const;
 
+	/** Get device startup time.
+	*	This timestamp is a UNIX timestamp, so it has millisec resolution.
+	*	Ideally this is set based on the device timestamp parsed from the device greeting message.
+	*	If the device doesn't use timekeeping, it should be set to the arrival time of the first device command.
+	  *	@return Startup timestamp.*/
+	static inline qint64 getStartupTime()
+		{ return mStartupTime; }
+
 	/** Set whether the device uses positive acknowledge to verify received commands.
 	  *	@return True if device uses poitive acknowledge, false if not.*/
 	static bool positiveAck()
 		{ return mPositiveAck; }
+
+	/** Get device time resolution (tick per millisecond).
+	  *	@return Device time resolution (tick per millisecond).*/
+	static double getDeviceTimeTicksPerMs()
+		{ return mDeviceTimeTicksPerMs; }
 
 	/** Get if device instance was created.
 	  *	If device is created, th device instance cannot be reached, only swapped with swap().
@@ -183,6 +199,34 @@ public slots:
 	  *	@param posAck Set to true if device uses poitive acknowledge, false if not.*/
 	void setPositiveAck( bool posAck );
 
+	/** Set device time resolution.
+	  *	Resolution is given in tick / millisecond.
+	  *	For example if the device timekeeping is microsecond based, this value should be 1000.
+	  * To convert device timestamp to millisec resolution, use timeStampToMs().
+	  *	@param tickPerMs Device timer resolution: tick / ms. Minimum value is 0.001.
+	  *	@return True on success, false otherwise.*/
+	bool setDeviceTimeTicksPerMs( double const &tickPerMs );
+
+	/** Set device startup time.
+	  *	This timestamp should be a UNIX timestamp.
+	  *	@param timeStamp Startup timestamp.*/
+	void setStartupTime( qint64 const &timeStamp )
+		{ mStartupTime = timeStamp; }
+
+	/** Convert device timestamp to millisecond resolution.
+	  *	Conversion is based on mDeviceTimeTicksPerMs, which is read from the configuration file.
+	  *	@param deviceTimeStamp The device timestamp.
+	  *	@return The device timestamp converted to millisec resolution.*/
+	static quint32 timeStampToMs( quint64 const &deviceTimeStamp )
+		{ return (quint32)( deviceTimeStamp / mDeviceTimeTicksPerMs + 0.5 ); }
+
+	/** Convert device timestamp to a stabdard UNIX timestamp.
+	  *	Conversion is based on mDeviceTimeTicksPerMs, which is read from the configuration file, and mStartupTime
+	  *	@param deviceTimeStamp The device timestamp.
+	  *	@return The UNIX timestamp.*/
+	static qint64 timeStampToUnix( quint64 const &deviceTimeStamp )
+		{ return mStartupTime + timeStampToMs(deviceTimeStamp); }
+
 private:
 
 	/** Private constructor.
@@ -206,6 +250,17 @@ private:
 	static QList<QStringList> mFunctions;		///< Device function list.
 	static bool mPositiveAck;	///< Whether the device uses positive acknowledge to verify received commands.
 	static QHash<QString,QString> mInfo;	///< Several device information, parsed from deviceAPI.
+
+	/** Timestamp of the device startup.
+	*	This timestamp is a UNIX timestamp, so it has millisec resolution.
+	*	Ideally this is set based on the device timestamp parsed from the device greeting message.
+	*	If the device doesn't use timekeeping, this will be set to the arrival time of the first device command.*/
+	static qint64 mStartupTime;
+
+	/** Device time resolution.
+	  *	Resolution is given in tick / millisecond.
+	  *	For example if the device timekeeping is microsecond based, this value should be 1000.*/
+	static double mDeviceTimeTicksPerMs;
 };
 
 }	//QtuC::

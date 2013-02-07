@@ -6,12 +6,14 @@ DeviceCommandBase::DeviceCommandBase()
 {
 	mType = deviceCmdUndefined;
 	mTimestamp = 0;
+	mHasTimestamp = false;
 }
 
 DeviceCommandBase::DeviceCommandBase( const DeviceCommandBase &deviceCommand )
 {
 	mType = deviceCommand.getType();
 	mTimestamp = deviceCommand.getTimestamp();
+	mHasTimestamp = deviceCommand.hasTimestamp();
 	mHwInterface = deviceCommand.getHwInterface();
 	mVariable = deviceCommand.getVariable();
 	mArgs = QStringList( deviceCommand.getArgList() );

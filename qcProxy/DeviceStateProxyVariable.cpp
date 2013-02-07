@@ -77,7 +77,7 @@ bool DeviceStateProxyVariable::isValid() const
 	return valid;
 }
 
-void DeviceStateProxyVariable::updateFromDevice( const QString& newRawValue )
+void DeviceStateProxyVariable::updateFromDevice( const QString& newRawValue, const qint64 &timestamp )
 {
 	QVariant castNewRawVal( variantFromString( newRawValue, mRawType ) );
 
@@ -87,14 +87,14 @@ void DeviceStateProxyVariable::updateFromDevice( const QString& newRawValue )
 		errDetails.insert( "name", mName );
 		errDetails.insert( "rawType",  QString(QVariant::typeToName(mRawType)) );
 		errDetails.insert( "newRawValue", newRawValue );
-		error( QtWarningMsg, "Invalid value from device!", "setFromDevice()", errDetails );
+		error( QtWarningMsg, "Invalid value from device!", "updateFromDevice()", errDetails );
 		return;
 	}
 
 	if( mRawValue != castNewRawVal )
 	{
 		mRawValue = castNewRawVal;
-		mLastUpdate = QDateTime::currentMSecsSinceEpoch();
+		timestamp? mLastUpdate = timestamp : mLastUpdate = QDateTime::currentMSecsSinceEpoch();
 		emit updated();
 		// Do not emit valueChangedRaw ( signal-slot recursion, because valueChangedRaw usually connected to sendMe(), however this connect - if exists - is outside  DeviceStateVar )
 		// This will call valueUpdated signals

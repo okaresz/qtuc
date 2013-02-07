@@ -22,6 +22,7 @@ DeviceCommand::DeviceCommand( const QString &commandString ) :
 	mType = commandTypeFromString( cmdExploded.at(partIndex++) );
 
 	// timestamp
+	mHasTimestamp = false;
 	if( cmdExploded.at(partIndex).at(0) == '@' )
 	{
 		bool ok;
@@ -31,6 +32,8 @@ DeviceCommand::DeviceCommand( const QString &commandString ) :
 			mTimestamp = 0;
 			ErrorHandlerBase::error( QtWarningMsg, "Invalid timestamp, ignored.", "DeviceCommand()", "DeviceCommand" );
 		}
+		else
+			{ mHasTimestamp = true; }
 	}
 
 	mHwInterface = cmdExploded.at(partIndex++);

@@ -1,36 +1,35 @@
 Overview		{#mainpage}
 ==========
 
-A fast prototyping framework for embedded systems, in a client (GUI) - server
-(proxy) configuration.
+A fast prototyping framework for embedded systems, in a server - client configuration.
 
 
 # Motivation #		{#mainpage-motivation}
 
-Are you fed up with the common practice that at the beginning of every project,
+Are you familiar with the common practice that at the beginning of every project,
 you spend a ridiculously long time implementing the same trivial tasks (serial
 communication, communication protocolls, PC-side control program, etc..) again
 and again?
-I was, and so QtuC was created. QtuC takes care of these "basic"
-features so you can concentrate on the *real* developement.
+
+QtuC takes care of these "basic" features so you can concentrate on the *real* developement.
 
 
 # Components #			{#mainpage-components}
 
 The framework consists of the following separate applications:
 
-  * **qcDevice**: The code running on the embedded device (denoted as *device*
+  * **QcDevice**: The code running on the embedded device (denoted as *device*
 throughout the documentation). This sofware is not essential part of the provided
 framework, only some bare minimum examples are provided, the implementation is
 up to the device developer.
-  * **qcProxy**: This is a *command-line* application, running usually on an x86
+  * **QcProxy**: This is a *command-line* application, running usually on an x86 / x86_64
 platform, and uses the Qt C++ framework.
-qcProxy is in a tight communication loop with the device through a serial line
+QcProxy is in a tight communication loop with the device through a serial line
 (though different protocols can be implemented if necessary),
 and keeps an up-to date state of the device, serving as a high level API to the
 device.
-  *  **qcGUI**: The GUI can connect to the proxy through a TCP socket on a
-custom port (can be set in the qcGuiSettings.xml).
+  *  **QcGUI**: The GUI can connect to the proxy through a TCP socket on a
+custom port.
 If the connection is successful, the GUI will show the state of the device and
 provides basic control.
 
@@ -43,12 +42,11 @@ system,
 or an ADC channel reading, a timer value, etc... These variables are updated to
 the proxy, to be easily accessible through qcGUI or any other connected client.
 The device and the proxy communicates with a fixed command syntax, called
-deviceCommand. See Device Command documentation page. Between the proxy and the
+deviceCommand. See [Device Commands](@ref doc-deviceCommand) documentation page. Between the proxy and the
 clients,
-a custom XML-based packet communication exists. See [clientCommand](@ref
-doc-clientProtocol) page for details.
+a custom XML based packet communication exists. See [clientCommand](@ref doc-clientProtocol) page for details.
 
-The client and  device side is aupdated and handled asynchronously.
+The client and  device side is updated and handled asynchronously.
 
 
 ## DeviceAPI ##			{#mainpage-concept-deviceAPI}
@@ -78,6 +76,7 @@ and cast according to the specified variable type.
   * string
   * boolean
   * integer
+  * unsigned integer
   * double
 
   
@@ -134,8 +133,43 @@ that is. From the proxy to the device, any number of functions can be defined in
 the device API file, they will be accessible on the GUI without any modification
 to the proxy or gui code.)
 
-A function can accept a custom number of arguments. See [deviceCommand](@ref
-doc-deviceCommand) page for details.
+A function can accept a custom number of arguments. See [deviceCommand](@ref doc-deviceCommand) page for details.
+
+
+## Timekeeping ##			{#mainpage-concept-timekeeping}
+
+The communication between the device and the proxy, and even more between the proxy and the clients takes a considerable amount of time. The clients are connected through a TCP socket, which - when there is a large network distance between the endpoints - brings a random delay to the system.
+Some  applications however require precise timing, such as logging or graph plotting. To tackle this problem, QtuC supports a timekeeping method.
+
+In timing-critical applications, the device should implement a timekeeping mechanism, such as a system timer. This way when a variable is requested from the device, it can generate a timestamp, marking the creation time of the value.
+This timestamp can be sent with the `set` command reply in the following form:
+
+    set @35d2 hwiname varName value
+
+the timestamp is the second word, a hex number after the command name (`set`), prefixed with a `@` sign, marking the time since device startup.
+This timestamp is treated as the passed time since device startup. The granularity may vary from device to device, and can be set with defining the device time ticks per millisecond.
+Since the timekeeping in the proxy and in general on a PC platform is millisecond based (better granularity is rarely available depends on the OS), the device timestamp must be converted to millisecond granularity.
+The constant for this conversion is `deviceTimeTicksPerMs`. This is a double number, meaning the device timer ticks per millisecond. This can be of course less than one, if the timer is slower than 1000Hz. Zero value is invalid.
+DeviceTimeTicksPerMs can be set in two ways:
+
+  * In the qcProxy configuration file, device section, key *timeTicksPerMs*
+  * Can be sent to the proxy as a parameter in the device greeting message with the name of `timeTicksPerMs`
+
+For slower devices, or when time is not critical, a timer frequency of 1kHz is acceptable. For higher-end, faster devices however it's recommended to keep a 1MHz timer (microsecond granularity).
+
+QcProxy always registers when a stateVariable was last updated. If the device doesn't send timestamps, this update time will be the arrival of the command. If id does however, the following method is used:
+
+Since qcProxy stores the variable last update time with a UNIX timestamp, it needs the device startup time to synchronize it with the device timestamp.
+QcProxy will take the timestamp of the first valid device command (ideally a device greeting), convert it to millisecond granularity and substract it from the current UNIX timestamp, resulting in the device startup time. This serves as a reference point for the following relative device timestamps.
+If the first device command doesn't contain a timestamp, the time of arrival will be used to calculate the startup time.
+
+The calculated variable update time is included in the client commands as a UNIX timestamp. See [ClientCommandDevice](@ref doc-clientProtocol-command-device).
+
+In passThrough mode, qcProxy timekeeping is disabled. The timestamps are however forwarded to the clients **unaltered**.
+
+Since logging and plotting is the task of a client, the client must first acquire the stateVariable to log. This can be with explicit get command or with subscription.
+Either way, normally it is not guaranteed that all update of the device variable will be cought by the client, but all registered updates will be stored with the correct time (not the time of arrival), thanks to the timestamps.
+However, by using the proxy in passthrough mode, full synchronization without update loss is achievable (but as the timestamps will be forwarded by the proxy as-is, the client is responsible to convert them to absolute UNIX timestamps (or not)).
 
 
 # Settings #			{#mainpage-settings}

@@ -15,6 +15,8 @@ ClientCommandDevice::ClientCommandDevice( deviceCommandType_t type, const Device
 
 	if( stateVariable )
 	{
+		mTimestamp = stateVariable->getLastUpdateTime();
+		mHasTimestamp = true;	// stateVariable should always have a last update time
 		mVariable = stateVariable->getName();
 		mHwInterface = stateVariable->getHwInterface();
 		/// @todo Send serialized QVariant, and check if local type is a match
@@ -50,7 +52,20 @@ bool ClientCommandDevice::applyDomElement(const QDomElement &cmdElement)
 	if( !checkTagName(cmdElement) )
 		{ return false; }
 
+	if( cmdElement.attribute( "time" ).isEmpty() )
+	{
+		mTimestamp = 0;
+		mHasTimestamp = false;
+	}
+	else
+	{
+		bool ok;
+		mTimestamp = cmdElement.attribute( "time" ).toLongLong( &ok, 16 );	// toLongLong() returns 0 on failure
+		mHasTimestamp = ok;
+	}
+
 	setInterface( cmdElement.attribute( "hwi" ) );
+
 	if( mType == deviceCmdCall )
 	{
 		setFunction( cmdElement.attribute( "func" ) );
@@ -96,17 +111,16 @@ ClientCommandBase *ClientCommandDevice::clone()
 
 ClientCommandBase *ClientCommandDevice::exactClone()
 {
-	ClientCommandDevice *clone = new ClientCommandDevice(mType);
-	clone->mHwInterface = mHwInterface;
-	clone->mVariable = mVariable;
-	clone->mArgs = mArgs;
-	return clone;
+	return new ClientCommandDevice(this);
 }
 
 QDomElement ClientCommandDevice::getDomElement() const
 {
 	QDomDocument dom;
 	QDomElement cmdElement = dom.createElement(mName);
+
+	if( mType == deviceCmdSet && mHasTimestamp )
+		{ cmdElement.setAttribute( "time", QString::number( mTimestamp, 16 ) ); }
 
 	if( !mHwInterface.isEmpty() )
 		{ cmdElement.setAttribute( "hwi", mHwInterface ); }
@@ -131,9 +145,5 @@ QDomElement ClientCommandDevice::getDomElement() const
 
 bool ClientCommandDevice::isValid()
 {
-	bool validity = true;
-	validity = validity && mType != deviceCmdUndefined;
-	validity = validity && !( mType == deviceCmdSet && (mArgs.isEmpty() || mHwInterface.isEmpty()) );
-	validity = validity && !( mType == deviceCmdCall && (mArgs.isEmpty() || mHwInterface.isEmpty()) );
-	return ( ClientCommandBase::isValid() && validity );
+	return ( ClientCommandBase::isValid() && DeviceCommandBase::isValid() );
 }

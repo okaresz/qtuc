@@ -11,7 +11,7 @@
 
     <hardwareInterfaceList>
         <hardwareInterface>
-			<name>hw1</name>
+			<name>testHw</name>
 			<info>Test hw interface 1 for testDevice.</info>
 		</hardwareInterface>
 		<hardwareInterface>
@@ -22,21 +22,10 @@
 
     <stateVariableList>
         <stateVariable>
-			<hwInterface>hw1</hwInterface>
-			<name>var1i</name>
+			<hwInterface>testHw</hwInterface>
+			<name>sint</name>
 			<type>int</type>
-		</stateVariable>
-		<stateVariable>
-			<hwInterface>hw1</hwInterface>
-			<name>var2s</name>
-			<type>string</type>
-			<autoUpdate side="device">500</autoUpdate>
-			<autoUpdate side="user">1000</autoUpdate>
-		</stateVariable>
-		<stateVariable>
-			<hwInterface>hw2</hwInterface>
-			<name>var3i</name>
-			<type>int</type>
+			<autoUpdate side="user">50</autoUpdate>
 		</stateVariable>
     </stateVariableList>
 

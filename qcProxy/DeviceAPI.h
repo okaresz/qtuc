@@ -137,6 +137,7 @@ private:
 	DeviceAPIFileHandler *mDeviceAPI;		///< DeviceAPIFileHandler intance. handles deviceAPI and device API file.
 	Device* mDeviceInstance;		///< Pointer to the current device singleton.
 	bool mEmitAllCmd;	///< If true, emit all received device command ("passThrough" mode)
+	quint64 mReceivedDeviceCommandCounter;
 };
 
 }	//QtuC::

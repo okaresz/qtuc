@@ -28,7 +28,7 @@ If device uses positive ACK, after receiving a set command and successfully upda
 Without positive ACK, the proxy sends out the set command, but no acknowledgment will be received from the device, whether the set command was successful is unknown.
 Positive ACK is safer but a bit slower.
 
-You can notify the proxy if the device uses positive ACK in the deviceAPI.xml, [deviceInfo](@ref doc-deviceAPIxml-deviceInfo) node.
+You can notify the proxy if the device uses positive ACK in the deviceAPI.xml, [deviceInfo](@ref doc-deviceAPIxml-deviceInfo) node, or in the [greeting message](@ref doc-deviceCommand-special-greeting).
 
 
 ## get ##	{#doc-deviceCommand-type-get}
@@ -77,3 +77,43 @@ In the case of a set command, if you want to set a new value for an integer vari
 `call lcd write "Hello LCD"\n`
 
 **Note the compulsory terminating newline at the end of every command.**
+
+
+# Special commands #	{#doc-deviceCommand-special}
+
+## Message ##		{#doc-deviceCommand-special-message}
+
+With a device message the device can notify the proxy that something has happened. This could be an information about a state change, a simple debug message or an error report, etc...
+
+There are four types of messages:
+
+  * **info**: An information which could be helpful for the proxy and the user.
+  * **debug**: A debug message which can be displayed if necessary (depending on the verbosity level)
+  * **warning**: A warning message that something went wrong, but it's not fatal
+  * **error**: Error message, meaning that a critical and possibly fatal error has happened.
+  
+The device can send these messages with the following syntax:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+call :proxy message debug ADC has started
+call @e2fa5 :proxy message warning "Temperature is too high" 56
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+The messages are usually forwarded to the clients with the [Message](@ref doc-clientProtocol-command-control-message) command.
+
+
+## Greeting message ##		{#doc-deviceCommand-special-greeting}
+
+The greeting message should be the first command sent to the proxy. It can contain several important parameters about the device and an optional greeting message.
+The greeting also allows the proxy to detect device startup and reset, which can be a crutial information to the proxy and the users.
+
+The syntax is the following:
+
+    call @32a :proxy greeting "name:qcDeviceDemo" "desc:Demo for qcDevice" "platform:stm32f4xx" "positiveAck:0" "msg:Hey!"
+    
+The parameter key and value is separated with a colon. The key is parsed until the *first* occurence of the ":" character.
+
+As you may notice, these are more-or-less the same parameters which can be given in the deviceAPI. The parameters received in a greeting message always overwrite the deviceAPI.
+If an existing parameter is overwritten, qcProxy and the clients may warn about the possible mismatch between the device and the deviceAPI file.
+
+If the device uses timekeeping, it is highly recommended to include a timestamp at least in the greeting message.

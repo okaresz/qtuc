@@ -43,6 +43,7 @@ Some basic information about the device. This node is optional, but strongly rec
 	<desc>A short description of the device</desc>
 	<platform>A short platform string, eg.: STM32F4</platform>
 	<project>projName</project>
+	<timeTicksPerMs>1000.0</timeTicksPerMs>
 </deviceInfo>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -50,7 +51,10 @@ Some basic information about the device. This node is optional, but strongly rec
 **name**: A short name of the device. (max 50 char, ASCII)<br>
 **desc**: Description of the device.<br>
 **platform**: A short platform description.<br>
-**project**: A string to identify the project. What for? For example you have one device, but you use it in several projects, each needing a different API file.<br>
+**project**: A string to identify the project. What for? For example you have one device, but you use it in several projects, each needing a different API file.
+**timeTicksPerMs**: A double number, defining the ticks per millisecond of the device timer. See [timekeeping](@ref mainpage-concept-timekeeping).
+
+These parameters may be overwritten by the [device greeting message](@ref doc-deviceCommand-special-greeting), in which case QcProxy will issue a warning about the mismatch.
 
 # hardwareInterfaceList #		{#doc-deviceAPIxml-hwList}
 
@@ -155,7 +159,7 @@ Please note that the value returned by the script will be cast to the type of th
 The value must be given as an integer, in milliseconds (time between updates).<br>
 *side*: This attribute is compulsory, if omitted, the autoupdate definition will be dropped. Value is `device` or `user`. With this you can define different update intervals on the two sides.
   * `device`: the variable will be pulled from the device periodically with the defined interval. This means that the proxy will send a get command for the variable to the device periodically, to which the device must respond with the corresponding set command with the current value.<br>
-  * `user`: This node is ignored by qcProxy, it must be handled by the clients, so every client can chose if it ignores, or handles the user-side autoUpdate. To activate the update, the client must create a [subscribe](@ref doc-clientProtocol-packets-control-subscribe) Client Command based on the information in the deviceAPI, and send it to the proxy.
+  * `user`: This node is ignored by qcProxy, it must be handled by the clients, so every client can chose if it ignores, or handles the user-side autoUpdate. To activate the update, the client must create a [subscribe](@ref doc-clientProtocol-command-control-subscribe) Client Command based on the information in the deviceAPI, and send it to the proxy.
 
 For the autoUpdates, the timer system of Qt is used (QTimer and QObject::startTimer()). According to the Qt documentation, most platforms support millisecond resolution, down to 1ms, but that's not guaranteed.
 In general, a minimum of 20ms is a reasonable limit. Internally, the minimum interval is limited to 10ms in the device-side, and 20ms on the user-side, but if you want, it can be changed in the code. (See DeviceStateVariable::minAutoUpdateInterval and ClientSubscription::minSubscriptionInterval).

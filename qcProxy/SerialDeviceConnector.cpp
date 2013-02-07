@@ -20,6 +20,13 @@ bool SerialDeviceConnector::sendCommand( DeviceCommand *cmd )
 	if( !cmd )
 		{ return false; }
 
+	if( !cmd->isValid() )
+	{
+		error( QtWarningMsg, "Command is invalid, cannot be sent.", "sendCommand()" );
+		cmd->deleteLater();
+		return false;
+	}
+
 	if( !mSerialPort->isOpen() )
 	{
 		error( QtWarningMsg, "Serial port is closed, sendCommand failed", "sendCommand()" );
@@ -27,10 +34,12 @@ bool SerialDeviceConnector::sendCommand( DeviceCommand *cmd )
 		return false;
 	}
 
-	if( mSerialPort->write( cmd->getCommandString().toAscii() ) <= 0 )
+	// get commandString once
+	QByteArray commandString = cmd->getCommandString().toAscii();
+	if( mSerialPort->write( commandString ) <= 0 )
 	{
 		errorDetails_t errDet;
-		errDet.insert( "cmdStr", cmd->getCommandString() );
+		errDet.insert( "cmdStr", QString(commandString) );
 		errDet.insert( "serialPort error", mSerialPort->errorString() );
 		error( QtWarningMsg, "Failed to send command to device.", "senmdCommand()", errDet );
 		cmd->deleteLater();

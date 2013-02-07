@@ -79,11 +79,13 @@ bool QcProxy::route(ClientCommandBase *clientCommand)
 		}
 		else if( clientCommand->getName() == "subscribe" )
 		{
+			/// @todo ignore when in passthrough mode
 			ClientCommandSubscribe *subscribeCmd = (ClientCommandSubscribe*)clientCommand;
 			mClientSubscriptionManager->subscribe( client, subscribeCmd->getInterval(), subscribeCmd->getHwInterface(), subscribeCmd->getVariable() );
 		}
 		else if( clientCommand->getName() == "unSubscribe" )
 		{
+			/// @todo ignore when in passthrough mode
 			ClientCommandUnSubscribe *unSubscribeCmd = (ClientCommandUnSubscribe*)clientCommand;
 			mClientSubscriptionManager->unSubscribe( client, unSubscribeCmd->getHwInterface(), unSubscribeCmd->getVariable() );
 		}
@@ -153,7 +155,7 @@ bool QcProxy::route( DeviceCommand *deviceCommand )
 
 bool QcProxy::handleDeviceMessage(deviceMessageType_t msgType, QString msg)
 {
-	/// @todo implement
+	/// @todo implement sending to clients, and clean up this logging thing...
 
 	// log
 	QString logFilePath;

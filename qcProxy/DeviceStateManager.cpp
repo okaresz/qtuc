@@ -19,6 +19,7 @@ bool DeviceStateManager::registerNewStateVariable( QHash<QString,QString> params
 	if( newStateVar )
 	{
 		//set autoupdate if necessary
+		/// @todo dont start this in passThrough mode!!
 		if( params.contains("autoUpdate-device") )
 		{
 			bool ok;

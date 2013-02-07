@@ -165,9 +165,21 @@ bool DeviceStateVariableBase::setValue( bool newValue )
 
 void DeviceStateVariableBase::updateFromSource(const QString &newValue)
 {
-	if( mValue != newValue )
+	QVariant castNewRawVal( newValue );
+
+	if( !castNewRawVal.convert(mType) )
 	{
-		mValue = newValue;
+		errorDetails_t errDetails;
+		errDetails.insert( "name", mName );
+		errDetails.insert( "newValue", newValue );
+		errDetails.insert( "to type",  QString(QVariant::typeToName(mType)) );
+		error( QtWarningMsg, "Failed to convert new value from source!", "updateFromSource()", errDetails );
+		return;
+	}
+
+	if( mValue != castNewRawVal )
+	{
+		mValue = castNewRawVal;
 		mLastUpdate = QDateTime::currentMSecsSinceEpoch();
 		emit updated();
 		emitValueChanged();
@@ -250,7 +262,7 @@ QVariant DeviceStateVariableBase::variantFromString( const QString& strVal, QVar
 		case QVariant::Int:
 		{
 			bool ok;
-			castedNewVal = QVariant(strVal.toInt(&ok, 0));
+			castedNewVal = QVariant(strVal.toInt(&ok, 16));
 			if( !ok )
 			{
 				errorDetails_t errDetails;
@@ -265,7 +277,7 @@ QVariant DeviceStateVariableBase::variantFromString( const QString& strVal, QVar
 		case QVariant::UInt:
 		{
 			bool ok;
-			castedNewVal = QVariant( strVal.toUInt(&ok, 0) );
+			castedNewVal = QVariant( strVal.toUInt(&ok, 16) );
 			if( !ok )
 			{
 				errorDetails_t errDetails;

@@ -12,12 +12,16 @@ ErrorHandlerBase::ErrorHandlerBase(QObject *parent) : QObject(parent)
 
 void ErrorHandlerBase::customMessageHandler(QtMsgType msgType, const char *msg)
 {
+	// trim quotes from msg
+	QString trimmedMsg( msg );
+	if( trimmedMsg.startsWith('"') )
+		{ trimmedMsg = trimmedMsg.mid( 1, trimmedMsg.size()-3 ); }
 	switch( msgType )
 	{
-		case QtDebugMsg: std::cout << ":DEBUG: " << msg << std::endl; break;
-		case QtWarningMsg: std::cerr << "!WARN!  " << msg << std::endl; break;
-		case QtCriticalMsg: std::cerr << "#CRIT#  " << msg << std::endl; break;
-		case QtFatalMsg: std::cerr << "#FATAL# " << msg << std::endl;
+		case QtDebugMsg: std::cout << ":DEBUG: " << trimmedMsg.toStdString() << std::endl; break;
+		case QtWarningMsg: std::cerr << "!WARN!  " << trimmedMsg.toStdString() << std::endl; break;
+		case QtCriticalMsg: std::cerr << "#CRIT#  " << trimmedMsg.toStdString() << std::endl; break;
+		case QtFatalMsg: std::cerr << "#FATAL# " << trimmedMsg.toStdString() << std::endl;
 	}
 }
 

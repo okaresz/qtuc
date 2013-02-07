@@ -42,6 +42,11 @@ public:
 	quint64 getTimestamp() const
 		{ return mTimestamp; }
 
+	/** Get if there was a timestamp in the command.
+	  *	@return True if there was a timestamp in the command, false otherwise.*/
+	bool hasTimestamp() const
+		{ return mHasTimestamp; }
+
 	/** Get the hardware interface of the command.
 	  *	@return Hardware interface name.*/
 	const QString getHwInterface() const
@@ -135,9 +140,11 @@ public:
 protected:
 	deviceCommandType_t mType;	///< Command type.
 
+	bool mHasTimestamp;		///< Store if there was a timestamp in the command.
+
 	/** Command timestamp.
-	 *	Creation time of this command.
-	 *	The actual value and representation is device-dependent.*/
+	 *	The actual value and representation is device-dependent.
+	 *	If there wasn't a timestamp in the command, mHasTimestamp is false and this is 0.*/
 	quint64 mTimestamp;
 
 	QString mHwInterface;		///< Hardware interface name

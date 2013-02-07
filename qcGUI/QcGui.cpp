@@ -223,7 +223,7 @@ bool QcGui::handleDeviceCmd(ClientCommandDevice *deviceCmd)
 	{
 		DeviceStateVariableBase *var = mProxyState->getVar( deviceCmd->getHwInterface(), deviceCmd->getVariable() );
 		if( var )
-			{ var->setValue( deviceCmd->getArg() ); }
+			{ var->updateFromSource( deviceCmd->getArg() ); }
 		else
 		{
 			error( QtWarningMsg, QString("Failed to set variable from device, no such variable (hwI: %1, name: %2)").arg(deviceCmd->getHwInterface(),deviceCmd->getVariable()), "handleDeviceCmd()" );

@@ -1,5 +1,4 @@
 #include "Device.h"
-#include <QDebug>
 
 using namespace QtuC;
 
@@ -9,6 +8,8 @@ QStringList Device::mHardwareInterfaceInfo = QStringList();
 QList<QStringList> Device::mFunctions = QList<QStringList>();
 bool Device::mPositiveAck = false;
 QHash<QString,QString> Device::mInfo = QHash<QString,QString>();
+qint64 Device::mStartupTime = 0;
+double Device::mDeviceTimeTicksPerMs = 1000.0;
 
 Device *Device::create(QObject *parent)
 {
@@ -121,6 +122,7 @@ void Device::clear()
 	mCreated = false;
 	mInstance->deleteLater();
 	mInstance = 0;
+	mStartupTime = 0;
 }
 
 deviceMessageType_t Device::messageTypeFromString(const QString &msgTypeStr)
@@ -180,7 +182,14 @@ void Device::setInfo(const QString &key, const QString &value)
 			else if( value == "false" || value == "0" || value == "off" )
 				{ mPositiveAck = false; }
 			else
-				{ error( QtWarningMsg, "Invalid value set for positiveAck. Allowed values: true/false, on/off, 1/0. If parsed from API, check API file.", "setInfo()" ); }
+				{ error( QtWarningMsg, "Invalid value set for positiveAck. Allowed values: true/false, on/off, 1/0. If parsed from API, check API file, if sent with device greeting message, check value on the device.", "setInfo()" ); }
+		}
+		else if( key == "timeTicksPerMs" )
+		{
+			bool ok;
+			mDeviceTimeTicksPerMs = value.toDouble(&ok);
+			if( !ok )
+				{ error( QtWarningMsg, "Invalid value set for timeTicksPerMs. Allowed value is a string that can be converted to double. If parsed from API, check API file, if sent with device greeting message, check value on the device.", "setInfo()" ); }
 		}
 		else
 			{ mInfo.insert( key, value ); }
@@ -229,4 +238,17 @@ void Device::setPositiveAck(bool posAck)
 {
 	if( !mCreated )
 		{ mPositiveAck = posAck; }
+}
+
+bool Device::setDeviceTimeTicksPerMs( double const &tickPerMs )
+{
+	if( !mCreated )
+	{
+		if( tickPerMs >= 0.001 )
+		{
+			mDeviceTimeTicksPerMs = tickPerMs;
+			return true;
+		}
+	}
+	return false;
 }

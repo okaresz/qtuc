@@ -1,7 +1,7 @@
 Client Protocol		{#doc-clientProtocol}
 =====================
 
-The proxy can communicate with the clients (qcGUI or any other 3rd party client) through a custom XML-based protocol.
+The proxy communicates with the clients (qcGUI or any other 3rd party client) with a custom XML-based protocol.
 The protocol is packet based. A raw packet (on the transport layer) has the following structure:
 
   * First a 16bit unsigned integer in network endianness (big-endian), holding the size of the following XML data in bytes.
@@ -12,36 +12,44 @@ From this point, a "packet" means only the processed, decoded XML data.
   
 # Packets # {#doc-clientProtocol-packets}
 
-The packets are grouping the similar commands/data as a container:
+The packet wraps a client command. The purpose of the packet is to carry the parameters and states of the protocol, identify the clients, optimize data flow, etc..
+A packet can include several client commands, but ony from/to the same client.
+
+The syntax of a packet:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<packet class="<packetClass>" id="<packetID>" re="<replyTo_packetID>">
+<packet id="<packetID>" re="<replyTo_packetID>">
 	...
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  * **class**: The packet class, compulsory. This must be set for a valid packet. There are two type of packets so far:
-    * *device*: These packets contain a deviceCommand, and are used to get/set a state variable or call a device function.
-    * *control*: These packets are designated for the proxy or the client and can contain various control commands like `quit` or `heartBeat`, etc...
   * **id**: The packet ID, compulsory. This is a string, consisting of the ID string (see [Handshake command](#doc-clientProtocol-packets-handshake)) of the sender, and the packet number, separated by a hashmark. The packet number is an integer number, incremented on every packet, starting with 1. An example would be: `qcProxy#265` meaning this is a 265th packet sent by the qcProxy.
   * **re**: Optional. There are several packets, which are sent in reply to another (a set device command to a get request, a heartBeat ACK, or a deviceAPI packet to a deviceAPI request), in this case the ack attribute holds the original packet ID to which this packet is a reply (or ACK).
 
-If you want to send more commands which belong to the same packet class, you can send them in one packet. In that case, the commands are processed in order.
+You can send multiple commands in one packet. In that case, the commands are processed in order.
 
-## Device packets ##		{#doc-clientProtocol-packets-device}
+# Client commands #		{#doc-clientProtocol-command}
 
-A client-side device packet is essentially a device command. Three example for the three types of deviceCommand:
+There are two types of commands:
+  * *device*: This command is used to get/set a state variable or call a device function.
+  * *control*: These commands are designated for the proxy or the client and can mean for example a command like `quit` or `heartBeat`, etc...
+  
+These types don't appear in the protocol explicitly.
+  
+## Device command ##		{#doc-clientProtocol-command-device}
+
+A client-side device command (`ClientCommandDevice`) is essentially a bare device command. Three example for the three types of deviceCommand:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<packet class="device" id="clientID#2328">
+<packet id="clientID#2328">
 	<get hwi="led" var="dY"/>
 </packet>
 
-<packet class="device" id="qcProxy#2331" re="clientID#2328">
-	<set hwi="led" var="dY"><![CDATA[on]]></set>
+<packet id="qcProxy#2331" re="clientID#2328">
+	<set time="4f6da8" hwi="led" var="dY"><![CDATA[on]]></set>
 </packet>
 
-<packet class="device" id="clientID#2367">
+<packet id="clientID#2367">
 	<call hwi="LCD" func="write">
 		<arg><![CDATA[0,0]]</arg>
 		<arg><![CDATA[Hi LCD!]]></arg>
@@ -50,23 +58,28 @@ A client-side device packet is essentially a device command. Three example for t
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The arguments must always be wrapped in a CDATA node.
+**time**: The `time` attribute is the *last modified* or creation timestamp of the variable as a standard UNIX timestamp as a hexadecimal number, without the `0x` prefix.
+`time` only makes sense in a set command, so it's only included in a set command.
+If device uses timekeeping and sends timestamps in all commands, this timestamp will be exactly the time when the value was created on the device.
+Id device doesn't send a timestamp, proxy uses the time the variable is updated from the incoming device command. See [timekeeping](@ref mainpage-concept-timekeeping) for more details.
 
-Special cases of commands are possible for requesting several variables at a time. To get all variable in a hardware interface, send `<get hwi="hwI_name"/>` in a device packet. Or if you want to get ALL the variables (don't do this very often though... Use [subscribe](#doc-clientProtocol-packets-subscribe) instead.), send `<get/>`.
+**arg**: The arguments must always be wrapped in a CDATA node.
+
+Special cases of commands are possible for requesting several variables at a time. To get all variable in a hardware interface, send `<get hwi="hwI_name"/>`. Or if you want to get ALL the variables (don't do this very often though... Use [subscribe](#doc-clientProtocol-packets-subscribe) instead.), send `<get/>`.
 
 
-## Control packets ##		{#doc-clientProtocol-packets-control}
+## Control commands ##		{#doc-clientProtocol-command-control}
 
 There are several types of control packets, and the list is not yet complete... Feel free to implement more.
 
-### Handshake ###		{#doc-clientProtocol-packets-control-handshake}
+### Handshake ###		{#doc-clientProtocol-command-control-handshake}
 
 The handshake packet is used as the first packet sent from the client to the proxy, and from the proxy to the client in return.
 The client must then acknowledge the server's reply with an empty handShake.
 An example handshake would be:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<packet class="control" id="clientID#2338">
+<packet id="clientID#2338">
 	<handshake from="client">
 		<id>clientID</id>
 		<name>Client name</name>
@@ -75,7 +88,7 @@ An example handshake would be:
 	</handshake>
 </packet>
 
-<packet class="control" id="qcProxy#234" re="clientID#2338">
+<packet id="qcProxy#234" re="clientID#2338">
 	<handshake from="proxy" ack="true">
 		<id>qcProxy</id>
 		<name>QtuC Proxy</name>
@@ -85,7 +98,7 @@ An example handshake would be:
 	</handshake>
 </packet>
 
-packet class="control" id="clientID#2339" re="qcProxy#234">
+packet id="clientID#2339" re="qcProxy#234">
 	<handshake from="client" ack="true" />
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -96,12 +109,14 @@ packet class="control" id="clientID#2339" re="qcProxy#234">
   * **ack**: Whether the handShake was accepted. If the client is rejected, this will be false, and the connection is likely to be closed by the remote end.
 
 
-### HeartBeat ###		{#doc-clientProtocol-packets-control-heartbeat}
+### HeartBeat ###		{#doc-clientProtocol-command-control-heartbeat}
+
+\warning Not implemented yet
 
 A heartbeat command must be sent by the client every second (1Hz). The proxy may estimate connection speed and status from the periodic heartbeats. If the heartbeats are missing, the connection considered to be lost.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<packet class="control" id="clientID#334">
+<packet id="clientID#334">
 	<heartBeat id="1445"/>
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -109,24 +124,24 @@ A heartbeat command must be sent by the client every second (1Hz). The proxy may
 For every HeartBeat, the proxy will reply with an acknowledge HeartBeat:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<packet class="control" id="qcProxy#338">
+<packet id="qcProxy#338">
 	<heartBeat ack="1445"/>
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-### deviceAPI request ###		{#doc-clientProtocol-packets-control-deviceAPI_req}
+### deviceAPI request ###		{#doc-clientProtocol-command-control-deviceAPI_req}
 
 When the client is ready to handle the deviceAPI definition, it sends the deviceAPI request package:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<packet class="control" id="clientID#4">
+<packet id="clientID#4">
 	<reqDeviceAPI/>
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-### deviceAPI ###		{#doc-clientProtocol-packets-control-deviceAPI}
+### deviceAPI ###		{#doc-clientProtocol-command-control-deviceAPI}
 
 In this package, the whole deviceAPI definition is sent either from the client to the proxy, or back.
 
@@ -136,7 +151,7 @@ When a client receives this packet, it must take the necessary actions to accomo
 If the client sends a complete deviceAPI to the proxy, the proxy will update the device interface at runtime.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<packet class="control" id="qcProxy#6" re="clientID#4">
+<packet id="qcProxy#6" re="clientID#4">
 	<deviceAPI permanent="true" hash="hashofapidata"><![CDATA[base64(deviceAPI)]]></deviceAPI>
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -149,13 +164,13 @@ The whole root node (with the root node tags included) of the deviceAPI file is 
 The base64 encoding is done with QByteArray::toBase64(), so according to the Qt 4.8 manual, the algorithm used to encode Base64-encoded data is defined in [RFC 2045](http://www.rfc-editor.org/rfc/rfc2045.txt).
 
 
-### Subscribe ###		{#doc-clientProtocol-packets-control-subscribe}
+### Subscribe ###		{#doc-clientProtocol-command-control-subscribe}
 
 The client can subscribe to a variable autoUpdate. After the subscription, the proxy will send the requested variable with a set command in a device packet at the defined intervals.
 The interval is a 32bit integer, interpreted as milliseconds.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<packet class="control" id="clientID#23">
+<packet id="clientID#23">
 	<subscribe interval="5" hwInterface="led" variable="dY">
 	<subscribe interval="5" hwInterface="drive"/>
 	<subscribe interval="5"/>
@@ -187,12 +202,12 @@ and a package with all the variables (as device commands) in the *drive* interfa
 If the deviceAPI.xm contains a valid user-side [autoUpdate node](@ref doc-deviceAPIxml-stateVarList) for a variable, it is up to the client whether it uses this information to automatically send a subscription to the proxy for that variable.
 
 
-### unSubscribe ###		{#doc-clientProtocol-packets-control-unSubscribe}
+### unSubscribe ###		{#doc-clientProtocol-command-control-unSubscribe}
 
 In a similar fashion to subscribe, you can unsubscribe. After this command, proxy will stop sending the update packets immediately.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<packet class="control" id="clientID#73838">
+<packet id="clientID#73838">
 	<unSubscribe hwInterface="led" variable="dY">
 	<unSubscribe hwInterface="drive"/>
 	<unSubscribe/>
@@ -207,13 +222,15 @@ If *hwi* and *var* both equal "*", all subscriptions are cancelled.
 If *hwi* is a valid hardware interface name, and *var* is "*", then all subscriptions for the interface or a variable in the interface is cancelled.
 
 
-### Message ###		{#doc-clientProtocol-packets-control-message}
+### Message ###		{#doc-clientProtocol-command-control-message}
+
+\warning Not implemented yet
 
 Messages can be sent to the client with the message commands. This messages are either from the device, routed to the client by the proxy, or from the proxy itself. Sending messages to the proxy has little practical use, currently the proxy discards them.
 
-A message from the proxy:
+A message from the proxy or the device:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<packet class="control" id="qcProxy#524">
+<packet id="qcProxy#524">
 	<message sender="<sender>" level="<msgLevel>"><![CDATA[<message text>]]></message>
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -228,12 +245,14 @@ A message from the proxy:
     * *error*: A (in most cases) non-fatal error.
     * *critical*: A critical error, likely to result in an unknown critical state or application shutdown.
 
-### Status ###		{#doc-clientProtocol-packets-control-status}
+### Status ###		{#doc-clientProtocol-command-control-status}
+
+\warning Not implemented yet
 
 This is a one-direction command, only the proxy can send it to clients, to notify them of the current device and proxy status.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<packet class="control" id="qcProxy#554">
+<packet id="qcProxy#554">
 	<status of="<source>" about="<message>"><![CDATA[<status>]]></status>
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -251,12 +270,14 @@ This is a one-direction command, only the proxy can send it to clients, to notif
     
 ### Re-read deviceAPI ###		{#doc-clientProtocol-packets-control-reReadDeviceAPI}
 
+\warning Not implemented yet
+
 When the proxy receives this package, it will re-read the deviceAPI file, and reinitialize itself, considering the changes. After this command, all autoUpdates will stop.
 
-The client must take the necessary actions to adapt to the possibly changed deviceAPI. After sending this command, the proxy parses the new API definition and if it's valid, reconfigures the device interface. When the changes are done, the proxy will send out the new deviceAPI to all clients with the [deviceAIP](#doc-clientProtocol-packets-deviceAPI) packet.
+The client must take the necessary actions to adapt to the possibly changed deviceAPI. After sending this command, the proxy parses the new API definition and if it's valid, reconfigures the device interface. When the changes are done, the proxy will send out the new deviceAPI to all clients with the [deviceAPI](#doc-clientProtocol-packets-deviceAPI) packet.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<packet class="control" id="clientID#6367">
+<packet id="clientID#6367">
 	<reReadDeviceAPI/>
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -264,11 +285,12 @@ The client must take the necessary actions to adapt to the possibly changed devi
 
 ### Disconnect ###		{#doc-clientProtocol-packets-control-disconnect}
 
+\warning Not implemented yet
+
 When this packet is sent to the proxy, the proxy will stop all auto update and all data flow towards the client, disconnect the client, and close the socket.
-(Keeping the device-proxy connection alive.)
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<packet class="control" id="clientID#78346">
+<packet id="clientID#78346">
 	<disconnect/>
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -276,10 +298,12 @@ When this packet is sent to the proxy, the proxy will stop all auto update and a
 
 ### Quit ###		{#doc-clientProtocol-packets-control-quit}
 
+\warning Not implemented yet
+
 When this packet is sent to the proxy, the proxy will stop all auto update and all data flow, disconnect all clients, and the device and will exit gracefully,
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-<packet class="control" id="clientID#78347">
+<packet id="clientID#78347">
 	<quit/>
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
