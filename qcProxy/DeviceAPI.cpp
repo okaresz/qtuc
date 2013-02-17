@@ -17,8 +17,8 @@ DeviceAPI::DeviceAPI( QObject *parent ) :
 	mDeviceAPI = new DeviceAPIFileHandler(this);
 	mDeviceInstance = Device::create(this);
 
-	mDeviceLink = new SerialDeviceConnector(this);
-	//mDeviceLink = new DummySocketDevice(this);
+	//mDeviceLink = new SerialDeviceConnector(this);
+	mDeviceLink = new DummySocketDevice(this);
 
 	// set device command separator
 	DeviceCommand::setSeparator( ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar() );

@@ -156,12 +156,47 @@ If the client sends a complete deviceAPI to the proxy, the proxy will update the
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  * **permanent**: True or false. If false, the changes will take place but only for the current session, until next update or application exit. If true, the deviceAPI.xml file iss overwritten wit the new API.
+  * **permanent** (not implemented): True or false. If false, the changes will take place but only for the current session, until next update or application exit. If true, the deviceAPI.xml file iss overwritten wit the new API.
   * **hash**: The md5 hash of the base64 encoded deviceAPI data which is sent in this packet. It's recommended to check the data against the hash...
 
 The whole root node (with the root node tags included) of the deviceAPI file is sent, as a base64 encoded UTF-8 string, wrapped in a CDATA node.
 
 The base64 encoding is done with QByteArray::toBase64(), so according to the Qt 4.8 manual, the algorithm used to encode Base64-encoded data is defined in [RFC 2045](http://www.rfc-editor.org/rfc/rfc2045.txt).
+
+
+### DeviceInfo ###		{#doc-clientProtocol-command-control-deviceInfo}
+
+The deviceInfo command provides information about the device. This command is sent by the proxy to a client.
+
+The parameters in this command are the same as in the [similar section](@ref doc-deviceAPIxml-deviceInfo) of the DeviceAPI, and the [device greeting message](@ref doc-deviceCommand-special-greeting).
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<packet id="qcProxy#6">
+	<deviceInfo startup="false" startupTime="32f6e6a7182361817">
+		<positiveAck>false</positiveAck>
+		<name>deviceName</name>
+		<desc>A short description of the device</desc>
+		<platform>A short platform string, eg.: STM32F4</platform>
+		<project>projName</project>
+	</deviceInfo>
+</packet>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  * **startup**: True means that this command is sent by the proxy because the device has just started up (whether it had sent a greeting or not, this client command is sent by the proxy). If false or absent, than this is a reply to a client request.
+  * **startupTime**: The Time of the device startup, as a UNIX timestamp, in base 16 (hexa), without prefix. This is always a valid, non-zero timestamp. See [timekeeping](@ref mainpage-concept-timekeeping).
+
+The child nodes are the device parameters. Only those params are included, which the client has privilige to see.
+
+
+### Request deviceInfo ###		{#doc-clientProtocol-command-control-reqDeviceInfo}
+
+The client can send a deviceInfo request to the proxi, to which the proxy must reply with a deviceInfo command.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<packet id="clientID#8">
+	<reqDeviceInfo/>
+</packet>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 ### Subscribe ###		{#doc-clientProtocol-command-control-subscribe}

@@ -1,17 +1,17 @@
-#include "GuiSettingsManager.h"
+#include "PlotSettingsManager.h"
 
-using namespace QtuC;
+using namespace qcPlot;
 
-GuiSettingsManager::GuiSettingsManager(QObject *parent) :
+PlotSettingsManager::PlotSettingsManager(QObject *parent) :
 	SettingsManagerBase(parent)
 {
 	// selfInfo
 	if( !contains("selfInfo/id") )
-		{ setValue( "selfInfo/id", "QcGui" ); }
+		{ setValue( "selfInfo/id", "QcPlot" ); }
 	if( !contains("selfInfo/name") )
-		{ setValue( "selfInfo/name", "QcGui" ); }
+		{ setValue( "selfInfo/name", "QcPlot" ); }
 	if( !contains("selfInfo/desc") )
-		{ setValue( "selfInfo/desc", "GUI client for the QtuC framework." ); }
+		{ setValue( "selfInfo/desc", "Plot client for the QtuC framework." ); }
 	if( !contains("selfInfo/author") )
 		{ setValue( "selfInfo/author", "okaresz" ); }
 
@@ -23,11 +23,11 @@ GuiSettingsManager::GuiSettingsManager(QObject *parent) :
 
 }
 
-GuiSettingsManager *GuiSettingsManager::instance(QObject *parent)
+PlotSettingsManager *PlotSettingsManager::instance(QObject *parent)
 {
 	if( !instancePtr )
 	{
-		instancePtr = new GuiSettingsManager(parent);
+		instancePtr = new PlotSettingsManager(parent);
 	}
-	return (GuiSettingsManager*)instancePtr;
+	return (PlotSettingsManager*)instancePtr;
 }

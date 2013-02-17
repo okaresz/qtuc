@@ -5,7 +5,6 @@
 #include <QObject>
 #include <QString>
 #include <QVariant>
-#include <QScriptEngine>
 #include "ErrorHandlerBase.h"
 #include <QTimer>
 #include <QDateTime>

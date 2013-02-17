@@ -1,6 +1,5 @@
 #include "QcGuiMainView.h"
 #include "ErrorHandlerBase.h"
-#include "ui_QcGuiMainView.h"
 #include <QStatusBar>
 #include <QMessageBox>
 #include <QStringList>
@@ -10,12 +9,9 @@ using namespace qcGui;
 
 QcGuiMainView::QcGuiMainView(QcGui *model) :
 	QMainWindow(0),
-	mUi(new Ui::QcGuiMainView),
 	mModel(model),
 	mVariableView(0)
 {
-	//mUi->setupUi(this);
-
 	createGui();
 
 	initModelView();
@@ -23,7 +19,6 @@ QcGuiMainView::QcGuiMainView(QcGui *model) :
 
 QcGuiMainView::~QcGuiMainView()
 {
-	delete mUi;
 }
 
 /*

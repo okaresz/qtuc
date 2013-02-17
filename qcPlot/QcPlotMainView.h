@@ -1,23 +1,22 @@
 #ifndef QCGUIMAINWINDOW_H
 #define QCGUIMAINWINDOW_H
 
-#include "QcGui.h"
-#include "StateVariablesView.h"
+#include "QcPlot.h"
 #include <QMainWindow>
 #include <QToolBar>
 #include <QHash>
 #include <QAction>
 
-namespace qcGui {
+namespace qcPlot {
 
 /** Handle the view of th device state variables.*/
-class QcGuiMainView : public QMainWindow
+class QcPlotMainView : public QMainWindow
 {
 	Q_OBJECT
 	
 public:
-	explicit QcGuiMainView(QcGui *model);
-	~QcGuiMainView();
+	explicit QcPlotMainView(QcPlot *model);
+	~QcPlotMainView();
 
 	/** Set model pointer,
 	  *	Set the model and do the necessary initializations (eg. connect())
@@ -32,8 +31,17 @@ public slots:
 
 private slots:
 
+	// Actions
 	void onConnectActionTriggered();
+	void onNewPlotActionTriggered();
+
+	//dialogs, user interactions,...
+	void onNewPlotDialogSubmit();
+
+	// else
+	void onProxyConnected();
 	void onDeviceApiSet();
+	void onNewPlotterAdded( Plotter* plotter );
 
 signals:
 
@@ -44,12 +52,11 @@ private:
 	/// Initialize the view (after mModel has been set).
 	void initModelView();
 
-	QcGui *mModel;
-	StateVariablesView *mVariableView;
+	QcPlot *mModel;
 
 	QHash<QString, QAction*> mActions;
 	QToolBar *mMainToolBar;
 };
 
-}	//qcGui::
+}	//QcPlot::
 #endif // QCGUIMAINWINDOW_H

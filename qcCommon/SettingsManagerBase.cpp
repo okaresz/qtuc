@@ -18,6 +18,7 @@ SettingsManagerBase::~SettingsManagerBase()
 
 SettingsManagerBase *SettingsManagerBase::instance(QObject *parent)
 {
+	Q_UNUSED(parent);
 	ErrorHandlerBase::error( QtCriticalMsg, "no derived settings object! you must reimplement SettingsManagerBase::instance() to return a derived settings instance.", "instance()", "SettingsManagerBase" );
 	return 0;
 }

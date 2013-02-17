@@ -2,6 +2,7 @@
 #define DEVICESTATEPROXYVARIABLE_H
 
 #include <DeviceStateVariableBase.h>
+#include <QScriptEngine>
 
 namespace QtuC
 {

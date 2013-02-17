@@ -6,30 +6,44 @@
 
 QT       += core gui network xml
 
-TARGET = qcGUI
+TARGET = qcPlot
 TEMPLATE = app
 
 SOURCES += main.cpp\
-    QcGui.cpp \
+    QcPlot.cpp \
     ProxyStateManager.cpp \
     ProxyConnectionManager.cpp \
-    GuiSettingsManager.cpp \
-    QcGuiMainView.cpp \
-    StateVariablesView.cpp \
-    StateVarIntView.cpp \
-    StateVariableCustomViewBase.cpp \
-    StateVariableUlongBinView.cpp
+    PlotSettingsManager.cpp \
+    QcPlotMainView.cpp \
+    DeviceStateHistoryVariable.cpp \
+    DeviceStatePlotDataVariable.cpp \
+    PlotConfig.cpp \
+    CurveConfig.cpp \
+    CurveConfigView.cpp \
+    PlotConfigView.cpp \
+    PlotManager.cpp \
+    Plotter.cpp \
+    PlotView.cpp \
+    CurveView.cpp \
+    Qwt2AxisMagnifier.cpp
 
 HEADERS  += \
-    QcGui.h \
+    QcPlot.h \
     ProxyStateManager.h \
     ProxyConnectionManager.h \
-    GuiSettingsManager.h \
-    QcGuiMainView.h \
-    StateVariablesView.h \
-    StateVarIntView.h \
-    StateVariableCustomViewBase.h \
-    StateVariableUlongBinView.h
+    PlotSettingsManager.h \
+    QcPlotMainView.h \
+    DeviceStateHistoryVariable.h \
+    DeviceStatePlotDataVariable.h \
+    PlotConfig.h \
+    CurveConfig.h \
+    CurveConfigView.h \
+    PlotConfigView.h \
+    PlotManager.h \
+    Plotter.h \
+    PlotView.h \
+    CurveView.h \
+    Qwt2AxisMagnifier.h
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/release/ -lqcCommon
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/debug/ -lqcCommon
@@ -42,3 +56,7 @@ DEPENDPATH += $$PWD/../qcCommon
 win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/release/qcCommon.lib
 else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/debug/qcCommon.lib
 else:unix:!symbian: PRE_TARGETDEPS += $$OUT_PWD/../qcCommon/libqcCommon.a
+
+# Qwt (system)
+INCLUDEPATH += /usr/include/qwt
+LIBS      += -lqwt
