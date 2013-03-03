@@ -12,6 +12,8 @@ ClientCommandFactory::ClientCommandFactory( QObject *parent ) : ErrorHandlerBase
 	registerCommand( new ClientCommandReqDeviceApi() );
 	registerCommand( new ClientCommandSubscribe() );
 	registerCommand( new ClientCommandUnSubscribe() );
+	registerCommand( new ClientCommandReqDeviceInfo() );
+	registerCommand( new ClientCommandDeviceInfo() );
 
 	// Hah! How tricky I am! The deviceCommands with one class.
 	registerCommand( new ClientCommandDevice(deviceCmdGet) );

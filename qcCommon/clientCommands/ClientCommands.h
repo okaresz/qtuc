@@ -12,6 +12,8 @@
 #include "ClientCommandDevice.h"
 #include "ClientCommandSubscribe.h"
 #include "ClientCommandUnSubscribe.h"
+#include "ClientCommandReqDeviceInfo.h"
+#include "ClientCommandDeviceInfo.h"
 class ClientCommandStatus;
 
 #endif // CLIENTCOMMANDS_H

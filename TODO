@@ -1,22 +1,10 @@
+qcPlot:
+	mi van a timestampekkel? miért ragyás a plot?
+	ne kezdjen logolni a var, amíg nincs plot. (logHistory false default)
+	
+
+
 if device removed, high cpu usage?! -> QtSerialPort bug, or even lower (moserial also)
-
---- timestamping ------------------------------------------------------------------------------------
-
-set @35d2 hwiname varName 3f5d20
-
-the optional timestamp is a hex number after a "@" sign, meaning the microseconds since device startup (so the stamp is relative to device boot)
-since qcProxy stores variable last update time with UNIX timestamp, it needs the device startup time to synchronize the two and calculate the UNIX stamp from the device stamp.
-qcProxy will take the time of the first valid device command (ideally a device greeting), and store it as the base reference for the future device stamps.
-If this first device command contains a timestamp, the value of that timestamp is taken into account when calculating the reference time, which in this case
-is theoratically the actual device startup time (or the start of the device timekeeping, to be exact)
-If the device timestamp is omitted from the command, the time of arrival will be used.
-In passThrough mode, qcProxy timekeeping is disabled.
-
-Since logging and plotting is the task of a client, the client must first acquire the stateVariable to log. This can be with explicit get command or with subscription.
-Either way, normally it is not guarantied that all update of the device variable will be cought by the client, but all registered updates will be stored with the correct time (not the time of arrival), thanks to the timestamps.
-However, by using the proxy in passthrough mode, full synchronization without update loss is achievable.
-
----------------------------------------------------------------------------------------
 
 document device greeting message
 
@@ -25,11 +13,34 @@ document device greeting message
 Implement command line arguments to SettingsManager, considering the possible future feature to define all settings also on the command line.
  -> clean up passThrough mode behaviour: todo -s! (command deny, etc...)
 
+proxy: desktop integration command line switch
+	tray icon
+	menu:
+		info: listening on port x or conn to gui..., device status, gui status
+		quit button -> deinit gui, device, then exit
+
+command line switch to save settings in the current dir (portable option features: what else?)
+
+track device connection
+	int member in statevar: get request: +1, set receive: -1. if >0, connection problem -> what to do with auto set commands from device?
+	heartbeat with packet id -> reply with same id, separate class for handling heartbeat messages and special command
+	
+handling of different encodings with settings and deviceAPI files. Reading encoding tag from xml?
+
+autoUpdater:
+	DeviceAPI::update() interference?
+
+ctrl+c on proxy while live client connection, double delete???
+
+
+http://blog.codeimproved.net/2010/03/logging-in-qt-land/
+ 
 error():
 	use Q_FUNC or similar macro instead of the hardcoded function names
 	would be nice to include __LINE__ and __FILE__, maybe with an error macro
 	timestamping all errors and info
 	log (infos as well! ->so the whole stdout
+	http://www.qtcentre.org/threads/19534-redirect-qDebug%28%29-to-file
 
 make a qcInfo() function or something to print state info to stdout (always printed, independent of verbopsity or debuglevel)
 	-> add a verbosity level, level 1 (-v) will be debugLevelInfo, and so on...
@@ -54,19 +65,12 @@ check destructor chains, proper object deletions
 
 implement connection lost detection
 
-statevariable rawvval and val are not initialised upon creation, and the variable will be invalid, unable to get
-->initVal node to apiXML (optional)
-
 USE INIT FUNCTIONS
 if multiple constructors exist, you will always forget to update one of them... (if some modifications needed in the common c'tor code)
 
 doc todo-s
 
 write a short how-to use for every class doc.
-
-fix doxygen errors
-check doc, write missing func/class doc
-class references must include namespace.... QtuC::
 
 check whole code for memleaks
 

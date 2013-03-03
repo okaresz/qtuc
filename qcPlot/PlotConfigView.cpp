@@ -140,11 +140,12 @@ void PlotConfigView::createNewCurve( const QString &name )
 	curveItem->setData( curveIdRole, QVariant( curveModel->id() ) );
 	connect( curveModel, SIGNAL(nameChanged(QString)), curveItem, SLOT(updateText(QString)) );
 	mCurveListWidget->addItem( curveItem );
+	mCurveListWidget->setCurrentItem( curveItem );
 }
 
 void PlotConfigView::onCurveSelectionChanged()
 {
-	CurveConfig *curveCfg = mModel->curve( mCurveListWidget->currentItem()->data( curveIdRole ).toUInt() );
+	CurveConfig *curveCfg = mModel->getCurve( mCurveListWidget->currentItem()->data( curveIdRole ).toUInt() );
 	if( curveCfg )
 		{ mCurveConfig->setModel( curveCfg ); }
 }
@@ -152,7 +153,7 @@ void PlotConfigView::onCurveSelectionChanged()
 void PlotConfigView::onCurveDeleteButtonClicked()
 {
 	QListWidgetItem *currentCurveItem = mCurveListWidget->currentItem();
-	CurveConfig *curveModel = mModel->curve( currentCurveItem->data( curveIdRole ).toUInt() );
+	CurveConfig *curveModel = mModel->getCurve( currentCurveItem->data( curveIdRole ).toUInt() );
 	QMessageBox::StandardButton buttonClicked = QMessageBox::question( this, "Delete curve", QString("Delete %1?").arg(curveModel->name()), QMessageBox::Yes | QMessageBox::No );
 
 	if( buttonClicked == QMessageBox::Yes )

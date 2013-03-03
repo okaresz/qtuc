@@ -47,6 +47,7 @@ bool QcProxy::start()
 	}
 	connect( mDevice, SIGNAL(messageReceived(deviceMessageType_t,QString)), this, SLOT(handleDeviceMessage(deviceMessageType_t,QString)) );
 	connect( mDevice, SIGNAL(commandReceived(DeviceCommand*)), this, SLOT(route(DeviceCommand*)) );
+	connect( mDevice, SIGNAL(greetingReceived()), this, SLOT(handleDeviceGreeting()) );
 
 	connect( mConnectionServer, SIGNAL( newClientConnected( ClientConnectionManagerBase * ) ), this, SLOT( handleNewClient( ClientConnectionManagerBase * ) ) );
 	if( !mConnectionServer->startListening() )
@@ -89,7 +90,17 @@ bool QcProxy::route(ClientCommandBase *clientCommand)
 			ClientCommandUnSubscribe *unSubscribeCmd = (ClientCommandUnSubscribe*)clientCommand;
 			mClientSubscriptionManager->unSubscribe( client, unSubscribeCmd->getHwInterface(), unSubscribeCmd->getVariable() );
 		}
-		/// @todo implement
+		else if( clientCommand->getName() == "reqDeviceInfo" )
+		{
+			ClientCommandDeviceInfo *cmdInfo = new ClientCommandDeviceInfo();
+			cmdInfo->setStartup(false);
+			cmdInfo->setStartupTime( Device::getStartupTime() );
+			cmdInfo->setPositiveAck( Device::positiveAck() );
+			cmdInfo->setInfoList( Device::getInfoList() );
+			client->sendCommand( cmdInfo );
+		}
+		else
+			{ error( QtWarningMsg, QString("Unimplemented control clientCommand received: %1").arg(clientCommand->getName()), "route(ClientCommandBase*)" ); }
 	}
 	else if( clientCommand->getClass() == ClientCommandBase::clientCommandDevice )
 	{
@@ -153,11 +164,12 @@ bool QcProxy::route( DeviceCommand *deviceCommand )
 	return true;
 }
 
-bool QcProxy::handleDeviceMessage(deviceMessageType_t msgType, QString msg)
+bool QcProxy::handleDeviceMessage(deviceMessageType_t msgType, QString const &msg)
 {
 	/// @todo implement sending to clients, and clean up this logging thing...
 
 	// log
+	/*
 	QString logFilePath;
 	switch( msgType )
 	{
@@ -179,10 +191,20 @@ bool QcProxy::handleDeviceMessage(deviceMessageType_t msgType, QString msg)
 		fileStream.flush();
 		logFile.close();
 	}
-
+*/
 	debug( debugLevelVeryVerbose, QString("Device message received (%1): %2").arg( Device::messageTypeToString(msgType),msg), "handleDeviceMessage()" );
 
 	return true;
+}
+
+void QcProxy::handleDeviceGreeting()
+{
+	ClientCommandDeviceInfo *cmdInfo = new ClientCommandDeviceInfo();
+	cmdInfo->setStartup(true);
+	cmdInfo->setStartupTime( Device::getStartupTime() );
+	cmdInfo->setPositiveAck( Device::positiveAck() );
+	cmdInfo->setInfoList( Device::getInfoList() );
+	mConnectionServer->broadcast( cmdInfo );
 }
 
 void QcProxy::handleNewClient( ClientConnectionManagerBase *newClient )

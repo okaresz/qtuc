@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QPair>
+#include <QDomElement>
 
 namespace qcPlot
 {
@@ -36,6 +37,9 @@ public:
 		{ return mStateVariable; }
 
 	void setStateVariable( QString const &hwi, QString const &name );
+
+	QDomElement getXml() const;
+	bool loadXml( QDomElement const &curveCfgElement );
 
 signals:
 	void nameChanged( QString newName );

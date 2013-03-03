@@ -38,7 +38,7 @@ CurveConfig *PlotConfig::createCurve(const QString &name)
 
 void PlotConfig::deleteCurve(uint curveId)
 {
-	CurveConfig *curveCfg = curve( curveId );
+	CurveConfig *curveCfg = getCurve( curveId );
 	if( curveCfg )
 	{
 		mCurves.removeOne( curveCfg );
@@ -46,7 +46,7 @@ void PlotConfig::deleteCurve(uint curveId)
 	}
 }
 
-CurveConfig *PlotConfig::curve(uint curveId) const
+CurveConfig *PlotConfig::getCurve(uint curveId) const
 {
 	int i = mCurves.size();
 	while( i-- )
@@ -55,4 +55,32 @@ CurveConfig *PlotConfig::curve(uint curveId) const
 			{ return mCurves.at(i); }
 	}
 	return 0;
+}
+
+QDomElement PlotConfig::getXml() const
+{
+	QDomDocument dom;
+	QDomElement plotEl = dom.createElement( "plot" );
+	plotEl.setAttribute( "name", mName );
+	for( unsigned short int i=0; i < mCurves.size(); ++i )
+	{
+		plotEl.appendChild( mCurves.at(i)->getXml() );
+	}
+	return plotEl;
+}
+
+bool PlotConfig::loadXml(const QDomElement &plotCfgElement)
+{
+	mName = plotCfgElement.attribute( "name" );
+	QDomElement curveCfgEl = plotCfgElement.firstChildElement( "curve" );
+	while( !curveCfgEl.isNull() )
+	{
+		CurveConfig *curve = new CurveConfig(this);
+		if( !curve->loadXml( curveCfgEl ) )
+			{ curve->deleteLater(); }
+		else
+			{ mCurves.append( curve ); }
+		curveCfgEl = curveCfgEl.nextSiblingElement( "curve" );
+	}
+	return true;
 }

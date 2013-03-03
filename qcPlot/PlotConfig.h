@@ -32,7 +32,13 @@ public:
 
 	void deleteCurve( uint curveId );
 
-	CurveConfig *curve( uint curveId ) const;
+	CurveConfig *getCurve( uint curveId ) const;
+
+	QList<CurveConfig*> getCurves() const
+		{ return mCurves; }
+
+	QDomElement getXml() const;
+	bool loadXml( QDomElement const &plotCfgElement );
 
 private:
 

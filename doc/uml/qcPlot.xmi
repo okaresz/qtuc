@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<XMI verified="false" xmi.version="1.2" timestamp="2013-02-16T17:10:29" xmlns:UML="http://schema.omg.org/spec/UML/1.3">
+<XMI verified="false" xmi.version="1.2" timestamp="2013-02-28T23:48:36" xmlns:UML="http://schema.omg.org/spec/UML/1.3">
  <XMI.header>
   <XMI.documentation>
    <XMI.exporter>umbrello uml modeller http://uml.sf.net</XMI.exporter>
@@ -42,20 +42,28 @@
       <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="fzfN5x0pJtsS" name="DeviceStateHistoryVariable"/>
       <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="xYZhhuihFJJb" name="PlotSettingsManager"/>
       <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="vPqhGmggL029" name="PlotToolsView"/>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="pJaKvNGKefC2" name="Plotter"/>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="URUG00NI5p3L" name="PlotterView"/>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="GDgybUoOlMjg" name="DeviceStatePlotDataVariable"/>
+      <UML:Class visibility="public" isSpecification="false" namespace="Logical View" isAbstract="false" isLeaf="false" isRoot="false" xmi.id="hpILtgzuqxRF" name="QcPlot"/>
      </UML:Namespace.ownedElement>
      <XMI.extension xmi.extender="umbrello">
       <diagrams>
-       <diagram showopsig="1" linecolor="#7b7b7b" snapx="10" showattribassocs="1" snapy="10" linewidth="0" showattsig="1" textcolor="#000000" isopen="1" showpackage="1" showpubliconly="0" showstereotype="1" name="class diagram" font="Ubuntu,9,-1,5,50,0,0,0,0,0" canvasheight="642" canvaswidth="1283" localid="-1" snapcsgrid="0" showgrid="0" showops="1" griddotcolor="#808080" backgroundcolor="#ffffff" usefillcolor="1" fillcolor="#e4e3f2" zoom="100" xmi.id="jiO01AihvueH" documentation="" showscope="1" snapgrid="0" showatts="1" type="1">
+       <diagram showopsig="1" linecolor="#7b7b7b" snapx="10" showattribassocs="1" snapy="10" linewidth="0" showattsig="1" textcolor="#000000" isopen="1" showpackage="1" showpubliconly="0" showstereotype="1" name="class diagram" font="Ubuntu,9,-1,5,50,0,0,0,0,0" canvasheight="731" canvaswidth="1119" localid="-1" snapcsgrid="0" showgrid="0" showops="1" griddotcolor="#808080" backgroundcolor="#ffffff" usefillcolor="1" fillcolor="#e4e3f2" zoom="100" xmi.id="jiO01AihvueH" documentation="" showscope="1" snapgrid="0" showatts="1" type="1">
         <widgets>
-         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="240" showattsigs="601" showstereotype="1" y="189" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="66" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="JlzQmZn9RFe9" showscope="1" height="32" showopsigs="601"/>
+         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="230" showattsigs="601" showstereotype="1" y="105" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="66" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="JlzQmZn9RFe9" showscope="1" height="32" showopsigs="601"/>
          <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="409" showattsigs="601" showstereotype="1" y="186" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="106" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="Gaz2uh3JKqAe" showscope="1" height="32" showopsigs="601"/>
          <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="636" showattsigs="601" showstereotype="1" y="188" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="115" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="wjSGGt3ac00P" showscope="1" height="32" showopsigs="601"/>
-         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="197" showattsigs="601" showstereotype="1" y="272" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="86" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="ZnWz1A8Hk5Jc" showscope="1" height="32" showopsigs="601"/>
+         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="141" showattsigs="601" showstereotype="1" y="389" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="90" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="ZnWz1A8Hk5Jc" showscope="1" height="32" showopsigs="601"/>
          <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="421" showattsigs="601" showstereotype="1" y="274" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="76" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="kMv4A3g7m8L3" showscope="1" height="32" showopsigs="601"/>
          <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="649" showattsigs="601" showstereotype="1" y="277" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="86" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="2MbcMbzuNVtO" showscope="1" height="32" showopsigs="601"/>
-         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="250" showattsigs="601" showstereotype="1" y="429" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="179" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="fzfN5x0pJtsS" showscope="1" height="32" showopsigs="601"/>
-         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="412" showattsigs="601" showstereotype="1" y="549" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="140" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="xYZhhuihFJJb" showscope="1" height="32" showopsigs="601"/>
-         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="99" showattsigs="601" showstereotype="1" y="187" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="98" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="vPqhGmggL029" showscope="1" height="32" showopsigs="601"/>
+         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="369" showattsigs="601" showstereotype="1" y="545" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="179" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="fzfN5x0pJtsS" showscope="1" height="32" showopsigs="601"/>
+         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="891" showattsigs="601" showstereotype="1" y="453" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="140" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="xYZhhuihFJJb" showscope="1" height="32" showopsigs="601"/>
+         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="46" showattsigs="601" showstereotype="1" y="105" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="98" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="vPqhGmggL029" showscope="1" height="32" showopsigs="601"/>
+         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="152" showattsigs="601" showstereotype="1" y="284" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="56" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="pJaKvNGKefC2" showscope="1" height="32" showopsigs="601"/>
+         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="146" showattsigs="601" showstereotype="1" y="200" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="84" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="URUG00NI5p3L" showscope="1" height="32" showopsigs="601"/>
+         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="364" showattsigs="601" showstereotype="1" y="452" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="189" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="GDgybUoOlMjg" showscope="1" height="32" showopsigs="601"/>
+         <classwidget linecolor="none" usesdiagramfillcolor="1" linewidth="none" showoperations="1" textcolor="#000000" usesdiagramusefillcolor="1" showpubliconly="0" showpackage="1" x="300" showattsigs="601" showstereotype="1" y="631" showattributes="1" font="Ubuntu,9,-1,5,75,0,0,0,0,0" width="53" isinstance="0" usefillcolor="1" fillcolor="none" xmi.id="hpILtgzuqxRF" showscope="1" height="32" showopsigs="601"/>
         </widgets>
         <messages/>
         <associations/>
@@ -79,7 +87,7 @@
   </UML:Model>
  </XMI.content>
  <XMI.extensions xmi.extender="umbrello">
-  <docsettings viewid="jiO01AihvueH" uniqueid="vPqhGmggL029" documentation=""/>
+  <docsettings viewid="jiO01AihvueH" uniqueid="hpILtgzuqxRF" documentation=""/>
   <listview>
    <listitem open="1" type="800" id="Views">
     <listitem open="1" type="821" id="Component View"/>
@@ -103,12 +111,16 @@
       <listitem open="1" type="829" id="UD0dUmJA93cM"/>
      </listitem>
      <listitem open="1" type="813" id="fzfN5x0pJtsS"/>
+     <listitem open="1" type="813" id="GDgybUoOlMjg"/>
      <listitem open="1" type="813" id="kMv4A3g7m8L3"/>
      <listitem open="1" type="813" id="Gaz2uh3JKqAe"/>
      <listitem open="1" type="813" id="ZnWz1A8Hk5Jc"/>
      <listitem open="1" type="813" id="xYZhhuihFJJb"/>
+     <listitem open="1" type="813" id="pJaKvNGKefC2"/>
+     <listitem open="1" type="813" id="URUG00NI5p3L"/>
      <listitem open="1" type="813" id="vPqhGmggL029"/>
      <listitem open="1" type="813" id="JlzQmZn9RFe9"/>
+     <listitem open="1" type="813" id="hpILtgzuqxRF"/>
     </listitem>
     <listitem open="1" type="802" id="Use Case View"/>
    </listitem>
@@ -232,6 +244,34 @@
      </header>
      <classfields/>
     </classifiercodedocument>
+    <classifiercodedocument package="Logical View" fileExt=".cpp" parent_class="pJaKvNGKefC2" id="pJaKvNGKefC2" fileName="Plotter" writeOutCode="true">
+     <textblocks/>
+     <header>
+      <codecomment tag="" writeOutText="false"/>
+     </header>
+     <classfields/>
+    </classifiercodedocument>
+    <classifiercodedocument package="Logical View" fileExt=".cpp" parent_class="URUG00NI5p3L" id="URUG00NI5p3L" fileName="PlotterView" writeOutCode="true">
+     <textblocks/>
+     <header>
+      <codecomment tag="" writeOutText="false"/>
+     </header>
+     <classfields/>
+    </classifiercodedocument>
+    <classifiercodedocument package="Logical View" fileExt=".cpp" parent_class="GDgybUoOlMjg" id="GDgybUoOlMjg" fileName="DeviceStatePlotDataVariable" writeOutCode="true">
+     <textblocks/>
+     <header>
+      <codecomment tag="" writeOutText="false"/>
+     </header>
+     <classfields/>
+    </classifiercodedocument>
+    <classifiercodedocument package="Logical View" fileExt=".cpp" parent_class="hpILtgzuqxRF" id="hpILtgzuqxRF" fileName="QcPlot" writeOutCode="true">
+     <textblocks/>
+     <header>
+      <codecomment tag="" writeOutText="false"/>
+     </header>
+     <classfields/>
+    </classifiercodedocument>
     <classifiercodedocument package="Logical View" fileExt=".h" parent_class="JlzQmZn9RFe9" id="cppheaderJlzQmZn9RFe9" fileName="PlotView" writeOutCode="true">
      <textblocks>
       <codeblockwithcomments tag="hashDefBlock" text="#ifndef PLOTVIEW_H&amp;#010;#define PLOTVIEW_H">
@@ -313,172 +353,6 @@
           <cppcodedocumentation tag="" writeOutText="false"/>
          </header>
         </codeblockwithcomments>
-        <cppheaderclassdeclarationblock tag="classDeclarationBlock" parent_id="ZnWz1A8Hk5Jc" canDelete="false">
-         <header>
-          <cppcodedocumentation tag="" writeOutText="false" text="Class PlotManager&amp;#010;"/>
-         </header>
-         <textblocks>
-          <hierarchicalcodeblock tag="publicBlock" canDelete="false">
-           <header>
-            <cppcodedocumentation tag="" text="Public stuff"/>
-           </header>
-           <textblocks>
-            <hierarchicalcodeblock tag="publicFieldsDecl" indentLevel="1" canDelete="false">
-             <header>
-              <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" text="Fields"/>
-             </header>
-             <textblocks/>
-            </hierarchicalcodeblock>
-            <hierarchicalcodeblock tag="pubMethodsBlock" indentLevel="1" canDelete="false">
-             <header>
-              <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
-             </header>
-             <textblocks>
-              <hierarchicalcodeblock tag="constructionMethods" indentLevel="1" canDelete="false">
-               <header>
-                <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" text="Constructors"/>
-               </header>
-               <textblocks>
-                <codeblockwithcomments tag="emptyconstructor" writeOutText="false" indentLevel="1" text="PlotManager ( ) { }">
-                 <header>
-                  <cppcodedocumentation tag="" indentLevel="1" text="Empty Constructor"/>
-                 </header>
-                </codeblockwithcomments>
-               </textblocks>
-              </hierarchicalcodeblock>
-              <hierarchicalcodeblock tag="accessorMethods" indentLevel="1" canDelete="false">
-               <header>
-                <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" text="Accessor Methods"/>
-               </header>
-               <textblocks>
-                <hierarchicalcodeblock tag="pubStaticAccessorMethods" indentLevel="1" canDelete="false">
-                 <header>
-                  <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
-                 </header>
-                 <textblocks/>
-                </hierarchicalcodeblock>
-                <hierarchicalcodeblock tag="pubRegularAccessorMethods" indentLevel="1" canDelete="false">
-                 <header>
-                  <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
-                 </header>
-                 <textblocks/>
-                </hierarchicalcodeblock>
-               </textblocks>
-              </hierarchicalcodeblock>
-              <hierarchicalcodeblock tag="operationMethods" indentLevel="1" canDelete="false">
-               <header>
-                <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" text="Operations"/>
-               </header>
-               <textblocks/>
-              </hierarchicalcodeblock>
-             </textblocks>
-            </hierarchicalcodeblock>
-           </textblocks>
-          </hierarchicalcodeblock>
-          <hierarchicalcodeblock tag="protectedBlock" canDelete="false">
-           <header>
-            <cppcodedocumentation tag="" text="Protected stuff"/>
-           </header>
-           <textblocks>
-            <hierarchicalcodeblock tag="protectedFieldsDecl" indentLevel="1" canDelete="false">
-             <header>
-              <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" text="Fields"/>
-             </header>
-             <textblocks/>
-            </hierarchicalcodeblock>
-            <hierarchicalcodeblock tag="protMethodsBlock" indentLevel="1" canDelete="false">
-             <header>
-              <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
-             </header>
-             <textblocks>
-              <hierarchicalcodeblock tag="constructionMethods" indentLevel="1" canDelete="false">
-               <header>
-                <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" text="Constructors"/>
-               </header>
-               <textblocks/>
-              </hierarchicalcodeblock>
-              <hierarchicalcodeblock tag="accessorMethods" indentLevel="1" canDelete="false">
-               <header>
-                <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" text="Accessor Methods"/>
-               </header>
-               <textblocks>
-                <hierarchicalcodeblock tag="protStaticAccessorMethods" indentLevel="1" canDelete="false">
-                 <header>
-                  <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
-                 </header>
-                 <textblocks/>
-                </hierarchicalcodeblock>
-                <hierarchicalcodeblock tag="protRegularAccessorMethods" indentLevel="1" canDelete="false">
-                 <header>
-                  <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
-                 </header>
-                 <textblocks/>
-                </hierarchicalcodeblock>
-               </textblocks>
-              </hierarchicalcodeblock>
-              <hierarchicalcodeblock tag="operationMethods" indentLevel="1" canDelete="false">
-               <header>
-                <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" text="Operations"/>
-               </header>
-               <textblocks/>
-              </hierarchicalcodeblock>
-             </textblocks>
-            </hierarchicalcodeblock>
-           </textblocks>
-          </hierarchicalcodeblock>
-          <hierarchicalcodeblock tag="privateBlock" canDelete="false">
-           <header>
-            <cppcodedocumentation tag="" text="Private stuff"/>
-           </header>
-           <textblocks>
-            <hierarchicalcodeblock tag="privateFieldsDecl" indentLevel="1" canDelete="false">
-             <header>
-              <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" text="Fields"/>
-             </header>
-             <textblocks/>
-            </hierarchicalcodeblock>
-            <hierarchicalcodeblock tag="privMethodsBlock" indentLevel="1" canDelete="false">
-             <header>
-              <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
-             </header>
-             <textblocks>
-              <hierarchicalcodeblock tag="constructionMethods" indentLevel="1" canDelete="false">
-               <header>
-                <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" text="Constructors"/>
-               </header>
-               <textblocks/>
-              </hierarchicalcodeblock>
-              <hierarchicalcodeblock tag="accessorMethods" indentLevel="1" canDelete="false">
-               <header>
-                <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" text="Accessor Methods"/>
-               </header>
-               <textblocks>
-                <hierarchicalcodeblock tag="privStaticAccessorMethods" indentLevel="1" canDelete="false">
-                 <header>
-                  <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
-                 </header>
-                 <textblocks/>
-                </hierarchicalcodeblock>
-                <hierarchicalcodeblock tag="privRegularAccessorMethods" indentLevel="1" canDelete="false">
-                 <header>
-                  <cppcodedocumentation tag="" writeOutText="false" indentLevel="1"/>
-                 </header>
-                 <textblocks/>
-                </hierarchicalcodeblock>
-               </textblocks>
-              </hierarchicalcodeblock>
-              <hierarchicalcodeblock tag="operationMethods" indentLevel="1" canDelete="false">
-               <header>
-                <cppcodedocumentation tag="" writeOutText="false" indentLevel="1" text="Operations"/>
-               </header>
-               <textblocks/>
-              </hierarchicalcodeblock>
-             </textblocks>
-            </hierarchicalcodeblock>
-           </textblocks>
-          </hierarchicalcodeblock>
-         </textblocks>
-        </cppheaderclassdeclarationblock>
        </textblocks>
       </hierarchicalcodeblock>
       <codeblockwithcomments tag="hashDefBlockEnd" text="#endif //PLOTMANAGER_H">
@@ -554,6 +428,34 @@
      <classfields/>
     </classifiercodedocument>
     <classifiercodedocument package="Logical View" fileExt=".h" parent_class="vPqhGmggL029" id="cppheadervPqhGmggL029" fileName="PlotToolsView" writeOutCode="true">
+     <textblocks/>
+     <header>
+      <codecomment tag="" writeOutText="false"/>
+     </header>
+     <classfields/>
+    </classifiercodedocument>
+    <classifiercodedocument package="Logical View" fileExt=".h" parent_class="pJaKvNGKefC2" id="cppheaderpJaKvNGKefC2" fileName="Plotter" writeOutCode="true">
+     <textblocks/>
+     <header>
+      <codecomment tag="" writeOutText="false"/>
+     </header>
+     <classfields/>
+    </classifiercodedocument>
+    <classifiercodedocument package="Logical View" fileExt=".h" parent_class="URUG00NI5p3L" id="cppheaderURUG00NI5p3L" fileName="PlotterView" writeOutCode="true">
+     <textblocks/>
+     <header>
+      <codecomment tag="" writeOutText="false"/>
+     </header>
+     <classfields/>
+    </classifiercodedocument>
+    <classifiercodedocument package="Logical View" fileExt=".h" parent_class="GDgybUoOlMjg" id="cppheaderGDgybUoOlMjg" fileName="DeviceStatePlotDataVariable" writeOutCode="true">
+     <textblocks/>
+     <header>
+      <codecomment tag="" writeOutText="false"/>
+     </header>
+     <classfields/>
+    </classifiercodedocument>
+    <classifiercodedocument package="Logical View" fileExt=".h" parent_class="hpILtgzuqxRF" id="cppheaderhpILtgzuqxRF" fileName="QcPlot" writeOutCode="true">
      <textblocks/>
      <header>
       <codecomment tag="" writeOutText="false"/>

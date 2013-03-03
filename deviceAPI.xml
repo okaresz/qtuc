@@ -23,19 +23,9 @@
     <stateVariableList>
         <stateVariable>
 			<hwInterface>testHw</hwInterface>
-			<name>sint</name>
+			<name>counter</name>
 			<type>int</type>
 			<autoUpdate side="user">50</autoUpdate>
-		</stateVariable>
-		<stateVariable>
-			<hwInterface>testHw</hwInterface>
-			<name>stringvar</name>
-			<type>string</type>
-		</stateVariable>
-		<stateVariable>
-			<hwInterface>testHw</hwInterface>
-			<name>uintV1</name>
-			<type>uint</type>
 		</stateVariable>
     </stateVariableList>
 

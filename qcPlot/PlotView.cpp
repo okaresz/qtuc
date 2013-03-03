@@ -4,12 +4,16 @@
 #include <qwt_legend.h>
 #include <qwt_plot_picker.h>
 #include "Qwt2AxisMagnifier.h"
+#include <QDebug>
+#include <qwt_symbol.h>
 
 using namespace qcPlot;
 
 PlotView::PlotView( Plotter *model, QWidget *parent ):
 	QwtPlot( parent ),
-	mModel(model)
+	mModel(model),
+	mAutoZoom(true),
+	mAutoFollow(true)
 {
 	// panning with the left mouse button
 	( void ) new QwtPlotPanner( canvas() );
@@ -23,7 +27,6 @@ PlotView::PlotView( Plotter *model, QWidget *parent ):
 	QwtPlotPicker *picker = new QwtPlotPicker( canvas() );
 	picker->setTrackerMode(QwtPicker::AlwaysOn);
 
-	setTitle( mModel->cfg()->name() );
 	insertLegend( new QwtLegend(), QwtPlot::RightLegend );
 
 	setAutoReplot(false);
@@ -62,12 +65,69 @@ PlotView::PlotView( Plotter *model, QWidget *parent ):
 
 void PlotView::onDataChanged()
 {
-//	double upperLim = ((PlotData*)sender())->getMaxX();
-//	double lowerLim = upperLim-axisScaleDiv(xBottom)->range();
-//	setAxisScale(xBottom, lowerLim, upperLim, axisStepSize(xBottom) );
-//	replot();
+	if( mAutoZoom )
+	{
+		QPair<double, double> valLimits = ((DeviceStateHistoryVariable*)sender())->getValueLimits();
+		setAxisScale(yLeft, valLimits.first, valLimits.second, axisStepSize(yLeft) );
+	}
+
+	if( mAutoFollow )
+	{
+		QPair<qint64, qint64> timeLimits = ((DeviceStateHistoryVariable*)sender())->getTimestampLimits();
+		double lowerTimeLim = timeLimits.second-axisScaleDiv(xBottom)->range();
+		setAxisScale(xBottom, lowerTimeLim, timeLimits.second, axisStepSize(xBottom) );
+	}
+
+	/// @todo why is this necessary? QwtPlot should replot itself on new data. Maybe a special signal must be emitted by data object?...
+	replot();
 }
 
-void PlotView::setConfig(PlotConfig *config)
+void PlotView::setConfig(PlotConfig const *config)
 {
+	/// @todo I can't disconnect the config slots from me, because it's const. It's his responsibility. Is this an issue?...
+	//disconnect(mConfig);
+
+	setTitle( config->name() );
+
+	//create/set curves
+	QList<CurveConfig*> curveCfgList = config->getCurves();
+	for( int i=0; i<curveCfgList.size(); ++i )
+	{
+		QwtPlotCurve *plotCurve = curve(curveCfgList.at(i)->id());
+		if( !plotCurve )
+		{
+			plotCurve = new QwtPlotCurve();
+			DeviceStatePlotDataVariable *plotVar = mModel->resolveStateVar( curveCfgList.at(i)->stateVariable() );
+			if( plotVar )
+			{
+				plotCurve->setData( plotVar );
+				mCurves.append( QPair<uint,QwtPlotCurve*>( curveCfgList.at(i)->id(), plotCurve ) );
+				plotCurve->attach(this);
+				connect( plotVar, SIGNAL(historyUpdated()), this, SLOT(onDataChanged()) );
+			}
+			else
+				{ qWarning()<<QString("no variable vound: hwi=%1, name=%2").arg(curveCfgList.at(i)->stateVariable().first, curveCfgList.at(i)->stateVariable().second); }
+
+			plotCurve->setRenderHint( QwtPlotItem::RenderAntialiased );
+			plotCurve->setLegendAttribute( QwtPlotCurve::LegendShowLine, true );
+
+			QwtSymbol *curveSymbol = new QwtSymbol(QwtSymbol::Ellipse);
+			curveSymbol->setColor( QColor(160,160,160));
+			curveSymbol->setSize( 3, 3 );
+			plotCurve->setSymbol( curveSymbol );
+		}
+
+		plotCurve->setTitle( curveCfgList.at(i)->name() );
+	}
+
+}
+
+QwtPlotCurve *PlotView::curve(uint curveId)
+{
+	for( unsigned short int i=0; i<mCurves.size(); ++i )
+	{
+		if( mCurves.at(i).first == curveId )
+			{ return mCurves.at(i).second; }
+	}
+	return 0;
 }

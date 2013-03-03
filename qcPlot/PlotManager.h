@@ -16,6 +16,9 @@ public:
 	explicit PlotManager(QObject *parent = 0);
 
 	bool addNewPlot( PlotConfig *plotCfg );
+
+	QDomElement getXml() const;
+	bool loadXml( QDomElement const &layoutCfgElement );
 	
 signals:
 	void newPlotterAdded( Plotter* );

@@ -1,8 +1,11 @@
 #include "QcPlot.h"
 #include "PlotSettingsManager.h"
 #include <QCoreApplication>
-#include "DeviceStateVariableBase.h"
+#include "DeviceStatePlotDataVariable.h"
 #include "PlotConfigView.h"
+#include <QDomDocument>
+#include <QFile>
+#include <QTextStream>
 
 using namespace QtuC;
 using namespace qcPlot;
@@ -17,7 +20,7 @@ QcPlot::QcPlot(QObject *parent) : ErrorHandlerBase(parent),
     QSettings::setDefaultFormat( QSettings::IniFormat );
 	PlotSettingsManager::instance(this);
 
-	mProxyState = new ProxyStateManager(this);
+	mProxyState = ProxyStateManager::instance(this);
 	connect( mProxyState, SIGNAL(stateVariableSendRequest(DeviceStateVariableBase*)), this, SLOT(handleStateVariableSendRequest(DeviceStateVariableBase*)) );
 
 	mPlotManager = new PlotManager(this);
@@ -138,6 +141,51 @@ QHash<QString, QStringList> QcPlot::getVariableList() const
 	return varNlist;
 }
 
+bool QcPlot::saveLayout(const QString &fileName) const
+{
+	QDomDocument dom( "qcPlotLayoutCfg" );
+	dom.appendChild( mPlotManager->getXml() );
+	QFile layoutFile( fileName );
+	if( !layoutFile.open( QIODevice::WriteOnly ) )
+	{
+		error( QtWarningMsg, QString("Failed to sava layout file to %1").arg(fileName), "saveLayout()" );
+		return false;
+	}
+	QTextStream fStream(&layoutFile);
+	fStream << dom;
+	layoutFile.close();
+	return true;
+}
+
+bool QcPlot::loadLayout(const QString &fileName)
+{
+	QFile layoutFile( fileName );
+	if( !layoutFile.open( QIODevice::ReadOnly ) )
+	{
+		error( QtWarningMsg, QString("Failed to open layout file: %1").arg(fileName), "loadLayout()" );
+		return false;
+	}
+
+	QDomDocument dom;
+	if( !dom.setContent( &layoutFile ) )
+	{
+		error( QtWarningMsg, QString("Failed to parse layout file: %1").arg(fileName), "loadLayout()" );
+		layoutFile.close();
+		return false;
+	}
+	else
+	{
+		if( !mPlotManager->loadXml( dom.documentElement() ) )
+		{
+			error( QtWarningMsg, QString("Failed to load layout file: %1").arg(fileName), "loadLayout()" );
+			layoutFile.close();
+			return false;
+		}
+	}
+	layoutFile.close();
+	return true;
+}
+
 void QcPlot::proxyConnectError()
 {
 	errorDetails_t errDet;
@@ -171,6 +219,7 @@ void QcPlot::proxyConnectionReady()
 	emit proxyHasConnected();
 	debug( debugLevelVerbose, "Request device API...", "proxyConnectionReady()" );
 	mProxyLink->sendCommand( new ClientCommandReqDeviceApi() );
+	mProxyLink->sendCommand( new ClientCommandReqDeviceInfo() );
 }
 
 void QcPlot::handleStateVariableSendRequest(DeviceStateVariableBase *stateVar )
@@ -185,14 +234,15 @@ void QcPlot::createDeviceVariable(QHash<QString, QString> varParams)
 	varParams.remove("autoUpdate-device");
 	if( mProxyState->registerNewStateVariable(varParams) )
 	{
-		DeviceStateVariableBase *stateVar = mProxyState->getVar( varParams.value("hwInterface"), varParams.value("name") );
+		DeviceStateHistoryVariable *stateVar = mProxyState->getVar( varParams.value("hwInterface"), varParams.value("name") );
 		if(  stateVar == 0 )
 		{
-			error( QtWarningMsg, "StateVar is null", "createDeviceVariable()");
+			error( QtWarningMsg, "StateVar is null, failed to create", "createDeviceVariable()");
 			return;
 		}
 
 		emit deviceVariableCreated( stateVar, varParams.value("guiHint") );
+		connect( this, SIGNAL(deviceStartup()), stateVar, SLOT(onDeviceStartup()) );
 
 		// subscribe if autoUpdate-user is present in the API
 		if( varParams.contains("autoUpdate-user") )
@@ -249,7 +299,7 @@ bool QcPlot::handleDeviceCmd(ClientCommandDevice *deviceCmd)
 {
 	if( deviceCmd->getType() == deviceCmdSet )
 	{
-		DeviceStateVariableBase *var = mProxyState->getVar( deviceCmd->getHwInterface(), deviceCmd->getVariable() );
+		DeviceStateHistoryVariable *var = (DeviceStateHistoryVariable*)mProxyState->getVar( deviceCmd->getHwInterface(), deviceCmd->getVariable() );
 		if( var )
 			{ var->updateFromSource( deviceCmd->getArg() ); }
 		else
@@ -275,6 +325,12 @@ void QcPlot::handleCommand(ClientCommandBase *cmd)
 		if( cmd->getName() == "deviceAPI" )
 		{
 			handleDeviceApiCmd( (ClientCommandDeviceApi*)cmd );
+		}
+		else if( cmd->getName() == "deviceInfo" )
+		{
+			ClientCommandDeviceInfo *cmdDeviceInfo = (ClientCommandDeviceInfo*)cmd;
+			DeviceStateHistoryVariable::setDeviceStartupTime( cmdDeviceInfo->getStartupTime() );
+			emit deviceStartup();
 		}
 		else
 			{ debug( debugLevelInfo, QString("Unhandled command: %1").arg(cmd->getName()), "handleCommand()" ); }

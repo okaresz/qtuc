@@ -172,6 +172,16 @@ Either way, normally it is not guaranteed that all update of the device variable
 However, by using the proxy in passthrough mode, full synchronization without update loss is achievable (but as the timestamps will be forwarded by the proxy as-is, the client is responsible to convert them to absolute UNIX timestamps (or not)).
 
 
+## PassThrough ##			{#mainpage-concept-passthrough}
+
+In this mode, proxy will relay all device commands to all clients, and send all client device commands to the device.
+This way, deviceStateVariables in the proxy are not used, proxy will act only as a translator. Also, the commands related and relying on stateVariables will not work in passthrough mode, for example subscribe, autoUpdate, and so on...
+
+Exceptions:
+
+  * Device greeting messages are processed, and a ClientCommandDeviceInfo is sent to the client. ClientCommandReqDeviceInfo also works.
+  
+
 # Settings #			{#mainpage-settings}
 
 ## deviceAPI.xml ##			{#mainpage-settings-deviceAPIxml}
@@ -198,5 +208,4 @@ See related page for details.
 
 -vv: be very verbose
 
---passthrough: Enable passthrough mode. In this mode, proxy will relay all device commands to all clients, and send all client device commands to the device.
-This way, deviceStateVariables in the proxy are not used, proxy will act only as a translator. Also, the commands related and relying on stateVariables will not work in passthrough mode, for example subscribe, autoUpdate, and so on...
+--passthrough: Enable passthrough mode.

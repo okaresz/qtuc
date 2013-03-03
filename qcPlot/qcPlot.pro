@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     Plotter.cpp \
     PlotView.cpp \
     CurveView.cpp \
-    Qwt2AxisMagnifier.cpp
+    Qwt2AxisMagnifier.cpp \
+    PlotterView.cpp
 
 HEADERS  += \
     QcPlot.h \
@@ -43,7 +44,8 @@ HEADERS  += \
     Plotter.h \
     PlotView.h \
     CurveView.h \
-    Qwt2AxisMagnifier.h
+    Qwt2AxisMagnifier.h \
+    PlotterView.h
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/release/ -lqcCommon
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../qcCommon/debug/ -lqcCommon

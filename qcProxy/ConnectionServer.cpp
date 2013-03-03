@@ -104,6 +104,7 @@ bool ConnectionServer::broadcast( ClientCommandBase *cmd )
 	if( !( cmd && cmd->isValid() ) )
 	{
 		error( QtWarningMsg, QString( "Command (name: %1) is invalid, won't broadcast.").arg(cmd->getName()), "broadcast()" );
+		cmd->deleteLater();
 		return false;
 	}
 
@@ -113,13 +114,21 @@ bool ConnectionServer::broadcast( ClientCommandBase *cmd )
 		if( !mClients.at(i) )
 		{
 			error( QtWarningMsg, QString("Client (index:%1) is null! Can't send command %2").arg(QString::number(i),cmd->getName()), "broadcast()" );
+			ok = false;
 			continue;
 		}
-		if( !mClients.value(i)->sendCommand( cmd ) )
+		if( !mClients.value(i)->isReady() )
+		{
+			error( QtWarningMsg, QString("Client (index:%1) is not ready! Can't send command %2").arg(QString::number(i),cmd->getName()), "broadcast()" );
+			ok = false;
+			continue;
+		}
+		if( !mClients.value(i)->sendCommand( cmd->exactClone() ) )
 		{
 			error( QtWarningMsg, QString( "Failed to send command (name: %1) to client: %2").arg(cmd->getName(), mClients.at(i)->getID()), "broadcast()" );
 			ok = false;
 		}
 	}
+	cmd->deleteLater();
 	return ok;
 }

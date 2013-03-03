@@ -94,7 +94,7 @@ bool ClientSubscription::includes(const DeviceStateVariableBase *variable) const
 bool ClientSubscription::isValid()
 {
 	bool valid = true;
-	valid = valid && mInterval > mMinSubscriptionInterval;
+	valid = valid && mInterval >= mMinSubscriptionInterval;
 	valid = valid && !( mHwInterface.isEmpty() && !mVariable.isEmpty() );
 	return valid;
 }

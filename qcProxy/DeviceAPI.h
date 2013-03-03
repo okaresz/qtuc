@@ -126,6 +126,9 @@ signals:
 	  *	@param cmd The device command.*/
 	void commandReceived( DeviceCommand *cmd );
 
+	/** Emitted when a device greeting is received.*/
+	void greetingReceived();
+
 private:
 	/** Handle the device greeting message.
 	 *	If the greeting contains device parameters (name, platform, ...), parse the parameters and update the Device object accordingly.

@@ -29,11 +29,12 @@ public:
 		{ return mValueLimits; }
 
 	/** Set device startup time.
-	  *	@param Device startup time as a valid non-zero UNIX timestamp.*/
-	static void setDeviceStartupTime( qint64 timestamp );
+	  *	@param Device startup time as a valid UNIX timestamp in milliseconds.*/
+	static void setDeviceStartupTime( qint64 timestamp )
+		{ mDeviceStartupTime = timestamp; }
 
 	/** Get device startup time.
-	  *	@return Device startup time. May be zero, if it hasn't been set.*/
+	  *	@return Device startup time as a valid UNIX timestamp in milliseconds. May be zero, if it hasn't been set.*/
 	static qint64 getDeviceStartupTime()
 		{ return mDeviceStartupTime; }
 
@@ -45,12 +46,25 @@ public:
 	static quint32 toDeviceTime( qint64 timestampUNIX )
 		{ return timestampUNIX - mDeviceStartupTime; }
 
+	/** Clear history.
+	  *	Clear the entire value history.*/
+	void clearHistory();
+
+	/** Activate history logging.
+	  *	@param enabled If true, all values will be added to history, if false, the old values will be discarded on update.*/
+	void setHistoryLog( bool enabled = true )
+		{ mLogHistory = enabled; }
+
 	/** @name Reimplemented from base.
 	*	@{*/
 	void updateFromSource( const QString& newValue );
 	void swapValue( const QVariant &newValue );
 	bool isValid() const;
 	/// @}
+
+public slots:
+
+	void onDeviceStartup();
 
 signals:
 
@@ -62,11 +76,16 @@ protected:
 	void pushToHistory();
 
 	QList<QPair<qint64,double> > mHistory;	///< History of this state variable. Stores all new updates with the update timestamp and the new value.
-	QPair<qint64, qint64> mTimestampLimits;	///< Lower and upper limits (minimum and maximum) of the timestamp-range.
+	QPair<qint64, qint64> mTimestampLimits;	///< Lower and upper limits (minimum and maximum) of the timestamp-range in device-time.
 	QPair<double, double> mValueLimits;	///< Lower and upper limits (minimum and maximum) of the value-range.
 
-	static qint64 mDeviceStartupTime;	///< Device startup time as a UNIX timestamp. This should be requested from the proxy before using this variable.
+private:
 
+	void updateValueLimits( double newVal );
+	void updateTimestampLimits( qint64 newStamp );
+
+	bool mLogHistory;
+	static qint64 mDeviceStartupTime;	///< Device startup time as a UNIX timestamp. This should be requested from the proxy before using this variable.
 };
 
 }	//qcPlot::

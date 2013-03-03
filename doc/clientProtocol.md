@@ -173,19 +173,19 @@ The parameters in this command are the same as in the [similar section](@ref doc
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <packet id="qcProxy#6">
 	<deviceInfo startup="false" startupTime="32f6e6a7182361817">
-		<positiveAck>false</positiveAck>
-		<name>deviceName</name>
-		<desc>A short description of the device</desc>
-		<platform>A short platform string, eg.: STM32F4</platform>
-		<project>projName</project>
+		<info name="positiveAck">false</info>
+		<info name="name">deviceName</info>
+		<info name="desc">A short description of the device</info>
+		<info name="platform">A short platform string, eg.: STM32F4</info>
+		<info name="project">projName</info>
 	</deviceInfo>
 </packet>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   * **startup**: True means that this command is sent by the proxy because the device has just started up (whether it had sent a greeting or not, this client command is sent by the proxy). If false or absent, than this is a reply to a client request.
-  * **startupTime**: The Time of the device startup, as a UNIX timestamp, in base 16 (hexa), without prefix. This is always a valid, non-zero timestamp. See [timekeeping](@ref mainpage-concept-timekeeping).
+  * **startupTime**: The Time of the device startup, as a UNIX timestamp expressed in milliseconds, in base 16 (hexa), without prefix. This is always a valid, non-zero timestamp. See [timekeeping](@ref mainpage-concept-timekeeping).
 
-The child nodes are the device parameters. Only those params are included, which the client has privilige to see.
+The child nodes are the device parameters. Only those params are included, which the client has privilege to see.
 
 
 ### Request deviceInfo ###		{#doc-clientProtocol-command-control-reqDeviceInfo}

@@ -17,8 +17,8 @@ DeviceAPI::DeviceAPI( QObject *parent ) :
 	mDeviceAPI = new DeviceAPIFileHandler(this);
 	mDeviceInstance = Device::create(this);
 
-	//mDeviceLink = new SerialDeviceConnector(this);
-	mDeviceLink = new DummySocketDevice(this);
+	mDeviceLink = new SerialDeviceConnector(this);
+	//mDeviceLink = new DummySocketDevice(this);
 
 	// set device command separator
 	DeviceCommand::setSeparator( ProxySettingsManager::instance()->value( "device/commandSeparator" ).toChar() );
@@ -312,6 +312,8 @@ void DeviceAPI::handleDeviceGreeting( DeviceCommand *greetingCmd )
 	else /// @todo This should reach the clients as well!
 		{ debug( debugLevelInfo, "Device greeting received (empty greeting)", "handleDeviceGreeting()" ); }
 
+	emit greetingReceived();
+
 	greetingCmd->deleteLater();
 }
 
@@ -319,7 +321,7 @@ void DeviceAPI::handleDeviceCommand( DeviceCommand *cmd )
 {
 	++mReceivedDeviceCommandCounter;
 
-	if( mEmitAllCmd )
+	if( mEmitAllCmd && !( cmd->getType() == deviceCmdCall && cmd->getHwInterface() == ":proxy" && cmd->getVariable() == "greeting" ) )
 	{
 		emit commandReceived( cmd );
 		return;

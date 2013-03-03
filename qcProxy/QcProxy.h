@@ -47,16 +47,18 @@ public slots:
 	 *	@param deviceCommand The device command.*/
 	bool route( DeviceCommand *deviceCommand );
 
-	/** Handle incoming device message*
-	  *	@param msgType Message type.
-	  *	@param msg The message string.
-	  * @return True on success, false otherwise.*/
-	bool handleDeviceMessage( deviceMessageType_t msgType, QString msg );
-
 private slots:
 	/** Handle a newly connected client.
 	 *	@param newClient The connected client object.*/
 	void handleNewClient( ClientConnectionManagerBase *newClient );
+
+	/** Handle incoming device message*
+	  *	@param msgType Message type.
+	  *	@param msg The message string.
+	  * @return True on success, false otherwise.*/
+	bool handleDeviceMessage( deviceMessageType_t msgType, const QString &msg );
+
+	void handleDeviceGreeting();
 
 	/** Handle subscription feed request and send the feed to the client.
 	  *	Called on every ClientSubscription::subscriptionTick() of every subscription.

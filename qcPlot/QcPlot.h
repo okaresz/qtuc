@@ -61,6 +61,9 @@ public:
 
 	QHash<QString,QStringList> getVariableList() const;
 
+	bool saveLayout( QString const &fileName ) const;
+	bool loadLayout( QString const &fileName );
+
 signals:
 
 	/** Emitted if a new Device State Variable is created.
@@ -80,6 +83,9 @@ signals:
 
 	/// Emitted when the proxy connection has been succesfully estabilished (after the handshakes)
 	void proxyHasConnected();
+
+	/// Emitted when a deviceInfo clientCommand is received with a startup=true flag.
+	void deviceStartup();
 	
 private slots:
 

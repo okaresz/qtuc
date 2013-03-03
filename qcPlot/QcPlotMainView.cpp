@@ -5,8 +5,11 @@
 #include <QStringList>
 #include "PlotSettingsManager.h"
 #include "PlotConfigView.h"
-#include "PlotView.h"
+#include "PlotterView.h"
 #include <QDockWidget>
+#include <QMenu>
+#include <QMenuBar>
+#include <QFileDialog>
 
 using namespace qcPlot;
 
@@ -44,6 +47,9 @@ bool QcGuiMainView::setModel(QcGui *model)
 void QcPlotMainView::createGui()
 {
 	mMainToolBar = new QToolBar(this);
+	QMenu *fileMenu = new QMenu(this);
+	fileMenu->setTitle( "File" );
+	menuBar()->addMenu( fileMenu );
 
 	QAction *connectAction = new QAction( QIcon(""), tr("Connect"), this );
 	connectAction->setObjectName( QString::fromUtf8( "connectAction" ) );
@@ -59,6 +65,20 @@ void QcPlotMainView::createGui()
 	connect( newPlotAction, SIGNAL(triggered()), this, SLOT(onNewPlotActionTriggered()) );
 	newPlotAction->setEnabled(false);
 	mMainToolBar->addAction(newPlotAction);
+
+	QAction *saveLayoutAction = new QAction( QIcon("document-save"), tr("Save layout"), this );
+	saveLayoutAction->setObjectName( QString::fromUtf8( "saveLayoutAction" ) );
+	saveLayoutAction->setToolTip( tr("Save the plots") );
+	mActions.insert( "saveLayout", saveLayoutAction );
+	connect( saveLayoutAction, SIGNAL(triggered()), this, SLOT(onSaveLayoutActionTriggered()) );
+	fileMenu->addAction(saveLayoutAction);
+
+	QAction *loadLayoutAction = new QAction( QIcon("document-open"), tr("Open layout"), this );
+	loadLayoutAction->setObjectName( QString::fromUtf8( "loadLayoutAction" ) );
+	loadLayoutAction->setToolTip( tr("Open and load a plot layout") );
+	mActions.insert( "loadLayout", loadLayoutAction );
+	connect( loadLayoutAction, SIGNAL(triggered()), this, SLOT(onLoadLayoutActionTriggered()) );
+	fileMenu->addAction(loadLayoutAction);
 
 	setDockOptions( QMainWindow::AnimatedDocks );
 
@@ -113,6 +133,24 @@ void QcPlotMainView::onNewPlotActionTriggered()
 	cfgView->show();
 }
 
+void QcPlotMainView::onSaveLayoutActionTriggered()
+{
+	QString fileName = QFileDialog::getSaveFileName( this, "Save layout", "", "qcPlot layout (*.qpl)" );
+	if( !fileName.isEmpty() )
+	{
+		mModel->saveLayout( fileName );
+	}
+}
+
+void QcPlotMainView::onLoadLayoutActionTriggered()
+{
+	QString fileName = QFileDialog::getOpenFileName( this, "Open layout", "", "qcPlot layout (*.qpl)" );
+	if( !fileName.isEmpty() )
+	{
+		mModel->loadLayout( fileName );
+	}
+}
+
 void QcPlotMainView::onNewPlotDialogSubmit()
 {
 	PlotConfigView *configView = (PlotConfigView*)sender();
@@ -135,10 +173,10 @@ void QcPlotMainView::onDeviceApiSet()
 
 void QcPlotMainView::onNewPlotterAdded(Plotter *plotter)
 {
-	PlotView *plot = new PlotView( plotter, this );
+	PlotterView *plotterView = new PlotterView( plotter, this );
 	QDockWidget *plotDock = new QDockWidget( plotter->cfg()->name(), this );
 	plotDock->setAllowedAreas( Qt::LeftDockWidgetArea );
-	plotDock->setWidget( plot );
+	plotDock->setWidget( plotterView );
 
 	addDockWidget( Qt::LeftDockWidgetArea, plotDock );
 }

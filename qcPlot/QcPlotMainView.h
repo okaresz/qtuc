@@ -34,6 +34,8 @@ private slots:
 	// Actions
 	void onConnectActionTriggered();
 	void onNewPlotActionTriggered();
+	void onSaveLayoutActionTriggered();
+	void onLoadLayoutActionTriggered();
 
 	//dialogs, user interactions,...
 	void onNewPlotDialogSubmit();

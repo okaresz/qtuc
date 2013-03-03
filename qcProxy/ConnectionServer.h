@@ -43,7 +43,7 @@ public:
 	bool startListening();
 
 	/** Send a broadcast command.
-	  *	The passed command will be sent to all clients.
+	  *	The passed command will be sent to all clients, then destroyed.
 	  *	@param cmd The command to send.
 	  *	@return True if the command has been successfully sent to ALL clients, false otherwise.*/
 	bool broadcast( ClientCommandBase *cmd );
