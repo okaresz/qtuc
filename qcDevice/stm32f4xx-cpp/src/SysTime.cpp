@@ -35,22 +35,20 @@ void SysTime::init(void)
 	timtb.TIM_Prescaler = prescaler;
 	TIM_TimeBaseInit( timer, &timtb );
 
-	TIM_UpdateRequestConfig( timer, TIM_UpdateSource_Regular );
-	TIM_ITConfig( timer, TIM_IT_Update, ENABLE );
-	TIM_ClearITPendingBit( timer, TIM_IT_Update );	//WTF?? why is this necessary?
-
 	NVIC_InitTypeDef nvicConf;
 	nvicConf.NVIC_IRQChannel = timerIRQ;
 	nvicConf.NVIC_IRQChannelCmd = ENABLE;
 	nvicConf.NVIC_IRQChannelPreemptionPriority = 0;
 	nvicConf.NVIC_IRQChannelSubPriority = 0;
 	NVIC_Init( &nvicConf );
+
+	TIM_UpdateRequestConfig( timer, TIM_UpdateSource_Regular );
+	TIM_ClearITPendingBit( timer, TIM_IT_Update );
 }
 
 void SysTime::start(void)
 {
-	TIM_GenerateEvent( timer, TIM_EventSource_Update );
-	TIM_ClearITPendingBit( timer, TIM_IT_Update );
+	TIM_ITConfig( timer, TIM_IT_Update, ENABLE );
 	TIM_Cmd( timer, ENABLE );
 }
 

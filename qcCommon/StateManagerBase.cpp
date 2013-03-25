@@ -10,14 +10,15 @@ StateManagerBase::StateManagerBase( QObject *parent ) : ErrorHandlerBase(parent)
 
 StateManagerBase::~StateManagerBase()
 {
-	for( int i=0; i<mStateVars->size(); ++i )
-	{
-		if( mStateVars->at(i) )
-		{
-			mStateVars->value(i)->disconnect();
-			delete mStateVars->value(i);
-		}
-	}
+	// Qt will delete the variables, as they are parented to this stateManager when created.
+//	for( int i=0; i<mStateVars->size(); ++i )
+//	{
+//		if( mStateVars->at(i) )
+//		{
+//			mStateVars->value(i)->disconnect();
+//			delete mStateVars->value(i);
+//		}
+//	}
 	mStateVars->clear();
 	delete mStateVars;
 }

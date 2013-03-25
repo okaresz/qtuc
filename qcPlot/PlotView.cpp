@@ -93,15 +93,17 @@ void PlotView::setConfig(PlotConfig const *config)
 	QList<CurveConfig*> curveCfgList = config->getCurves();
 	for( int i=0; i<curveCfgList.size(); ++i )
 	{
-		QwtPlotCurve *plotCurve = curve(curveCfgList.at(i)->id());
+		QcPlotCurve *plotCurve = curve(curveCfgList.at(i)->id());
 		if( !plotCurve )
 		{
-			plotCurve = new QwtPlotCurve();
+			plotCurve = new QcPlotCurve();
 			DeviceStatePlotDataVariable *plotVar = mModel->resolveStateVar( curveCfgList.at(i)->stateVariable() );
 			if( plotVar )
 			{
+				// QwtPlotCurve takes ownership of the variable, but it's parent is still the ProxyStateManager, so clear it.
+				//plotVar->setParent(0);
 				plotCurve->setData( plotVar );
-				mCurves.append( QPair<uint,QwtPlotCurve*>( curveCfgList.at(i)->id(), plotCurve ) );
+				mCurves.append( QPair<uint,QcPlotCurve*>( curveCfgList.at(i)->id(), plotCurve ) );
 				plotCurve->attach(this);
 				connect( plotVar, SIGNAL(historyUpdated()), this, SLOT(onDataChanged()) );
 			}
@@ -122,7 +124,7 @@ void PlotView::setConfig(PlotConfig const *config)
 
 }
 
-QwtPlotCurve *PlotView::curve(uint curveId)
+QcPlotCurve *PlotView::curve(uint curveId)
 {
 	for( unsigned short int i=0; i<mCurves.size(); ++i )
 	{

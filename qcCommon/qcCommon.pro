@@ -8,6 +8,7 @@ TEMPLATE = lib
 CONFIG += staticlib
 
 SOURCES += SettingsManagerBase.cpp \
+	DeviceStateVariableBase.cpp \
     StateManagerBase.cpp \
     DeviceCommandBase.cpp \
     ClientCommandBase.cpp \
@@ -16,18 +17,19 @@ SOURCES += SettingsManagerBase.cpp \
     ClientConnectionManagerBase.cpp \
     DeviceAPIParser.cpp \
     ErrorHandlerBase.cpp \
+	QCommandLine.cpp \
     ClientCommandFactory.cpp \
     clientCommands/ClientCommandHeartBeat.cpp \
 	clientCommands/ClientCommandHandshake.cpp \
     clientCommands/ClientCommandDeviceApi.cpp \
     clientCommands/ClientCommandReqDeviceApi.cpp \
     clientCommands/ClientCommandUnSubscribe.cpp \
-    clientCommands/ClientCommandSubscribe.cpp \
-    DeviceStateVariableBase.cpp \
+	clientCommands/ClientCommandSubscribe.cpp \
     clientCommands/ClientCommandReqDeviceInfo.cpp \
     clientCommands/ClientCommandDeviceInfo.cpp
 
 HEADERS += SettingsManagerBase.h \
+	DeviceStateVariableBase.h \
     StateManagerBase.h \
     DeviceCommandBase.h \
     ClientCommandBase.h \
@@ -35,7 +37,8 @@ HEADERS += SettingsManagerBase.h \
     ClientCommandDevice.h \
     ClientConnectionManagerBase.h \
     DeviceAPIParser.h \
-    ErrorHandlerBase.h \
+	ErrorHandlerBase.h \
+	QCommandLine.h \
     ClientCommandFactory.h \
     clientCommands/ClientCommands.h \
     clientCommands/ClientCommandHeartBeat.h \
@@ -43,8 +46,7 @@ HEADERS += SettingsManagerBase.h \
     clientCommands/ClientCommandDeviceApi.h \
     clientCommands/ClientCommandReqDeviceApi.h \
     clientCommands/ClientCommandUnSubscribe.h \
-    clientCommands/ClientCommandSubscribe.h \
-    DeviceStateVariableBase.h \
+	clientCommands/ClientCommandSubscribe.h \
     clientCommands/ClientCommandReqDeviceInfo.h \
     clientCommands/ClientCommandDeviceInfo.h
 

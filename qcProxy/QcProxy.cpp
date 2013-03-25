@@ -6,7 +6,6 @@
 #include "ProxySettingsManager.h"
 #include <QFile>
 #include <QTextStream>
-#include <iostream>
 
 using namespace QtuC;
 
@@ -17,15 +16,6 @@ QcProxy::QcProxy( QObject *parent ) :
 	mClientSubscriptionManager(0),
 	mPassThrough(false)
 {
-	std::cout << QString("QcProxy %1").arg( QCoreApplication::applicationVersion() ).toStdString() << std::endl;
-
-	// On windows default format is registry, but we want file.
-	#ifdef Q_OS_WIN32
-		QSettings::setDefaultFormat( QSettings::IniFormat );
-	#endif
-	// Create the settings object, QcProxy as parent.
-	ProxySettingsManager::instance( this );
-
 	connect( QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(deleteLater()) );
 
 	mDevice = new DeviceAPI( this );
@@ -40,9 +30,11 @@ QcProxy::~QcProxy()
 
 bool QcProxy::start()
 {
+	setPassThrough( ProxySettingsManager::instance()->getCmdArgValue(ProxySettingsManager::cmdArgPassthrough).toBool() );
+
 	if( !mDevice->initAPI() )
 	{
-		error( QtCriticalMsg, "Failed to initialize device API", "start()" );
+		error( QtCriticalMsg, "Failed to initialize device", "start()" );
 		return false;
 	}
 	connect( mDevice, SIGNAL(messageReceived(deviceMessageType_t,QString)), this, SLOT(handleDeviceMessage(deviceMessageType_t,QString)) );
@@ -169,7 +161,6 @@ bool QcProxy::handleDeviceMessage(deviceMessageType_t msgType, QString const &ms
 	/// @todo implement sending to clients, and clean up this logging thing...
 
 	// log
-	/*
 	QString logFilePath;
 	switch( msgType )
 	{
@@ -191,8 +182,8 @@ bool QcProxy::handleDeviceMessage(deviceMessageType_t msgType, QString const &ms
 		fileStream.flush();
 		logFile.close();
 	}
-*/
-	debug( debugLevelVeryVerbose, QString("Device message received (%1): %2").arg( Device::messageTypeToString(msgType),msg), "handleDeviceMessage()" );
+
+	//debug( debugLevelVeryVerbose, QString("Device message received (%1): %2").arg( Device::messageTypeToString(msgType),msg), "handleDeviceMessage()" );
 
 	return true;
 }

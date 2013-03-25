@@ -11,7 +11,8 @@ enum debugLevel_t
 {
 	debugLevelInfo,
 	debugLevelVerbose,
-	debugLevelVeryVerbose
+	debugLevelVeryVerbose,
+	debugLevelVeryVeryVerbose
 };
 
 /** Error and debug print functions.

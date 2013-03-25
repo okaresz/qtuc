@@ -1,6 +1,13 @@
 #include "ProxySettingsManager.h"
+#include <QDebug>
+#include <iostream>
 
 using namespace QtuC;
+
+QString ProxySettingsManager::mCmdArgNames[] = {
+	QString("passthrough"),
+	QString("verbose")
+};
 
 ProxySettingsManager::ProxySettingsManager(QObject *parent) :
 	SettingsManagerBase(parent)
@@ -56,6 +63,13 @@ ProxySettingsManager::ProxySettingsManager(QObject *parent) :
 		{ setValue( "deviceLog/errorLogPath", "deviceErrorMsgLog" ); }
 
 	sync();
+
+	// init command line params
+
+	mCmdArgs.insert( cmdArgVerbose, QVariant((uint)0) );
+	mCmdArgs.insert( cmdArgPassthrough, QVariant(false) );
+
+	initCmdParser();
 }
 
 ProxySettingsManager* ProxySettingsManager::instance(QObject *parent)
@@ -65,4 +79,42 @@ ProxySettingsManager* ProxySettingsManager::instance(QObject *parent)
 		instancePtr = new ProxySettingsManager(parent);
 	}
 	return (ProxySettingsManager*)instancePtr;
+}
+
+void ProxySettingsManager::initCmdParser()
+{
+	static const QCommandLineConfigEntry conf[] = {
+		{ QCommandLine::Switch, 'v', mCmdArgNames[cmdArgVerbose], "increase verbosity", QCommandLine::OptionalMultiple },
+		{ QCommandLine::Switch, 'p', mCmdArgNames[cmdArgPassthrough], "Enable passThrough mode", QCommandLine::Optional },
+		QCOMMANDLINE_CONFIG_ENTRY_END
+	};
+	mCmdParser->setConfig( conf );
+}
+
+void ProxySettingsManager::cmdSwitchFound(const QString &name)
+{
+	if( name == mCmdArgNames[cmdArgPassthrough] )
+		{ mCmdArgs[cmdArgPassthrough] = true; }
+	else if( name == mCmdArgNames[cmdArgVerbose] )
+		{ mCmdArgs[cmdArgVerbose] = mCmdArgs.value(cmdArgVerbose).toUInt()+1; }
+}
+
+void ProxySettingsManager::cmdOptionFound(const QString &name, const QVariant &value)
+{
+	qDebug() << "Option:" << name << value;
+}
+
+void ProxySettingsManager::cmdParamFound(const QString &name, const QVariant &value)
+{
+	qDebug() << "Param:" << name << value;
+}
+
+void ProxySettingsManager::cmdParseError(const QString &error)
+{
+	std::cerr << qPrintable(error) << std::endl;
+}
+
+const QVariant ProxySettingsManager::getCmdArgValue(ProxySettingsManager::cmdArg_t arg)
+{
+	return mCmdArgs.value(arg);
 }

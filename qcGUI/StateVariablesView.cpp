@@ -8,6 +8,7 @@
 #include "StateVariableUlongBinView.h"
 #include <QSlider>
 #include "StateVarIntView.h"
+#include <QRegExp>
 
 using namespace qcGui;
 
@@ -150,18 +151,29 @@ QWidget *StateVariablesView::createVariableWidget(const DeviceStateVariableBase 
 		case QVariant::Int:
 		case QVariant::UInt:
 		{
-			if( guiHint == "slider" )
+			if( guiHint.startsWith("slider") )
 			{
+				QPair<int,int> limits = QPair<int,int>( -65535, 65535 );
+				QRegExp limitRegexp("slider\\[(-?\\d+),(-?\\d+)\\]");
+				if( limitRegexp.indexIn( guiHint ) != -1 )
+				{
+					if( !limitRegexp.cap(1).isEmpty() )
+						{ limits.first = limitRegexp.cap(1).toInt(); }
+					if( !limitRegexp.cap(2).isEmpty() )
+						{ limits.second = limitRegexp.cap(2).toInt(); }
+				}
+
 				QSlider *slider = new QSlider();
 				slider->setObjectName( widgetName );
 
 				if( var->getType() == QVariant::Int )
-					{ slider->setMinimum(-65535); }
+					{ slider->setMinimum(limits.first); }
 				else
 					{ slider->setMinimum(0); }
 
-				slider->setMaximum(65535);
-				slider->setSingleStep(10);
+				slider->setMaximum(limits.second);
+				slider->setSingleStep(5);
+				slider->setPageStep(20);
 				slider->setOrientation(Qt::Horizontal);
 				slider->setTracking(true);
 				slider->setValue( var->getValue().toInt() );

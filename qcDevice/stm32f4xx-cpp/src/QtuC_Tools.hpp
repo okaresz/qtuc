@@ -17,6 +17,16 @@
 #include "UserCoreConfig.hpp"
 #include "SysTime.hpp"
 
+/** Macro switches for turning interrupts on/off.
+ *	See CPS instruction for more information.
+ * @{*/
+
+extern volatile uint16_t IRQDisableLevel;
+#define IRQDIS() if( ++IRQDisableLevel == 1 ){ __disable_irq(); }	///< Disable interrupts and configurable fault handlers (set PRIMASK)
+#define IRQEN() if( !IRQDisableLevel || !--IRQDisableLevel ){ __enable_irq(); }	///< Enable interrupts and configurable fault handlers (clear PRIMASK)
+
+/// @}
+
 /** Convert integer to string.
  *	This function is written based on the itoa.c in the embox project. http://code.google.com/p/embox/, /trunk/embox/src/lib/stdlib/itoa.c.
  *	Convert integer to string using base. The result won't have any prefix, only the minus sign (if necessary), and the digits according to base.
@@ -236,6 +246,9 @@ public:
 	template<typename int1T, typename int2T>
 	static void sendDebug( char const *str1, int1T const &int1, char const *str2, int2T const &int2 )
 	{
+		/// @todo Cache the string to be sent and sent it in one command, only guard that with interrupt blocks
+		IRQDIS();
+
 		print( Tools::commandTypeToString(cmdCall) );
 
 		// print timestamp
@@ -265,6 +278,8 @@ public:
 		}
 
 		putChar( Endl );
+
+		IRQEN();
 	}
 
 	/** Get command type as string.
@@ -298,13 +313,15 @@ private:
 
 	static void inline printTimeStamp()
 	{
-		putChar( CmdSep );
-		putChar( '@' );
-		char buf[9];
 		uint32_t us;
 		SysTime::getUsSince( SysTime::NullTime, us );
+		char buf[9];
 		itoa( us, buf, 16 );
+		IRQDIS();
+		putChar( CmdSep );
+		putChar( '@' );
 		print( buf );
+		IRQEN();
 	}
 };
 

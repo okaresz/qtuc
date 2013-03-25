@@ -37,7 +37,7 @@ public:
 	/** Register a deviceStateVariable.
 	  *	Once a variable is registered, the stateManager handles it's signals, keep it updated , and so on...
 	  *	@param stateVar The variable to manage.*/
-	void registerStateVariable( DeviceStateVariableBase* stateVar );
+	virtual void registerStateVariable( DeviceStateVariableBase* stateVar );
 
 signals:
 

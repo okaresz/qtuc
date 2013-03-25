@@ -3,6 +3,7 @@
 
 #include "DeviceConnectionManagerBase.h"
 #include <serialport.h>
+#include <QFile>
 
 namespace QtuC
 {

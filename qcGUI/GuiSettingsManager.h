@@ -13,6 +13,9 @@ public:
 	explicit GuiSettingsManager(QObject *parent = 0);
 
 	static GuiSettingsManager *instance(QObject *parent = 0);
+
+private:
+	void initCmdParser();
 };
 
 }	//QtuC::

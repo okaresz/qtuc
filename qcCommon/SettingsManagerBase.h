@@ -2,11 +2,14 @@
 #define SETTINGSMANAGERBASE_H
 
 #include <QSettings>
+#include "QCommandLine.h"
+#include <QStringList>
 
 namespace QtuC
 {
 
 /** Base for settings manager classes.
+*	Manage file-based settings and command line parameters.
 *	The location of the configuration file is printed to stdout when initialized.
 *	This class is essentially a singleton wrapper above QSettings.
 *	As QSettings is initialized without parameters, according to the Qt manual, you must specify application-related information before using QSettings.*/
@@ -22,11 +25,23 @@ public:
 	 *	@param parent On first call, the object will be created, so a parent argument should  be passed. On subsequent calls, you can omit it.*/
 	static SettingsManagerBase* instance(QObject *parent = 0);
 
+	bool parseCmdArgs( QStringList const &argList );
+
+	void showCmdHelp();
+
+protected slots:
+
+	virtual void cmdSwitchFound( const QString & name );
+	virtual void cmdOptionFound( const QString & name, const QVariant & value );
+	virtual void cmdParamFound( const QString & name, const QVariant & value );
+	virtual void cmdParseError( const QString & error );
+
 protected:
 	static SettingsManagerBase *instancePtr;
 
-	//bool readXML(QIODevice &device, QSettings::SettingsMap &map);
-	//bool writeXML(QIODevice &device, const QSettings::SettingsMap &map);
+	virtual void initCmdParser() = 0;
+
+	QCommandLine *mCmdParser;
 };
 
 }	//QtuC::

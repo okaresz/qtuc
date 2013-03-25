@@ -19,6 +19,9 @@ public:
 
 	QDomElement getXml() const;
 	bool loadXml( QDomElement const &layoutCfgElement );
+
+	uint getPlotterCount() const
+		{ return mPlotters.size(); }
 	
 signals:
 	void newPlotterAdded( Plotter* );

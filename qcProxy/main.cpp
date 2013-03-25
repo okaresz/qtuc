@@ -2,18 +2,13 @@
 #include "QcProxy.h"
 #include <QDebug>
 #include "ErrorHandlerBase.h"
+#include "ProxySettingsManager.h"
 
 #ifdef Q_OS_UNIX
     #include <signal.h>
 #endif
 
 using namespace QtuC;
-
-/// @todo .... :S
-/// @todo make the cmd line arguments globally accessible
-bool proxyPassThrough = false;
-
-void parseAppArg( const QString &, int & );
 
 /** Signal handling...
   *	For more info, see http://www.cplusplus.com/forum/unices/16430/, http://linux.die.net/man/2/sigaction*/
@@ -38,22 +33,26 @@ int main(int argc, char *argv[])
 	// Install a custom mesage handler
 	qInstallMsgHandler( ErrorHandlerBase::customMessageHandler );
 
-	// Parse arguments
-	QStringList appArgs = qcProxyApp.arguments();
-	for( int i=0; i<appArgs.size(); )
-	{
-		if( i == 0 )	// the command that started this application
-		{
-			++i;
-			continue;
-		}
+	// Create the Proxy object
+	QcProxy *proxy = new QcProxy();
 
-		parseAppArg( appArgs.at(i), i );
+	// Create the settings object, QcProxy as parent.
+	// On windows default format is registry, but we want file.
+	#ifdef Q_OS_WIN32
+		QSettings::setDefaultFormat( QSettings::IniFormat );
+	#endif
+
+	ProxySettingsManager::instance( proxy );
+
+	if( !ProxySettingsManager::instance()->parseCmdArgs( QCoreApplication::arguments() ) )
+	{
+		ProxySettingsManager::instance()->showCmdHelp();
+		delete proxy;
+		return -1;
 	}
 
-	// ...and let the show begin!
-	QcProxy *proxy = new QcProxy();
-	proxy->setPassThrough(proxyPassThrough);
+	ErrorHandlerBase::setDebugLevel( (debugLevel_t)ProxySettingsManager::instance()->getCmdArgValue(ProxySettingsManager::cmdArgVerbose).toUInt() );
+
 	if( !proxy->start() )
 	{
 		//  oops..
@@ -73,35 +72,6 @@ int main(int argc, char *argv[])
 
 		// Okay! Start the main thread's event loop.
 		return qcProxyApp.exec();
-	}
-}
-
-void parseAppArg( const QString &appArg, int &argIndex )
-{
-	QString arg(appArg);
-
-	if( arg.startsWith("--") )
-	{
-		arg = arg.mid(2);
-		if( arg == "passthrough" )
-		{
-			proxyPassThrough = true;
-		}
-		++argIndex;
-	}
-	else if( arg.startsWith('-') )
-	{
-		arg = arg.mid(1);
-		if( arg == "v" )
-		{
-			ErrorHandlerBase::setDebugLevel( debugLevelVerbose );
-		}
-		else if( arg == "vv" )
-		{
-			ErrorHandlerBase::setDebugLevel( debugLevelVeryVerbose );
-
-		}
-		++argIndex;
 	}
 }
 

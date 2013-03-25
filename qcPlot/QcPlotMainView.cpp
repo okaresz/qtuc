@@ -179,6 +179,11 @@ void QcPlotMainView::onNewPlotterAdded(Plotter *plotter)
 	plotDock->setWidget( plotterView );
 
 	addDockWidget( Qt::LeftDockWidgetArea, plotDock );
+
+	int w = width();
+	if( w < 650 )
+		{ w = 650; }
+	resize( w, height()+300 );
 }
 
 void QcPlotMainView::initModelView()

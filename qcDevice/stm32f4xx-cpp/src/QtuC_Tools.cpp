@@ -2,6 +2,7 @@
 
 using namespace QtuC;
 
+volatile uint16_t IRQDisableLevel = 0;
 const char Tools::Endl = '\n';
 const char Tools::CmdSep = ' ';
 
@@ -12,6 +13,9 @@ bool Tools::sendCommandBase( cmdType_t const type, const char *interface, const 
 		sendMessage( msgError, "[QcTools::sendCommand] invalid command" );
 		return false;
 	}
+
+	/// @todo Cache the string to be sent and sent it in one command, only guard that with interrupt blocks
+	IRQDIS();
 
 	print( Tools::commandTypeToString(type) );
 
@@ -51,6 +55,8 @@ bool Tools::sendCommandBase( cmdType_t const type, const char *interface, const 
 	}
 
 	putChar( Endl );
+
+	IRQEN();
 	return true;
 }
 
@@ -112,6 +118,9 @@ bool Tools::parseArg( char *arg, char **argv, uint8_t &argc )
 
 void Tools::sendMessage( messageType_t const msgType, char const *msgPart1, char const *msgPart2, char const *msgPart3, char const *msgPart4, char const *msgPart5, char const *msgPart6, char const *msgPart7, char const *msgPart8, char const *msgPart9, char const *msgPart10 )
 {
+	/// @todo Cache the string to be sent and sent it in one command, only guard that with interrupt blocks
+	IRQDIS();
+
 	print( Tools::commandTypeToString(cmdCall) );
 
 	// print timestamp
@@ -150,10 +159,15 @@ void Tools::sendMessage( messageType_t const msgType, char const *msgPart1, char
 		{ print( msgPart10 ); }
 
 	putChar( Endl );
+
+	IRQEN();
 }
 
 void Tools::sendGreeting( char const *deviceParams[], char const *greetingMsg )
 {
+	/// @todo Cache the string to be sent and sent it in one command, only guard that with interrupt blocks
+	IRQDIS();
+
 	print( Tools::commandTypeToString(cmdCall) );
 
 	// print timestamp
@@ -198,17 +212,19 @@ void Tools::sendGreeting( char const *deviceParams[], char const *greetingMsg )
 	}
 
 	putChar( Endl );
+
+	IRQEN();
 }
 
 const char *Tools::messageTypeToString( messageType_t const msgType )
 {
 	switch( msgType )
 	{
-		case msgUndefined: return "UNDEF"; break;
-		case msgInfo: return "info"; break;
-		case msgDebug: return "debug"; break;
-		case msgWarning: return "warning"; break;
-		case msgError: return "error"; break;
+		case msgUndefined: return "???"; break;
+		case msgInfo: return "inf"; break;
+		case msgDebug: return "dbg"; break;
+		case msgWarning: return "wrn"; break;
+		case msgError: return "err"; break;
 		default: return 0;
 	}
 }

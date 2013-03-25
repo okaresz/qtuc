@@ -72,8 +72,8 @@ void DeviceStateHistoryVariable::pushToHistory()
 				mHistory.append( QPair<qint64,double>( mLastUpdate, dval ) );
 				emit historyUpdated();
 			}
-			else
-				{ debug( QtuC::debugLevelVerbose, "Variable update timestamp equals the previous, skip history update.", "pushToHistory" ); }
+//			else
+//				{ debug( QtuC::debugLevelVerbose, "Variable update timestamp equals the previous, skip history update.", "pushToHistory" ); }
 		}
 		else
 			{ error( QtWarningMsg, "Cannot convert variable to double, history update failed.", "pushToHistory" ); }

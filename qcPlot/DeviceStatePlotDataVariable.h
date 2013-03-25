@@ -15,6 +15,8 @@ class DeviceStatePlotDataVariable : public DeviceStateHistoryVariable, public Qw
 public:
 	explicit DeviceStatePlotDataVariable( const QString& varHwInterface, const QString& varName, const QString& varType, const QString &accessModeStr );
 
+	~DeviceStatePlotDataVariable(){}
+
 	/** Inherited from QwtSeriesData.
 	  *	@{*/
 	QRectF boundingRect() const;

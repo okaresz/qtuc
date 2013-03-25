@@ -80,9 +80,19 @@ void ErrorHandlerBase::printError(QtMsgType severity, const QString &msg, const 
 {
 	QString line;
 	if( !QString(className).isEmpty() )
-		{ line = QString("[%1::%2]: %3").arg(className,functionName,msg); }
+	{
+		if( mDebugLevel == debugLevelVeryVeryVerbose )
+			{ line = QString("[%1::%2]: %3").arg(className,functionName,msg); }
+		else
+			{ line = QString("%1").arg(msg); }
+	}
 	else
-		{ line = QString("[%1]: %2").arg(functionName,msg); }
+	{
+		if( mDebugLevel == debugLevelVeryVeryVerbose )
+			{ line = QString("[%1]: %2").arg(functionName,msg); }
+		else
+			{ line = QString("%1").arg(msg); }
+	}
 
 	if( !details.isEmpty() )
 	{

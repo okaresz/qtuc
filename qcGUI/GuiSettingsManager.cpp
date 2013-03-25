@@ -31,3 +31,8 @@ GuiSettingsManager *GuiSettingsManager::instance(QObject *parent)
 	}
 	return (GuiSettingsManager*)instancePtr;
 }
+
+void GuiSettingsManager::initCmdParser()
+{
+
+}

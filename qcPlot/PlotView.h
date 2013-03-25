@@ -5,7 +5,7 @@
 #include <QList>
 #include "PlotConfig.h"
 #include "Plotter.h"
-#include "qwt_plot_curve.h"
+#include "QcPlotCurve.h"
 #include <QList>
 #include <QPair>
 
@@ -37,9 +37,9 @@ protected slots:
 	void onDataChanged();
 
 private:
-	QwtPlotCurve *curve( uint curveId );
+	QcPlotCurve *curve( uint curveId );
 
-	QList<QPair<uint,QwtPlotCurve*> > mCurves;
+	QList<QPair<uint,QcPlotCurve*> > mCurves;
 	Plotter *mModel;
 	bool mAutoZoom;
 	bool mAutoFollow;

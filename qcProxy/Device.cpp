@@ -127,9 +127,10 @@ void Device::clear()
 
 deviceMessageType_t Device::messageTypeFromString(const QString &msgTypeStr)
 {
-	if( msgTypeStr == "info" ) { return deviceMsgInfo; }
-	if( msgTypeStr == "debug" ) { return deviceMsgDebug; }
-	if( msgTypeStr == "error" ) { return deviceMsgError; }
+	if( msgTypeStr == "inf" ) { return deviceMsgInfo; }
+	if( msgTypeStr == "dbg" ) { return deviceMsgDebug; }
+	if( msgTypeStr == "wrn" ) { return deviceMsgWarning; }
+	if( msgTypeStr == "err" ) { return deviceMsgError; }
 	return deviceMsgUndefined;
 }
 

@@ -2,7 +2,9 @@ qcPlot:
 	mi van a timestampekkel? miért ragyás a plot?
 	ne kezdjen logolni a var, amíg nincs plot. (logHistory false default)
 	
+qcClientBase
 
+in general, improve reusability and extensibility for developers (virtual functions, modularity, ...)
 
 if device removed, high cpu usage?! -> QtSerialPort bug, or even lower (moserial also)
 

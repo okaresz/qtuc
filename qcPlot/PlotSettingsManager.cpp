@@ -31,3 +31,7 @@ PlotSettingsManager *PlotSettingsManager::instance(QObject *parent)
 	}
 	return (PlotSettingsManager*)instancePtr;
 }
+
+void PlotSettingsManager::initCmdParser()
+{
+}

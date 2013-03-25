@@ -13,6 +13,9 @@ public:
 	explicit PlotSettingsManager(QObject *parent = 0);
 
 	static PlotSettingsManager *instance(QObject *parent = 0);
+
+private:
+	void initCmdParser();
 };
 
 }	//QcPlot::

@@ -122,11 +122,14 @@ uint16_t ProxyCom::print( const char* str )
 	if( !mStarted ) { return 0; }
 
 	uint16_t chcnt = 0;
+	IRQDIS();
 	while( *(str+chcnt) )
 	{
 		ProxyCom::putChar( *(str+chcnt) );
 		chcnt++;
 	}
+	IRQEN();
+
 	return chcnt;
 }
 
@@ -151,7 +154,7 @@ void ProxyCom::handleNewData( uint16_t const &newData )
 	}
 	else
 	{
-		if( mReceiveBufferPtr < MReceiveBufferCmdSize )
+		if( mReceiveBufferPtr < MReceiveBufferCmdSize-1 )
 		{
 			mReceiveBuffer[mReceiveBufferCmdWPtr][mReceiveBufferPtr++] = (char)newData;
 		}

@@ -36,7 +36,7 @@ namespace Conf
 			uint32_t const moduleRCC = RCC_APB2Periph_USART1;
 			uint8_t const AFMap = GPIO_AF_USART1;
 			IRQn_Type const IRQCh = USART1_IRQn;
-			uint32_t const baudRate = 115200;
+			uint32_t const baudRate = 460800;
 		}
 	}
 }
